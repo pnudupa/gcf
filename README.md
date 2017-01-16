@@ -6,4 +6,4 @@ Please refer to the html documentation supplied before using the library. You ca
 
 NOTE : You can integrate the GCF 3 documentation to Qt Assistant using the “Documentation/html/qthelp/gcf-3.0.0.qch” file in the GCF 3 package.
 
-For further queries, you can write to gcf-support@vcreatelogic.com.
+For further queries, you can write to prashanth.udupa@gmail.com
