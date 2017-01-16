@@ -1,0 +1,5 @@
+<content>
+    <object name="StackedWidget1" type="widget" class="QStackedWidget"/>
+    <object name="Widget1" type="widget" parent="StackedWidget1"/>
+    <object name="Widget2" type="widget" parent="StackedWidget1"/>
+</content>

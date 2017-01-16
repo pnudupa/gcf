@@ -1,0 +1,18 @@
+<content>
+
+    <object name="Window" type="widget" class="QMainWindow" />
+    <object name="Table" type="widget" class="QTableWidget" />
+    <object name="GroupBox" type="widget" class="QGroupBox" />
+    <object name="StackedWidget" type="widget" class="QStackedWidget" />
+    <object name="TabWidget" type="widget" class="QTabWidget" />
+    <object name="GraphicsView" type="widget" class="QGraphicsView" />
+
+    <object name="Object" />
+
+    <object name="Menu" type="menu" />
+    <object name="Action" type="action" />
+    <object name="ToolBar" type="toolbar" />
+    <object name="MenuBar" type="menubar" />
+    <object name="ActionGroup" type="actiongroup" />
+
+</content>

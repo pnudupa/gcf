@@ -1,0 +1,5 @@
+<content>
+    <object name="parent1" />
+    <object name="object1" parent="parent1" />
+    <object name="object2" parent="parent1" />
+</content>

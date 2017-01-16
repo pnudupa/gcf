@@ -1,0 +1,8 @@
+QT += core
+isEqual(QT_MAJOR_VERSION, 5) {
+QT -= gui widgets
+} else {
+QT -= gui
+}
+INCLUDEPATH += $$PWD/../Include
+LIBS += -L$$PWD/../Binary -lGCF3

@@ -1,0 +1,15 @@
+<content>
+    <object name="Core" />
+    <object name="TestService" />
+
+    <object name="Window" type="widget" windowTitle="Simple Gui Component">
+        <property>
+            <key>minimumWidth</key>
+            <value>800</value>
+        </property>
+        <property>
+            <key>minimumHeight</key>
+            <value>600</value>
+        </property>
+    </object>
+</content>

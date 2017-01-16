@@ -1,0 +1,159 @@
+/**
+\class GCF::Version Version.h <GCF3/Version>
+\brief Represents version information as a major, minor, revision number triplet.
+\ingroup gcf_core
+
+
+You can construct a version object by
+\li specifying major, minor, revision numbers
+\li parsing version from a string
+
+A version object will be invalid if major or minor or revision numbers
+\li are greater than 65535
+\li are non-numeric values
+
+You can check for the validity of a version number via the \ref isValid() method.
+*/
+
+/**
+\fn GCF::Version::Version(quint16 major=0, quint16 minor=0, quint16 revision=0)
+
+Constructs a version object
+\param major major component of the version number
+\param minor minor component of the version number
+\param revision component of the version number
+*/
+
+/**
+\fn GCF::Version::Version(const Version &other)
+
+Copy constructor, copies contents of another version object into this version object.
+
+\param other the other version object from which version information is copied
+*/
+
+/**
+\fn GCF::Version::Version(const QString &versionStr)
+
+Constructs a version object from a string representation of it.
+
+\param versionStr string representation of the version. Example "10.8.4"
+
+\note If \c versionStr contains an invalid version representation, then \ref isValid()
+will return false.
+
+\sa toString()
+*/
+
+/**
+\fn GCF::Version::~Version()
+
+Destructor
+*/
+
+/**
+\fn bool GCF::Version::isValid() const
+
+A version is considered valid, if \ref major() returns a value greater than or equal to 1.
+
+\return true, if the version object is valid. False otherwise.
+*/
+
+/**
+\fn bool GCF::Version::isBaseVersion() const
+
+A version is considered base-version, if \ref major() is 1, \ref minor() is 0 and \ref revision() is 0.
+
+\return true, if the version object represents base-version. False otherwise.
+*/
+
+/**
+\fn bool GCF::Version::operator == (const Version &other) const
+
+Comparison operator.
+
+\param other the version against which this version object would be compared
+
+\return true if this version is equal to \c other, false otherwise.
+*/
+
+/**
+\fn GCF::Version &GCF::Version::operator = (const Version &other)
+
+Assignment operator
+
+\param other version object, whose data will be copied on to this version object
+
+\return A reference to the modified version object
+*/
+
+/**
+\fn bool GCF::Version::operator < (const Version &other) const
+
+Less than operator.
+
+\return true, if this version is less than the other version. False otherwise.
+*/
+
+/**
+\fn bool GCF::Version::operator <= (const Version &other) const
+
+Less than or equal to operator
+
+\return true, if this version is less than or equal to the other version. False otherwise.
+*/
+
+/**
+\fn bool GCF::Version::operator > (const Version &other) const
+
+Greater than operator.
+
+\return true, if this version is greater than the other version. False otherwise.
+*/
+
+/**
+\fn bool GCF::Version::operator >= (const Version &other) const
+
+Greater than or equal to operator.
+
+\return true, if this version is greater than or equal to the other version. False otherwise.
+*/
+
+/**
+\fn bool GCF::Version::operator != (const Version &other) const
+
+Not equal to operator.
+
+\return true, if this version is not equal to the other version. False otherwise.
+*/
+
+/**
+\fn quint16 GCF::Version::major() const
+
+\return the major component of this version
+*/
+
+/**
+\fn quint16 GCF::Version::minor() const
+
+\return the minor component of this version
+*/
+
+/**
+\fn quint16 GCF::Version::revision() const
+
+\return the revision component of this version
+*/
+
+/**
+\fn GCF::Version::operator QString() const
+
+\return a string representation of this version object
+*/
+
+
+/**
+\fn QString GCF::Version::toString() const
+
+\return a string representation of this version object
+*/

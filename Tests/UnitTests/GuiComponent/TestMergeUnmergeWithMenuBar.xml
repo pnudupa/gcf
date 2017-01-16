@@ -1,0 +1,4 @@
+<content>
+    <object name="MenuBar1" type="menubar" />
+    <object name="ChildMenu1" type="menu" parent="MenuBar1" />
+</content>

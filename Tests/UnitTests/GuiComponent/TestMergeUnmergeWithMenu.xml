@@ -1,0 +1,6 @@
+<content>
+    <object name="Menu1" type="menu" />
+    <object name="Action1" type="action" parent="Menu1" />
+    <object name="ChildMenu1" type="menu" parent="Menu1" />
+    <object name="Widget1" type="widget" parent="Menu1" />
+</content>

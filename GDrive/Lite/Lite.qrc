@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/Icons">
+        <file>google-drive.png</file>
+    </qresource>
+</RCC>

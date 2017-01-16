@@ -1,0 +1,12 @@
+<content>
+    <object name="Dial" type="widget" parent="AppWindowComponent.Window">
+        <property>
+            <key>minimumWidth</key>
+            <value>200</value>
+        </property>
+        <property>
+            <key>minimumHeight</key>
+            <value>200</value>
+        </property>
+    </object>
+</content>

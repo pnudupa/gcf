@@ -1,0 +1,38 @@
+<content>
+
+    <object name="Object1">
+
+        <property>
+            <key>property1</key>
+            <value>object1_value1</value>
+        </property>
+
+        <property>
+            <key>property2</key>
+            <value>object1_value2</value>
+        </property>
+
+    </object>
+
+    <object name="Object2">
+
+        <property>
+            <key>property1</key>
+            <value>Object1::property1</value>
+        </property>
+
+        <property>
+            <key>property2</key>
+            <value>object2_value2</value>
+        </property>
+
+        <property>
+            <key>property3</key>
+            <value>Object4::property1</value>
+        </property>
+
+    </object>
+
+</content>
+
+

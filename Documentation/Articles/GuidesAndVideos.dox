@@ -1,0 +1,44 @@
+/**
+\page gcf_guides_and_videos Guides and Videos
+
+\section gcf_guides Guides
+
+\li \ref gcf_component_model - Read this if you want to get a quick <b>Introduction to
+GCF 3 Concepts</b>. We recommend that you read this guide, if you are new to GCF 3.
+
+\li \ref gcf_installation - Read this to understand how to compile and setup GCF on your
+computer.
+
+\li \ref gcf_getting_started - Read this to get started with GCF 3 development, with the
+help of an example.
+
+\li \ref gcf_content_xml
+
+\li \ref gcf_using_ipc
+
+\section gcf_videos Videos
+
+We have some video tutorials for you to get yourself familiarized with GCF 3.
+
+\htmlonly
+<p>&nbsp</p>
+<iframe id="videosFrame" src="http://gcf.vcreatelogic.com/docs/videos.html" width="100%" height="100%" frameborder="0" seamless="seamless"></iframe>
+
+<script>
+function setIframeHeight(iframe) {
+    if (iframe) {
+        var iframeWin = iframe.contentWindow || iframe.contentDocument.parentWindow;
+        if (iframeWin.document.body) {
+            iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight;
+        }
+    }
+};
+
+window.onload = function() {
+    setIframeHeight(document.getElementById('videosFrame'));
+};
+</script>
+\endhtmlonly
+
+*/
+

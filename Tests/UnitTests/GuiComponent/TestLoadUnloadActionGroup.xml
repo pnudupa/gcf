@@ -1,0 +1,24 @@
+<content>
+
+    <object name="Action 1" type="action" />
+
+    <object name="ActionGroup 1" type="actiongroup" />
+    <object name="ActionGroup 2" type="actiongroup" />
+    <object name="ActionGroup 3" type="actiongroup" />
+    <object name="ActionGroup 4" type="actiongroup" />
+    <object name="ActionGroup 5" type="actiongroup" />
+
+    <object name="Window" type="widget" class="QMainWindow" />
+    <object name="Table" type="widget" class="QTableWidget" />
+    <object name="GroupBox" type="widget" class="QGroupBox" />
+    <object name="StackedWidget" type="widget" class="QStackedWidget" />
+    <object name="TabWidget" type="widget" class="QTabWidget" />
+    <object name="GraphicsView" type="widget" class="QGraphicsView" />
+
+    <object name="Object" />
+
+    <object name="Menu" type="menu" />
+    <object name="ToolBar" type="toolbar" />
+    <object name="MenuBar" type="menubar" />
+
+</content>

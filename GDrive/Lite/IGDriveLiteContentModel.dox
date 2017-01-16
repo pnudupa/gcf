@@ -1,0 +1,416 @@
+/**
+\class GCF::IGDriveLiteContentModel
+\brief This interface provides access to the content-structure of Google Drive
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF3/IGDriveLiteContentModel&gt;
+</pre>
+\endhtmlonly
+
+This class implements the \c QAbstractItemModel interface and offers access to
+\c MyDrive, \c Trash, \c SharedWithMe, \c Starred root folders and their folders
+and files. You can think of this class as a \c QFileSystemModel for Google Drive.
+
+Against each node in the content-tree, this model maintains an internal data
+structure of all property=value pairs returned by Google Drive API. This
+can be accessed via the \ref item() method.
+
+In order to arrange files in the google drive file system style content
+model has 4 top level special items inside which all the contents of google
+drive is arranged.
+
+\li \b My \b drive - This contains all the files created or uploaded by you.
+\li \b Shared \b with \b me - This item contains all the files shared with you.
+\li \b Starred - This item contains all the starred items by you.
+\li \b Trashed - This item contains all the files that has been trashed by you.
+
+Once the authentication is complete content model starts fetching contents from
+GDrive. Content model does not fetch all the drive contents at once. All the
+above top level items contents are fetched first. If there are folders inside
+any of the above items then the contents inside those folders are not fetched
+for the first time. The contents of folders are fetched only when
+the the items inside the folder needs to be shown.
+
+Shown below is an example of how the content-model is visualized in a QTreeView
+for a Google Drive account.
+
+\image html gdrive/content-model-treeview.png
+*/
+
+/*! \enum GCF::IGDriveLiteContentModel::Field
+The enumeration values of Field represents specific property of item i.e
+\ref GCF::GDriveContent::Item. \ref GCF::GDriveContent::Item represents
+a file or folder in google drive. Each of them posses the properties represented
+by the values of enumeration.
+
+This enumeration values are also used to construct columns and order of it
+using \ref GCF::IGDriveLiteContentModel::setColumns(const QList<int> &columns).
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::Kind
+ * kind string of item. For example "drive#file". [Role-name: \c "contentKind"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::Id
+ * id of item. Each item has unique id. [Role-name: \c "contentId"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::ETag
+ * etag of item. [Role-name: \c "contentETag"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::SelfLink
+ * selfLink of item. [Role-name: \c "contentSelfLink"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::WebContentLink
+ * web content link of item. [Role-name: \c "contentWebContentLink"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::WebViewLink
+ * web view link of item. [Role-name: \c "contentWebViewLink"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::AlternateLink
+ * alternative link of item. [Role-name: \c "contentAlternateLink"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::EmbedLink
+ * embed link of item.  [Role-name: \c "contentEmbedLink"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::OpenWithLinks
+ * QVariantMap of open with links of item. [Role-name: \c "contentIsOpenWithLinks"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::DefaultOpenWithLink
+ * default open with link of item. [Role-name: \c "contentDefaultOpenWithLink"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IconLink
+ * link to icon of item. [Role-name: \c "contentIconLink"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::ThumbnailLink
+ * link to thumbnail of the item. [Role-name: \c "contentThumbnailLink"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::Title
+ * title of item. [Role-name: \c "contentTitle"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::MimeType
+ * mime type of item. [Role-name: \c "contentMimeType"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::Description
+ * description of item. [Role-name: \c "contentDescription"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsStarred
+ * item is starred or not. [Role-name: \c "contentIsStarred"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsHidden
+ * item is hidden or not. [Role-name: \c "contentIsHidden"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsTrashed
+ * item is trashed. [Role-name: \c "contentIsTrashed"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsRestricted
+ * item is restricted or not. [Role-name: \c "contentIsRestricted"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsViewed
+ * item is viewed or not. [Role-name: \c "contentIsViewed"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::CreatedDate
+ * creation date of the item. [Role-name: \c "contentCreatedDate"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::ModifiedDate
+ * modified date of the item.  [Role-name: \c "contentModifiedDate"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::ModifiedByMeDate
+ * last modified date by the current user. [Role-name: \c "contentModifiedByMeDate"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::LastViewedByMeDate
+ * item last viewed by me date time. [Role-name: \c "contentLastViewedByMeDate"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::SharedWithMeDate
+ * item shared date time. [Role-name: \c "contentSharedWithMeDate"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::DownloadUrl
+ * item downloaded url. [Role-name: \c "contentDownloadUrl"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::ExportLinks
+ * QVariantMap of item export links. [Role-name: \c "contentExportLinks"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IndexableText
+ * indexable text of item. [Role-name: \c "contentIndexableText"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::UserPermissions
+ * \c QVariantMap of user permissions. [Role-name: \c "contentUserPermissions"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::OriginalFileName
+ * original file name of item. [Role-name: \c "contentOriginalFileName"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::FileExtension
+ * file extension of item. [Role-name: \c "contentFileExtension"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::Md5Checksum
+ * md5 checksum of item. [Role-name: \c "contentMd5Checksum"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::FileSize
+ * file size of item. [Role-name: \c "contentFileSize"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::QuataBytesUsed
+ * quata bytes used. [Role-name: \c "contentQuataBytesUsed"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::OwnerNames
+ * string list of names of owners of item. [Role-name: \c "contentOwnerNames"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::Owners
+ * \c QVariantMap of owners of item.  [Role-name: \c "contentOwners.
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::LastModifyingUserName
+ * last modified user's name. [Role-name: \c "contentLastModifyingUserName"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::LastModifyingUser
+ * \c QVariantMap map of info about last modifying user. [Role-name: \c "contentLastModifyingUser"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsEditable
+ * item is editable by current user or not. [Role-name: \c "contentIsEditable"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsCopyable
+ * item is copyable by the current user or not. [Role-name: \c "contentIsCopyable"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::CanWritersShare
+ * can the user with write permission can share file or not. [Role-name: \c "contentCanWritersShare"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsShared
+ * is item shared or not. [Role-name: \c "contentIsShared"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsExplicitlyTrashed
+ * whether the item was explicitly trashed. [Role-name: \c "contentIsExplicitlyTrashed"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsAppDataContents
+ * item has appdata contents or not. [Role-name: \c "contentIsAppDataContents"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::HeadRevisionId
+ * latest revision of item. [Role-name: \c "contentHeadRevisionId"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::Properties
+ * list or QVariantMap of properties of item. [Role-name: \c "contentProperties"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::ImageMediaMetaData
+ * \c QVariantMap of image meta data. [Role-name: \c "contentImageMediaMetaData"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsFolder
+ * whether item is a folder or not. [Role-name: \c "contentIsFolder"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsFile
+ * whether item is a file or not. [Role-name: \c "contentIsFile"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsSpecialItem
+ * whether item is a special item or not. [Role-name: \c "contentIsSpecialItem"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsFileInfoLoaded
+ * whether the file information is loaded from drive or not. [Role-name: \c "contentIsFileInfoLoaded"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::IsFolderContentLoaded
+ * whether the contents (folders and files) inside the item is loaded or not.
+ * [Role-name: \c "contentIsFolderContentLoaded"]
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::MinField
+ * starting Enumeration value of Field.
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::Field GCF::IGDriveLiteContentModel::MaxField
+ * ending Enumeration value of Field.
+ */
+
+
+/*! \enum GCF::IGDriveLiteContentModel::ContentVisibility
+The enumeration values of ContentVisibility is used to customize the
+contents of the content model.
+*/
+
+/*! \var GCF::IGDriveLiteContentModel::ContentVisibility GCF::IGDriveLiteContentModel::ShowMyDrive
+ * show contents of my drive.
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::ContentVisibility GCF::IGDriveLiteContentModel::ShowSharedWithMe
+ * show contents of shared with me.
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::ContentVisibility GCF::IGDriveLiteContentModel::ShowTrashed
+ * show contents of trashed.
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::ContentVisibility GCF::IGDriveLiteContentModel::ShowStarred
+ * show contents of starred.
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::ContentVisibility GCF::IGDriveLiteContentModel::ShowAll
+ * show all the contents. i.e My drive, Shared with me, Starred and Trashed.
+ */
+
+/*! \enum GCF::IGDriveLiteContentModel::SpecialItem
+The enumeration values of SpecialItem is used to fetch information about
+special items(root items on content model).
+*/
+
+/*! \var GCF::IGDriveLiteContentModel::SpecialItem GCF::IGDriveLiteContentModel::MyDrive
+ * represents MyDrive root item inside content model.
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::SpecialItem GCF::IGDriveLiteContentModel::SharedWithMe
+ * represents SharedWithMe root item inside content model.
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::SpecialItem GCF::IGDriveLiteContentModel::Trash
+ * represents Trash root item inside content model.
+ */
+
+/*! \var GCF::IGDriveLiteContentModel::SpecialItem GCF::IGDriveLiteContentModel::Starred
+ * represents Starred root item inside content model.
+ */
+
+/**
+\fn GCF::IGDriveLiteContentModel::setContentVisibility(int flags)
+Sets the visible contents of the content model to flags. Check
+\ref GCF::IGDriveLite::ContentVisibility more details about specifying flags.
+
+\param flags combination of \ref GCF::IGDriveLite::ContentVisibility .
+*/
+
+/**
+\fn GCF::IGDriveLiteContentModel::contentVisibility() const;
+
+\return the current content visibility flags set.
+
+*/
+
+/**
+\fn GCF::IGDriveLiteContentModel::setColumns(const QList<Field> &fields);
+
+Sets the columns of this according to fields. \ref QList<Field> &fields
+is a list of enumeration values of \ref GCF::IGDriveLiteContentModel::Field.
+The columns are constructed based on the given enumeration values and in
+respective order.
+
+\param fields list of enumeration values of \ref GCF::IGDriveLiteContentModel::Field
+based upon which model columns need to be constructed.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentModel::columns() const
+
+Returns the columns of content model. \c QList<int> will contain the enumeration
+values of \ref GCF::JobListModel::Field the order in which the columns are
+set in the model.
+
+\return \c QList<Field> list of enumeration values of
+\ref GCF::JobListModel::Field.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentModel::refresh(const QModelIndex &index=QModelIndex())
+
+Refreshes the item corresponding to \c QModelIndex. If item is a folder then
+it will also fetch first level of child items inside the that.
+
+\param index index of item to be refreshed.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentModel::item(const QModelIndex &index) const
+
+Returns item for that index.
+\return \ref GCF::GDriveContent::Item for index.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentModel::item(const QString &id) const
+
+Returns item for google drive id of the item.
+\return \ref GCF::GDriveContent::Item for id.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentModel::indexForId(const QString &id, int column=0) const
+
+Returns index of item for google drive id .
+\return \c QModelIndex for id.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentModel::indexForId(const QString &id, int column=0) const
+
+Returns list of index of item for google drive id if file is present in
+multiple folders.
+\return \c QModelIndexList for id.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentModel::specialItemIndex(SpecialItem item) const
+
+Returns item for the enumeration value.
+\ref GCF::IGDriveLiteContentModel::SpecialIndexlist.
+
+\return \c QModelIndex for enumeration value item.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentModel::fileItemLoaded(const QModelIndex &index)
+
+This signal is emitted when information about a particular item has
+been loaded.
+
+\param index index of item loaded.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentModel::folderItemLoaded(const QModelIndex &index)
+
+This signal is emitted when contents of a folder has been loaded.
+
+\param index index of item loaded.
+*/

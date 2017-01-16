@@ -1,0 +1,25 @@
+/**
+\page gcf_communique Communique - Example application for GCF's IPC module.
+
+Communique is a simple LAN chat application build to demonstract usage
+of IPC module. This page explains how to run the example and use it.
+
+\tableofcontents
+
+\section gcf_communique_0 Launching Communique
+To launch Communique either you can open the example in the QtCreator and run
+the application or you can go to \c Binary/Demos folder inside \c GCF3 and then
+run the application.
+
+\note Before running the application please make sure that the \c GCF3/Binary
+is in your path variable.
+
+\section gcf_communique_1 Using Communique
+
+Launch two instances of this application on different computers within the same
+LAN. Once both has been started, they figureout each other using IPC calls. Now
+the users can start chatting to each other.
+
+\image html communique.png
+
+*/

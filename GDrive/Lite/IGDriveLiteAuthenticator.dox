@@ -1,0 +1,57 @@
+/**
+\class GCF::IGDriveLiteAuthenticator
+\brief This is class helps the user to authenticate..
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF3/IGDriveLiteAuthenticator&gt;
+</pre>
+\endhtmlonly
+
+There will be only one instance of \ref GCF::IGDriveLiteAuthenticator in GDrive
+component . You will have to set the client ID and client-secret inorder for
+authenticator to give proper url for authentication. For Details about
+client ID and other things please refer to \ref gcf_gdrivelite.
+
+Once instantiated, you will need to authorize \ref GCF::IGDriveLite to access
+the drive content and work with it. Read \ref gcf_gdrivelite_2 for more details.
+
+Access tokens are automatically refreshed, but you can trigger it manually using
+\ref GCF::IGDriveLiteAuthenticator::refreshAuthentication() also.
+*/
+
+/**
+\fn GCF::IGDriveLiteAuthenticator::authenticationPageUrl() const
+
+Returns authentication Url which should be loaded into a web page and shown to
+user to enter his/her credentials.
+
+\return \c QUrl which needs to be shown to the user for authentication.
+*/
+
+/**
+\fn GCF::IGDriveLiteAuthenticator::authenticateFromPageTitle(const QString &title, QObject *notifyObject=0, const char *notifySlot=0)
+
+This method gets access token from the changed authentication url after
+user has authenticated.
+
+\param title the changed url after user authentication which contains the
+success code.
+\param notifyObject object to notify once the access token is retrieved by
+authenticator.
+\param notifySlot slot to notify in the notifyObject once the access token
+retrieved by authenticator.
+\return \ref GCF::Result which contains success or failure based on whether
+sending request for access token was successful or not.
+*/
+
+/**
+\fn GCF::IGDriveLiteAuthenticator::refreshAuthentication()
+
+Refreshes the access token. For refreshing authentication the user
+must have been authenticated at least once.
+\return \ref GCF::Result which contains success or failure based on whether
+sending request for refreshing was successful or not.
+*/
+

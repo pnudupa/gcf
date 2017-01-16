@@ -1,0 +1,93 @@
+/**
+\page gcf_rover Rover Demo
+
+This program showcases the use of GCFQuick3 module to build component based QML applications.
+Rover is a simple file/folder browser application written using GCFGui3, QtGui and QtQuick
+modules. You can view contents of a file/folder in list, grid, cover-flow and spiral views.
+While list and grid views are offered by the base Rover application, spiral and cover-flow
+views come from loadable components. The whole point of this demo is to whocase a way to
+bring QtGui and QtQuick modules together into a single component-based GCFGui3 application.
+
+This page does not explain the source code of the example. We encourage you to study the
+source code to get a sense of how GCFQuick3 module can be leveraged in your applications.
+
+\tableofcontents
+
+\section gcf_rover_1 Launching Rover
+
+Launch the Transfigure application from the \c $GCFDIR/Binary/Demos folder. You will notice
+a window as shown below.
+
+\image html rover.png
+
+You can expand to any folder on the left-tree-panel and view the contents of that folder
+in the panel on the right. The panel on the right is a \c QQuickView. You can switch
+between List, Grid, Cover Flow and Spiral Flow views by selecting the appropriate tab
+on the top.
+
+As said before, the List and Grid views come from the base Rover application. The Cover-Flow
+and Spiral-Flow views come from loadable components. Take a look at the contents of the
+\c $GCFDIR/Binary/Demos folder.
+
+\verbatim
+./Rover
+./RoverComponents
+./RoverComponents/libCoverFlowView.dylib
+./RoverComponents/libSpiralFlowView.dylib
+\endverbatim
+
+Notice how the cover-flow and spiral-flow views are made available from loadable components.
+The components are explicitly loaded by the RoverApp from its \c main() function.
+
+\code
+int main(int argc, char **argv)
+{
+    GCF::GuiApplication a(argc, argv);
+
+    RoverApp *roverApp = new RoverApp;
+    roverApp->load();
+
+    a.loadComponent("RoverComponents/CoverFlowView");
+    a.loadComponent("RoverComponents/SpiralFlowView");
+
+    return a.processArgumentsAndExec();
+}
+\endcode
+
+This part is being highlighted as much, because it demonstrates a way for QML items to
+come from shared libraries and merge at run-time.
+
+\section gcf_rover_2 Various views
+
+\htmlonly
+<center>
+<table border="0" cellspacing="5" cellpadding="5">
+<tr>
+<td>
+\endhtmlonly
+\image html rover-listview.png
+\htmlonly
+<td>
+<td>
+\endhtmlonly
+\image html rover-gridview.png
+\htmlonly
+<td>
+</tr>
+<tr>
+<td>
+\endhtmlonly
+\image html rover-coverflow.png
+\htmlonly
+<td>
+<td>
+\endhtmlonly
+\image html rover-spiralflow.png
+\htmlonly
+<td>
+</tr>
+</table>
+</center>
+\endhtmlonly
+
+*/

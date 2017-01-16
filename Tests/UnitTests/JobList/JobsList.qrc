@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/Qml">
+        <file>JobsListViewQt4.qml</file>
+        <file>JobsListViewQt5.qml</file>
+    </qresource>
+</RCC>

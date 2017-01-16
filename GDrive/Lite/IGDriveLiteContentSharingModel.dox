@@ -1,0 +1,193 @@
+/**
+\class GCF::IGDriveLiteContentSharingModel
+\brief This interface provides access to permissions of a file/folder item
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF3/IGDriveLiteContentSharingModel&gt;
+</pre>
+\endhtmlonly
+
+Using this interface you can add/remove/edit share permissions for a file
+or folder. Instances of this interface can be created using the
+\ref GCF::IGDriveLite::createSharingModel() method. Once created the
+interface fetches current sharing permissions using Google Drive API.
+This interface implements \c QAbstractItemModel to provide a model-like
+access to permissions against the file identified by \ref contentItemId().
+You can visualize the sharing permissions in a list-view or also using QML!
+
+\image html gdrive/sharing-model-qml.png
+
+You can use the \ref share(), \ref unshare(), \ref modifyShareRole()
+methods to edit share permissions.
+*/
+
+/*! \enum GCF::IGDriveLiteContentSharingModel::Field
+The enumeration values of Field represents specific property of sharing information
+of an item.
+
+This enumeration values are also used to construct columns and order of it
+using \ref GCF::IGDriveLiteContentSharingModel::setColumns(const QList<int> &columns).
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::Field GCF::IGDriveLiteContentSharingModel::Kind
+ * kind of sharing information. [Role-name: \c "shareKind"]
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::Field GCF::IGDriveLiteContentSharingModel::ETag
+ * etag of sharing information. [Role-name: \c "shareETag"]
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::Field GCF::IGDriveLiteContentSharingModel::PermissionId
+ * permission ID of sharing information. [Role-name: \c "sharePermissionId"]
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::Field GCF::IGDriveLiteContentSharingModel::Id
+ * alias of \ref GCF::IGDriveLiteContentSharingModel::PermissionId. [Role-name: \c "sharePermissionId"]
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::Field GCF::IGDriveLiteContentSharingModel::Name
+ * name of user in sharing information. [Role-name: \c "shareUserName"]
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::Field GCF::IGDriveLiteContentSharingModel::EMailAddress
+ * email id of user in sharing information. [Role-name: \c "shareEMailAddress"]
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::Field GCF::IGDriveLiteContentSharingModel::Domain
+ * domain present in sharing information. [Role-name: \c "shareDomain"]
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::Field GCF::IGDriveLiteContentSharingModel::RoleType
+ * role type of sharing information.
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::Field GCF::IGDriveLiteContentSharingModel::RoleTypeStr
+ * role type string of sharing information. [Role-name: \c "shareRoleType"]
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::Field GCF::IGDriveLiteContentSharingModel::Title
+ * title of sharing information.  [Role-name: \c "shareTitle"]
+ */
+
+
+/*! \enum GCF::IGDriveLiteContentSharingModel::ShareRole
+The enumeration values of ShareRole represents types of roles in google drive.
+*/
+
+/*! \var GCF::IGDriveLiteContentSharingModel::ShareRole GCF::IGDriveLiteContentSharingModel::Owner
+ * user role is Owner.
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::ShareRole GCF::IGDriveLiteContentSharingModel::Reader
+ * user role is Reader.
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::ShareRole GCF::IGDriveLiteContentSharingModel::Writer
+ * user role is Writer.
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::ShareRole GCF::IGDriveLiteContentSharingModel::Commenter
+ * user role is Commenter.
+ */
+
+/*! \var GCF::IGDriveLiteContentSharingModel::ShareRole GCF::IGDriveLiteContentSharingModel::Unknown
+ * user role is not known.
+ */
+
+/**
+\fn GCF::IGDriveLiteContentSharingModel::~IGDriveLiteContentSharingModel()
+Destructor.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentSharingModel::contentItemId()
+Returns id of the sharing model's item.
+
+\return \c QString id of item
+*/
+
+/**
+\fn GCF::IGDriveLiteContentSharingModel::contentItem()
+Returns sharing model's item.
+
+\return \ref GCF::GDriveContent::Item
+*/
+
+/**
+\fn GCF::IGDriveLiteContentSharingModel::shareLink()
+Url which will should be used to share the current item.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentSharingModel::setColumns(const QList<int> &fields);
+
+Sets the columns of this according to 'fields' parameter. \ref QList<Field> &fields
+is a list of enumeration values of \ref GCF::IGDriveLiteContentSharingModel::Field.
+The columns are constructed based on the given enumeration values and the
+order of it.
+
+\param fields list of enumeration values of
+\ref GCF::IGDriveLiteContentSharingModel::Field
+based upon which model's columns need to be constructed.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentSharingModel::columns() const
+
+Returns the columns of content model. \c QList<int> will contain the
+values of \ref GCF::IGDriveLiteContentSharingModel::Field the order in which
+the columns are set in the model.
+
+\return \c QList<int> list of enumeration values of
+\ref GCF::IGDriveLiteContentSharingModel::Field.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentSharingModel::share(const GCF::GDriveLiteShareRequest &request)
+
+Shares the item represented by share model. \c GCF::GDriveLiteShareRequest is a
+structure which contains the fields necessary for sharing the file.
+
+\return \ref GCF::Result which contains the success or failure information
+regarding whether sharing was successful or not.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentSharingModel::unshare(const QModelIndex &index)
+
+Unshares the item with user in sharing information at specified index.
+
+\param index index of permission.
+\return \ref GCF::Result which contains the success or failure information
+regarding whether unsharing was successful or not.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentSharingModel::modifyShareRole(const QModelIndex &index, int role)
+
+Modifies the current item permission for a user corresponding to sharing
+information at index.
+
+\param role new role of the user.
+\param index index of permission.
+
+\return \ref GCF::Result which contains the success or failure information
+regarding whether the modifying sharing permission was successful or not.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentSharingModel::modified()
+
+This signal is emitted when the sharing information stored in the sharing
+model is modified.
+*/
+
+/**
+\fn GCF::IGDriveLiteContentSharingModel::error(const QString &msg)
+
+This signal is emitted when some error occurs while fetching
+the sharing information.
+*/
+

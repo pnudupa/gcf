@@ -1,0 +1,12 @@
+<content>
+    <object name="Window" type="widget" windowTitle="Hello World">
+        <property>
+            <key>minimumWidth</key>
+            <value>800</value>
+        </property>
+        <property>
+            <key>minimumHeight</key>
+            <value>600</value>
+        </property>
+    </object>
+</content>

@@ -1,0 +1,62 @@
+<content>
+    <object name="Window1" type="widget" />
+    <object name="Layout1" type="layout:vertical" parent="Window1" />
+    <object name="MenuBar1" type="menubar" parent="Window1" />
+
+    <object name="Window2" type="widget" />
+    <object name="Layout2" type="layout:horizontal" parent="Window2" />
+    <object name="MenuBar2" type="menubar" parent="Window2" />
+
+    <object name="Window3" type="widget" />
+    <object name="Layout3" type="layout:grid" parent="Window3" />
+    <object name="MenuBar3" type="menubar" parent="Window3" />
+
+    <object name="Window4" type="widget" />
+    <object name="Layout4" type="layout:form" parent="Window4" />
+    <object name="MenuBar4" type="menubar" parent="Window4" />
+
+    <object name="Window5" type="widget" />
+    <object name="MenuBar5" type="menubar" parent="Window5" />
+
+    <object name="Window6" type="widget" class="QTabWidget"/>
+    <object name="ChildWidget1" type="widget" parent="Window6" tabText="TabWidget" />
+
+    <object name="Window7" type="widget" class="QTabWidget"/>
+    <object name="ChildWidget2" type="widget" parent="Window7" windowTitle="WindowTitle" />
+
+    <object name="Window8" type="widget" class="QTabWidget"/>
+    <object name="ChildWidget3" type="widget" parent="Window8"/>
+
+    <object name="Window9" type="widget" class="QStackedWidget"/>
+    <object name="Page" type="widget" parent="Window9"/>
+
+    <object name="Window10" type="widget"/>
+    <object name="Layout5" type="layout:vertical" parent="Window10" />
+    <object name="ChildWidget10-1" type="widget" parent="Window10" layoutPosition="1,1"/>
+    <object name="ChildWidget10-2" type="widget" parent="Window10" layoutPosition="0,1"/>
+
+    <object name="Window11" type="widget"/>
+    <object name="Layout6" type="layout:grid" parent="Window11" />
+    <object name="ChildWidget11-2" type="widget" parent="Window11" layoutPosition="0,0,1,1"/>
+    <object name="ChildWidget11-1" type="widget" parent="Window11" layoutPosition="1,1,1,1"/>
+
+    <object name="Window12" type="widget"/>
+    <object name="Layout7" type="layout:form" parent="Window12" />
+    <object name="ChildWidget12-1" type="widget" parent="Window12" labeltext="FormChild"/>
+
+    <object name="Window13" type="widget"/>
+    <object name="Layout8" type="layout:form" parent="Window13" />
+    <object name="ChildWidget13-1" type="widget" parent="Window13" text="Form13-Child"/>
+
+    <object name="Window14" type="widget"/>
+    <object name="Layout9" type="layout:form" parent="Window14" />
+    <object name="ChildWidget14-1" type="widget" parent="Window14" windowtitle="Form14-Child"/>
+
+    <object name="Window15" type="widget"/>
+    <object name="Layout10" type="layout:form" parent="Window15" />
+    <object name="ChildWidget15-1" type="widget" parent="Window15"/>
+
+    <object name="Window16" type="widget" />
+    <object name="Widget16" type="widget" parent="Window16" />
+
+</content>

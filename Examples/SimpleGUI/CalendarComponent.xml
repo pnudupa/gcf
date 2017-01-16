@@ -1,0 +1,3 @@
+<content>
+    <object name="Calendar" type="widget" parent="AppWindowComponent.Window" />
+</content>

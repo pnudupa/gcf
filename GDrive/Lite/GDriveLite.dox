@@ -1,0 +1,138 @@
+/**
+\defgroup gcf_gdrivelite GCF's GDriveLite component
+
+GDriveLite is an in-built component in GCF that makes it possible to bring Google Drive
+to your applications. With this component you can
+
+- Authenticate a Google Account and access its Drive contents
+- Access the content-structure of the drive (through a model)
+- Upload / Download files
+- Share / Unshare files and folders in the drive
+- Star / Unstar files and folders in the drive
+- Trash / Untrash / Permanently Delete files and folders in the drive
+- Rename files and folders
+- Create directories
+- Move files and directories to other directories
+
+GCF comes bundled with two example programs: \ref gcf_gdrivelitegui "GDriveLiteGui" and
+\ref gcf_gdriveliteqml "GDriveLiteQml". These programs showcase how the component
+can be used to build a full-fledged drive-aware application using widgets and QML.
+
+\section gcf_gdrivelite_0 Registering your application with Google API Console
+
+To work with Google Drive API, you will need to register your application with Google using its
+API Console.
+
+\subsection gcf_gdrivelite_01 Step 1: Visit Google API Console
+
+Open https://code.google.com/apis/console/ in your web-browser.
+
+\image html gdrive/api-console.png
+
+Click on the "Create Project" button and switch to the "Services" tab.
+
+\image html gdrive/api-console1.png
+
+From the list of services, switch on (or enable) Drive-API service access.
+
+\image html gdrive/api-console2.png
+
+In the API-Access tab, create an OAuth Client-ID.
+
+\image html gdrive/api-console3.png
+
+\htmlonly
+&nbsp;
+\endhtmlonly
+
+\image html gdrive/api-console4.png
+
+\htmlonly
+&nbsp;
+\endhtmlonly
+
+\image html gdrive/api-console5.png
+
+\note Make sure that you selected "Installed Application" as application-type; and
+"Other" as installed application type.
+
+\image html gdrive/api-console6.png
+
+Upon creation of Client-ID; you will notice a \c client-id and \c client-secret string
+in your API console. Make note of these strings, you will need to use them in your code
+for using the GDriveLite component.
+
+\section gcf_gdrivelite_1 Loading GDriveLite component in your GCF applications
+
+Once you have the \c client-id and \c client-secret, you can load the GDriveLite component
+in your code as follows
+
+\code
+int main(int argc, char **argv)
+{
+    GCF::GuiApplication a(argc, argv);
+
+    QList< QPair<QByteArray,QVariant> > props;
+    props << qMakePair<QByteArray,QVariant>("clientID", "78399023134.apps.googleusercontent.com");
+    props << qMakePair<QByteArray,QVariant>("clientSecret", "QiA5B6kXo0gNWcn-6UKpggsJ");
+
+    GCF::Component *gDriveLite = a.loadComponent("GDrive/GDriveLite", props);
+    if(!gDriveLite)
+        return ::error("Could not load GDrive/GDriveLite component");
+
+    // ....
+}
+\endcode
+
+\note To load GDriveLite component in your application, you must ensure that GCF's \c Binary folder
+is available in PATH / LD_LIBRARY_PATH / DYLD_LIBRARY_PATH.
+
+\section gcf_gdrivelite_2 Authorising GDriveLite to access drive data
+
+The first thing you will need to do is to authorize GDriveLite to access your drive content.
+For this, you can make use of the \ref GCF::IGDriveLiteAuthenticator interface. The following
+code-snippet shows you how to do that
+
+\code
+GCF::Component *gDriveLite = a.loadComponent("GDrive/GDriveLite", props);
+if(!gDriveLite)
+    return ::error("Could not load GDrive/GDriveLite component");
+
+// Get the central interface of GDriveLite and then fetch the authenticator
+// interface from it.
+GCF::IGDriveLite *gDriveIface = qobject_cast<GCF::IGDriveLite*>(gDriveLite);
+GCF::IGDriveLiteAuthenticator *auth = gDriveIface->authenticator();
+
+// Show the authentication URL in a web-view.
+QWebView webView;
+webView.setUrl( auth->authenticationPageUrl() );
+webView.show();
+
+////.. Write some code here to ensure that the user is able to enter
+// username and password in the login-page. He will then be taken to
+// a authorization page, where he should authorize access to your application.
+// Upon success - a token is sent back via 'document title' of the HTML
+// page.
+
+GCF::Result result = auth->authenticateFromPageTitle( webView.title() );
+if(result.isSuccess())
+{
+    // Authorization successful
+}
+else
+{
+    // Show result.message() as error to user and abort
+}
+\endcode
+
+\sa \ref GCF::IGDriveLite
+\sa \ref GCF::IGDriveLiteAuthenticator
+\sa \ref GCF::IGDriveLiteContentModel
+\sa \ref GCF::IGDriveLiteContentSharingModel
+\sa \ref GCF::IGDriveLiteFileDownloader
+\sa \ref GCF::IGDriveLiteFileDownloaderListModel
+\sa \ref GCF::IGDriveLiteFileUploader
+\sa \ref GCF::IGDriveLiteFileUploaderListModel
+\sa \ref gcf_gdrivelitegui
+\sa \ref gcf_gdriveliteqml
+*/

@@ -1,0 +1,836 @@
+/**
+\page gcf_investigator GCF Investigator
+
+GCF Investigator is a tool-set that allows you to record, edit and play automated test
+scripts for GCF applications. Investigator is used only for creating UI test cases. For
+all other kinds, you can use QtTestLib or any other testing tool of your choice.
+The tool-set consists of the following
+
+\li \b Investigator \b Agent \b Component - this component is loaded into an application
+to either record or run a test case.
+\li \b Recorder - this program loads the agent component into an application and triggers
+record of a test case.
+\li \b Runner - this program loads the agent component into an application and triggers
+running of a test case.
+
+This page explains what Investigator can do and what it cannot do with the help of
+tutorials and examples.
+
+\tableofcontents
+
+\section gcf_investigator_tutorial Tutorial
+
+Consider a simple \ref gcf_gui "GCFGui3" application that when launched shows a window
+as follows.
+
+\image html investigator/tutorial-window.png
+
+In this application we have connected signals and slots between the sliders and dial
+in such a way that their values are always configured to be in sync. For instance if
+the value of dial is changed, then the values of the slider also change. The form
+itself is designed in Qt Designer. The application simply loads the form and shows it.
+
+Applications that are being tested using GCF Investigator are called AUT (or Application
+Under Test). In the next section you will see how to structure code of your AUT.
+
+\subsection gcf_investigator_tutorial_0 Implementing the AUT
+
+Shown below is the code of an \b AUT that would load the form as described before.
+
+\code
+#include <GCF3/GuiApplication>
+#include <GCF3/GuiComponent>
+#include "ui_Form.h"
+
+int main(int argc, char **argv)
+{
+    GCF::GuiApplication a(argc, argv);
+
+    QWidget *formWindow = new QWidget;
+    Ui::Form ui;
+    ui.setupUi(formWindow);
+    formWindow->show();
+
+    GCF::Component *formComponent = new GCF::Component;
+    formComponent->addContentObject("formWindow", formWindow);
+
+    return a.processArgumentsAndExec();
+}
+\endcode
+
+The following paragraphs explain each aspect of the \c main() function implementation.
+
+You start by creating an instance of \ref GCF::GuiApplication as follows.
+
+\code
+int main(int argc, char **argv)
+{
+    GCF::GuiApplication a(argc, argv);
+\endcode
+
+Then you create a \c formWindow and show it. It is important to create \c formWindow
+on the heap; because later on you will be adding the form window to a component as a
+content object. GCF deletes all content objects when the component is unloaded
+(which happens when the application is shuting down). We dont want GCF to attempt
+deleting an object on the stack!
+
+\code
+    QWidget *formWindow = new QWidget;
+    Ui::Form ui;
+    ui.setupUi(formWindow);
+    formWindow->show();
+\endcode
+
+Next you create a \ref GCF::Component instance and add the \c formWindow as a content
+object to it. This part is important because GCF Investigator expects to find root
+windows in the \ref gcf_component_objectTree "object-tree of the application".
+
+\code
+    GCF::Component *formComponent = new GCF::Component;
+    formComponent->load();
+    formComponent->addContentObject("formWindow", formWindow);
+\endcode
+
+Finally, you should make use of the \c processArgumentsAndExec() function to run the
+event loop of your application. This part is done to ensure that the \c --loadComponents
+command-line argument is parsed and processed. It is through this command-line argument
+that the \ref gcf_investigator_recorder "Recorder" and \ref gcf_investigator_runner "Runner"
+tools reqest loading of the \ref gcf_investigator_agent "Agent" component into your AUT.
+\b NOTE: if \c processArgumentsAndExec() is not used - then you will not be able to
+record or run test case scripts in your application.
+
+\code
+    return a.processArgumentsAndExec();
+}
+\endcode
+
+\subsection gcf_investigator_tutorial_1 Creating a UI test script for the AUT
+
+To create a AUT test script, launch the \ref gcf_investigator_recorder "Recorder" tool
+from the command prompt as follows.
+
+\verbatim
+$ cd /path/to/aut-binary
+$ $GCFDIR/Investigator/Recorder ./AUT TestScript1.js
+\endverbatim
+
+\note Here \c $GCFDIR refers to an environment variable that points to the \c Binary folder
+of the directory where you have compiled GCF3.
+\note Here \c AUT is the name of the application executable file.
+
+When you launch \ref gcf_investigator_recorder "Recorder", as described above, the following
+happens
+
+\li \ref gcf_investigator_recorder "Recorder" will inject \ref gcf_investigator_agent "Agent"
+component into the AUT and trigger its loading.
+\li \ref gcf_investigator_recorder "Recorder" will send a request for recording of all user
+actions on the AUT into a script called \c TestScript1.js
+
+Suppose you click on the dial in the AUT and notice its value changing. You then close the
+application and open \c TestScript1.js in a text editor. You will notice the following
+code
+
+\code
+function test_function() {
+    wait(750)
+
+    var dial = object("Application.GCF_Component.formWindow/dial")
+    dial.mouseClickAtPos(144, 31, Qt.LeftButton, Qt.NoModifier)
+}
+\endcode
+
+\note The code generated on your computer may be slightly different.
+
+Later, you can read more about \ref gcf_investigator_script "test script syntax" and
+the \ref gcf_investigator_agent_2 "environment" in which the scripts are run. But at
+this point it is enough to know
+
+\li \c test_xxx() functions in the test script are called one after the other, when
+the test script is run.
+\li the \c object() method allows you to reference named objects in the application
+\li you can trigger events by using methods like \c mouseClickAtPos()
+\li you can introduce spin waits using the \c wait() method
+
+\subsection gcf_investigator_tutorial_2 Adding validation checks
+
+Now suppose that you want to include validation checks in the script. Lets say you wanted
+to verify ane ensure that values of dial, horizontal and vertical sliders are in sync. You
+would modify the test script code as follows
+
+\code
+function test_function() {
+    wait(750)
+
+    var dial = object("Application.GCF_Component.formWindow/dial")
+    dial.mouseClickAtPos(144, 31, Qt.LeftButton, Qt.NoModifier)
+
+    log("Dial value is now: " + dial.value)
+
+    var verticalScrollBar = object("Application.GCF_Component.formWindow/verticalScrollBar")
+    var horizontalScrollBar = object("Application.GCF_Component.formWindow/horizontalScrollBar")
+
+    verify(dial.value === horizontalScrollBar.value)
+    verify(dial.value === verticalScrollBar.value)
+}
+\endcode
+
+The \c verify() method passed the test function if the condition passed in it was true. It fails
+the test function and reports it otherwise. You can learn more about these functions in a
+\ref gcf_investigator_script "later section".
+
+\subsection gcf_investigator_tutorial_3 Running the test script
+
+You can now run the test script using the \ref gcf_investigator_runner "Runner" tool as follows
+
+\verbatim
+$ cd /path/to/aut-binary
+$ $GCFDIR/Investigator/Runner ./Tutorial TestScript1.js
+********* Start testing of Tutorial *********
+Using GCF 3.0.0 on Qt 5.1.1
+Scheduling test-script 'TestScript1.js' for execution after 0 seconds
+Running script 'TestScript1.js'
+test_function {
+    Dial value is now: 45
+}
+SUCCESS:
+********* Finished testing of Tutorial *********
+\endverbatim
+
+When you launched the \ref gcf_investigator_runner "Runner" tool, as described above, the following
+happend
+
+\li \ref gcf_investigator_runner "Runner" injected \ref gcf_investigator_agent "Agent"
+component into the AUT and triggered its loading.
+\li \ref gcf_investigator_runner "Runner" then requested for \c TestScript1.js to be loaded and
+executed.
+\li \ref gcf_investigator_agent "Agent" component, which was loaded into the AUT, processes the
+\c TestScript1.js file and exectes all \c test_xxx() functions.
+\li It then dumps the test results to console
+
+\section gcf_investigator_example Example - Calculator Application
+
+Qt comes with a standard inbuilt \c 'calculator' example. Lets alter the code of that example
+a little bit and see how we can use GCF Investigator to test it. Start Qt Creator and open the
+'Calculator Example'.
+
+\image html qt-calculator.png
+
+After opening the example, compile and execute it. Just to make sure that it works.
+
+\image html qt-calculator-run.png
+
+You can now start GCFying the application by altering the project file (\c calculator.pro) as follows
+
+\code
+QT += script widgets uitools
+RESOURCES += calculator.qrc
+SOURCES += main.cpp
+CONFIG -= app_bundle
+CONFIG += GCFGui3 # to include GCF's Gui module
+
+qtHaveModule(scripttools): QT += scripttools
+\endcode
+
+Next, alter the \c main.cpp file as follows
+
+\code
+#include <QApplication>
+....
+....
+
+#include <GCF3/GuiApplication>
+#include <GCF3/Component>
+
+int main(int argc, char **argv)
+{
+    Q_INIT_RESOURCE(calculator);
+
+    // Instead of QApplication use, GCF::GuiApplication
+    GCF::GuiApplication app(argc, argv);
+
+    .....
+    .....
+    .....
+
+    ui->show();
+
+    // Create a UI component and add ui as content object into it
+    GCF::Component *uiComp = new GCF::Component;
+    uiComp->load();
+    uiComp->addContentObject("ui", ui);
+
+    // call processArgumentsAndExec() instead of exec
+    return app.processArgumentsAndExec();
+}
+\endcode
+
+Now compile and execute the application. Just to make sure that it works after all
+the modifications.
+
+\image html gcf-calculator-run.png
+
+What you have accomplished with all these changes is that you have made the calculator
+example \b testable with \b Investigator.
+
+\subsection gcf_investigator_example_1 Record test script
+
+You can launch the \ref gcf_investigator_recorder "Recorder" tool to start recording
+all user actions into a test case.
+
+\verbatim
+$ cd /path/to/calculator-binary
+$ $GCFDIR/Investigator/Recorder ./calculator TestScript1.js
+\endverbatim
+
+Suppose that you wanted to test whether the \c SQRT button on the calculator works
+properly or not. You could the \c calculator program and "feed" user actions to
+compute the square-root of say 198; and have \ref gcf_investigator_recorder "Recorder"
+capture all the user actions into a script. When you open \c TestScript1.js; you will
+find the following auto-generated code
+
+\code
+function test_function() {
+    wait(3000)
+
+    var changeSignButton = object("Application.GCF_Component.ui/changeSignButton")
+    var calculator = object("Application.GCF_Component.ui")
+    var pointButton = object("Application.GCF_Component.ui/pointButton")
+    var twoButton = object("Application.GCF_Component.ui/twoButton")
+    var oneButton = object("Application.GCF_Component.ui/oneButton")
+    oneButton.mouseClickAtPos(23, 14, Qt.LeftButton, Qt.NoModifier)
+
+    oneButton.mousePressAtPos(23, 14, Qt.LeftButton, Qt.NoModifier)
+    oneButton.mouseMove(24, 10)
+    var fiveButton = object("Application.GCF_Component.ui/fiveButton")
+    var nineButton = object("Application.GCF_Component.ui/nineButton")
+    nineButton.mouseClickAtPos(13, 22, Qt.LeftButton, Qt.NoModifier)
+
+    nineButton.mousePressAtPos(13, 22, Qt.LeftButton, Qt.NoModifier)
+    nineButton.mouseMove(12, 22)
+    var eightButton = object("Application.GCF_Component.ui/eightButton")
+    eightButton.mouseClickAtPos(30, 22, Qt.LeftButton, Qt.NoModifier)
+
+    eightButton.mousePressAtPos(30, 22, Qt.LeftButton, Qt.NoModifier)
+    eightButton.mouseMove(32, 22)
+    var divisionButton = object("Application.GCF_Component.ui/divisionButton")
+    var squareRootButton = object("Application.GCF_Component.ui/squareRootButton")
+    squareRootButton.mouseClickAtPos(29, 22, Qt.LeftButton, Qt.NoModifier)
+
+    squareRootButton.mousePressAtPos(29, 22, Qt.LeftButton, Qt.NoModifier)
+    squareRootButton.mouseMove(29, 21)
+    var clearAllButton = object("Application.GCF_Component.ui/clearAllButton")
+    var display = object("Application.GCF_Component.ui/display")
+    display.mouseClickAtPos(219, 20, Qt.LeftButton, Qt.NoModifier)
+
+    wait(750)
+
+    display.mousePressAtPos(219, 20, Qt.LeftButton, Qt.NoModifier)
+    display.mouseMove(218, 20)
+}
+\endcode
+
+\subsection gcf_investigator_example_2 Insert validation code
+
+At the moment the \ref gcf_investigator_recorder "Recorder" doesnt capture user actions
+in a optimized way. So some edits are required. Shown below is a modified (and shorter)
+version of the same code.
+
+\code
+function test_sqrt() {
+    wait(750)
+
+    var oneButton = object("Application.GCF_Component.ui/oneButton")
+    oneButton.mouseClick(Qt.LeftButton, Qt.NoModifier)
+
+    var nineButton = object("Application.GCF_Component.ui/nineButton")
+    nineButton.mouseClick(Qt.LeftButton, Qt.NoModifier)
+
+    var eightButton = object("Application.GCF_Component.ui/eightButton")
+    eightButton.mouseClick(Qt.LeftButton, Qt.NoModifier)
+
+    var display = object("Application.GCF_Component.ui/display")
+    verify(display.text === "198") // validation code
+
+    var squareRootButton = object("Application.GCF_Component.ui/squareRootButton")
+    squareRootButton.mouseClick(Qt.LeftButton, Qt.NoModifier)
+
+    var sqrtValue = 14.0712472795
+
+    verify(display.text == sqrtValue, "Incorrect square root of 198")  // validation code
+}
+\endcode
+
+The above code is now easier to follow. It simulates mouse click on 1, 9 and 8 buttons.
+Ensures that the display is showing "198". Then it sumulates mouse click on the square root
+button and verifies that the result shown in the square-root is appropriate.
+
+\subsection gcf_investigator_example_3 Run the test script and validate the application
+
+You can now make use of \ref gcf_investigator_runner "Runner" to run the test script
+and check if the application passes the test.
+
+\verbatim
+$ cd /path/to/calculator-binary
+$ $GCFDIR/Investigator/Runner ./Calculator TestScript1.js
+********* Start testing of Calculator *********
+Using GCF 3.0.0 on Qt 5.1.1
+Scheduling test-script 'TestScript1.js' for execution after 0 seconds
+Running script 'TestScript1.js'
+test_function {
+    FAILED at line 21: Incorrect square root of 198
+}
+FAILURE: 1 of 1 test case(s) failed
+********* Finished testing of Calculator *********
+\endverbatim
+
+The test case failed because the calculator uses \c Math.sqrt() javascript function to evaluate
+square root of 198. And that function returns 14.071247279470288; a value more precise than
+14.0712472795. You can either perform a verification with error tolerance or compare the result
+directly against \c Math.sqrt(198). The following code snippet shows how to do the latter
+
+\code
+function test_sqrt() {
+    ....
+    ....
+    var sqrtValue = Math.sqrt(198)
+    verify(display.text == sqrtValue, "Incorrect square root of 198")  // validation code
+}
+\endcode
+
+Now use \ref gcf_investigator_runner "Runner" to run the test script and check if the application
+passes the test.
+
+\verbatim
+$ cd /path/to/calculator-binary
+$ $GCFDIR/Investigator/Runner ./Calculator TestScript1.js
+********* Start testing of Calculator *********
+Using GCF 3.0.0 on Qt 5.1.1
+Scheduling test-script 'TestScript1.js' for execution after 0 seconds
+Running script 'TestScript1.js'
+test_function {
+}
+SUCCESS:
+********* Finished testing of Calculator *********
+\endverbatim
+
+Sure enough it does!
+
+\section gcf_investigator_agent GCF Investigator - Agent
+
+\b Agent is a GCF component that can be loaded into any GCF application to either record user
+actions into a script or run a test script and print results. It is a light-weight component that
+makes a AUT testable.
+
+The \b Agent component can be loaded explicitly by the AUT as follows
+\code
+gAppService->loadComponent("Investigator/Agent");
+\endcode
+
+But that is a non-standard way to load the \b Agent component. A better way is to write your
+AUT such that it makes use of the \ref GCF::Application::processArgumentsAndExec() function
+to trigger the event loop. You can then inject the \b Agent component into the application
+by making use of the \c --loadComponents commandline argument.
+
+\verbatim
+$ cd /path/to/aut
+$ ./aut --loadComponents:Investigator/Agent
+\endverbatim
+
+\subsection gcf_investigator_agent_1 Command line parameters
+
+When you load the \b Agent component into a AUT, it looks for certain command line arguments
+passed to the AUT. If none of the command line arguments are found, then the \b Agent will
+trigger AUT to quit immediately.
+
+\htmlonly
+<table border="1" cellpadding="4" cellspacing="0" style="width: 80%;">
+<tbody>
+<tr>
+    <td><b>Parameter</b></td>
+    <td><b>Description</b></td>
+</tr>
+<tr>
+    <td><pre>--record</pre></td>
+    <td>
+    <p>Requests <b>Agent </b>to record user actions into a test script. The script will
+    be dumped on standard output when the AUT is closed, unless the --outputFile
+    parameter is used. Example:</p>
+
+    <pre>$ ./AUT --loadComponents:Investigator/Agent --record</pre>
+    </td>
+</tr>
+<tr>
+    <td><pre>--outputFile:&lt;output-file-name&gt;</pre></td>
+    <td>
+    <p>Requests <b>Agent</b> to dump the recorded test script into a file. Example:</p>
+
+    <pre>$ ./AUT --loadComponents:Investigator/Agent --record --outputFile:/path/to/output-file.js</pre>
+    </td>
+</tr>
+<tr>
+    <td><pre>--testScript:&lt;script-file-name&gt;</pre></td>
+    <td>
+    <p>Requests <b>Agent</b> to process run the specified test script on the AUT. Example:</p>
+
+    <pre>$ ./AUT --loadComponents:Investigator/Agent --testScript:/path/to/test-script.js</pre>
+    </td>
+</tr>
+<tr>
+    <td><pre>--testStartDelay:&lt;n&gt;</pre></td>
+    <td>
+    <p>Requests <b>Agent</b> to start processing the test script after <b><i>n</i></b> seconds.
+    By default the test script is run immediately. Example:</p>
+
+    <pre>$ ./AUT --loadComponents:Investigator/Agent --testScript:/path/to/test-script.js --testStartDelay:10</pre>
+    </td>
+</tr>
+</tbody>
+</table>
+\endhtmlonly
+
+\subsection gcf_investigator_agent_2 Script environment
+
+When \b Agent is used to run a test script, it creates an environment inside of which the script files are
+loaded and executed. This environment offers all enumerations defined in the Qt namespace (example: \c Qt.LeftButton,
+\c Qt.Key_A etc..). It also offers the following functions
+
+\li \ref gcf_investigator_agent_21
+\li \ref gcf_investigator_agent_22
+\li \ref gcf_investigator_agent_23
+\li \ref gcf_investigator_agent_24
+\li \ref gcf_investigator_agent_25
+\li \ref gcf_investigator_agent_26
+\li \ref gcf_investigator_agent_27
+\li \ref gcf_investigator_agent_28
+\li \ref gcf_investigator_agent_29
+\li \ref gcf_investigator_agent_210
+
+\subsubsection gcf_investigator_agent_21 log(message)
+
+This function can be used to log anything into the output of the test. The log will show up within
+the context created for the test function that is currently being run. Example:
+
+\code
+function test_function() {
+    log("this is my log message")
+}
+\endcode
+
+When the above test script is executed, you would get the following result
+
+\verbatim
+$ cd /path/to/calculator-binary
+$ ./Calculator --loadComponents:Investigator/Agent --testScript:script.js
+********* Start testing of calculator *********
+Using GCF 3.0.0 on Qt 5.1.1
+Scheduling test-script 'script.js' for execution after 0 seconds
+Running script 'script.js'
+test_function {
+    this is my log message
+}
+SUCCESS:
+********* Finished testing of calculator *********
+\endverbatim
+
+\subsubsection gcf_investigator_agent_22 fail(message)
+
+This function can be used to log a message and immediately mark the current test function as failed.
+The \c fail() function never returns to the caller. It immediately quits the test_function() and
+causes \b Agent to move on to the next test function. Example:
+
+\code
+function test_function() {
+    log("log message before fail")
+    fail("fail message")
+    log("log message after fail")
+}
+\endcode
+
+When the above test script is executed, you would get the following result
+
+\verbatim
+$ cd /path/to/calculator-binary
+$ ./Calculator --loadComponents:Investigator/Agent --testScript:script.js
+********* Start testing of calculator *********
+Using GCF 3.0.0 on Qt 5.1.1
+Scheduling test-script 'script.js' for execution after 0 seconds
+Running script 'script.js'
+test_function {
+    log message before fail
+    FAILED at line 3: fail message
+}
+FAILURE: 1 of 1 test case(s) failed
+********* Finished testing of calculator *********
+\endverbatim
+
+\subsubsection gcf_investigator_agent_23 object(path)
+
+This function is used to search for \c QObject instances in your application and return
+a reference to them for use in your test scripts. The function accepts as parameter the
+path of the object being searched. The path is a slash '/' seperated set of names that
+dig into the trees of objects in the AUT.
+
+\li The first component of path is complete name of an object in the AUT's
+\ref GCF::ApplicationServices::objectTree(). Example: \c "Application.Component.Object".
+\li From then on each component of the path could be
+    - Name of a child object. Example: \c "Application.Component.Object/childName/grandChildName"
+    - Indexed class-name of the child object. Example: \c "Application.Component.Object/QClassName[1]/AnotherClass[2]"
+    - Mixture of the above. Example: \c "Application.Component.Object/childName/QClassName[1]/grandChildName"
+    .
+\li Special names for special child objects
+    - If the path of an object leads to a \c QAbstractScrollArea (or its subclasses), then
+        - \c viewport will fetch its viewport widget. Example \c "Application.C.O/QTreeView[0]/viewport"
+        - \c horizontalscrollbar will fetch the horizontal scroll-bar of the scroll area
+        - \c verticalscrollbar will fetch the vertical scroll-bar of the scroll area
+        .
+    - If the path leads to a \c QAbstractItemView (or its subclasses), then
+        - \c viewport, \c horizontalsrollbar, \c verticalscrollbar will work as it would for a \c QAbstractScrollArea
+        - \c model will fetch the view's model
+        - \c delegate will fetch the view's delegate
+        - \c selectionmodel will fetch the selection model of the view
+        - \c horizontalheader will fetch the view's horizontal header
+        - \c verticalheader will fetch the view's vertical header
+        .
+    - If the path leads to a \c QGraphicsView (or its subclasses), then
+        - \c viewport, \c horizontalsrollbar, \c verticalscrollbar will work as it would for a \c QAbstractScrollArea
+        - \c scene would fetch the view's scene
+        - names of \c QGraphicsObject items in the scene can be used to fetch items in the scene
+        .
+    - If the path leads to a \c QQuickView (or its subclasses), then
+        - \c engine will return pointer to the \c QQmlEngine used by the \c QQuickView
+        - names of context properties (set using \c QQmlEngine::rootContext()->setContextProperty(...)) can be
+        used to fetch object corresponding to the context property.
+        .
+
+    .
+
+
+
+The \c object(string) function returns a object variable. Depending on the type of object returned
+certain functions and properties will be made available. For example if the returned object is a
+\c QWidget then you can access \c mousePress(), \c mouseClick(), \c mouseRelease() etc. The following
+table lists out all such object-type specific functions and properties.
+
+\htmlonly
+<table border="1" cellpadding="4" cellspacing="0" style="width: 80%;">
+<tbody>
+<tr>
+    <td><b>Object type</b></td>
+    <td><b>Functions</b></td>
+</tr>
+<tr>
+    <td><code>QObject</code></td>
+    <td>
+        <ul>
+            <li><code>parent</code>: Returns parent of this object</li>
+            <li><code>object(string)</code>: Returns a child object referenced by the
+            string path parameter. Path parameter convention is same as above.</li>
+        </ul>
+    </td>
+</tr>
+<tr>
+    <td><code>QWidget, QWindow</code></td>
+    <td>
+        <ul>
+            <li>Inherits properties and functions from <code>QObject</code></li>
+            <li><code>keyboardFocus</code>: true if the widget (or window) has keyboard focus. False otherwise</li>
+            <li><code>setGeometry(x,y,width,height)</code>: Sets geometry of the widget.</li>
+            <li><code>resize(width,height)</code>: Resizes the widget.</li>
+            <li><code>mousePress(button,modifiers)</code>: Simulates mouse press on the widget.
+            button is value from Qt.MouseButton enumeration. And modifiers is a value from
+            is Qt.KeyboardModifiers enumeration.</li>
+            <li><code>mousePressAtPos(x,y,button,modifiers)</code>: Simulates mouse press on the
+            widget at a particular position.</li>
+            <li><code>mouseRelease(button,modifiers)</code>: Simulates mouse release on the widget.
+            button is value from Qt.MouseButton enumeration. And modifiers is a value from
+            is Qt.KeyboardModifiers enumeration.</li>
+            <li><code>mouseReleaseAtPos(x,y,button,modifiers)</code>: Simulates mouse release on the
+            widget at a particular position.</li>
+            <li><code>mouseMove(x,y)</code>: Simulates mouse move on the widget at a particular position.</li>
+            <li><code>mouseClick(button,modifiers)</code>: Simulates mouse click on the widget</li>
+            <li><code>mouseClickAtPos(x,y,button,modifiers)</code>: Simulates mouse click on the widget
+            at a specific position</li>
+            <li><code>mouseDClick(button,modifiers)</code>: Simulates mouse double click on the widget</li>
+            <li><code>mouseDClickAtPos(x,y,button,modifiers)</code>: Simulates mouse double click on the widget
+            at a specific position</li>
+            <li><code>keyPress(modifiers,key)</code>: Simulates key press on the widget. The key parameter
+            can be a value from Qt.Key enumeration.</li>
+            <li><code>keyRelease(modifiers,key)</code>: Simulates key release on the widget</li>
+            <li><code>keyClick(modifiers,key)</code>: Simulates key click on the widget</li>
+            <li><code>keyClicks(modifiers,text)</code>: Simulates key click on the widget</li>
+            <li><code>waitForShown()</code>: Waits for widget to be shown</li>
+            <li><code>wheel(factor,modifiers)</code>: Simulates a wheel event on the widget</li>
+            <li><code>wheelAtPos(x,y,factor,modifiers)</code>: Simulates a wheel event on the widget at a
+            specific position</li>
+            <li><code>show()</code>: Shows the widget</li>
+            <li><code>hide()</code>: Hides the widget</li>
+        </ul>
+    </td>
+</tr>
+<tr>
+    <td><code>QGraphicsObject</code></td>
+    <td>
+        <ul>
+            <li>Inherits properties and functions from <code>QObject</code></li>
+            <li><code>center</code>: returns an object whose x and y properties return contain the center of the item</li>
+            <li><code>rect</code>: returns an object whose x, y, width and height properties contain the rectangle of
+            the item with respect to the scene</li>
+            <li><code>mousePress(button,modifiers)</code></li>
+            <li><code>mousePressAtPos(x,y,button,modifiers)</code></li>
+            <li><code>mouseRelease(button,modifiers)</code></li>
+            <li><code>mouseReleaseAtPos(x,y,button,modifiers)</code></li>
+            <li><code>mouseMove(x,y)</code></li>
+            <li><code>mouseClick(button,modifiers)</code></li>
+            <li><code>mouseClickAtPos(x,y,button,modifiers)</code></li>
+            <li><code>wheel(factor,modifiers)</code></li>
+            <li><code>wheelAtPos(x,y,factor,modifiers)</code></li>
+        </ul>
+    </td>
+</tr>
+</tbody>
+</table>
+\endhtmlonly
+
+\subsubsection gcf_investigator_agent_24 interface(name)
+
+This function takes as input name of a class or interface and returns an object that implements the interface.
+Example:
+
+\code
+function test_function() {
+    var obj = interface("GCF::IGDriveLite")
+    if(obj) {
+        ....
+    }
+}
+\endcode
+
+\subsubsection gcf_investigator_agent_25 wait(milliseconds)
+
+This function spin waits for as many milliseconds as specified in the parameter. During the spin-wait the
+event loop will be running.
+
+\subsubsection gcf_investigator_agent_26 waitForSignal(object,signal,timeout)
+
+This function waits for emission of a \c signal in an \c object for a maximum \c timeout milliseconds duration.
+The function returns an object whose properties are parameters emitted by the signal.
+Example:
+
+\code
+function test_function() {
+    var webView = interface("QWebView")
+    var sigObj = waitForSignal(webView, "titleChanged(QString)", 5000)
+    if(sigObj === false)
+        log("signal was not emitted within 5 seconds")
+    else
+        log("title was " + sigObj.title)
+}
+\endcode
+
+\subsubsection gcf_investigator_agent_27 waitForPropertyChange(object,property,timeout)
+
+This function waits for a change in \c property to occur in \c object for a max of \c timeout milliseconds
+The function returns value of the property, if a change was detected, false otherwise. Example:
+
+\code
+function test_function() {
+    var webView = interface("QWebView")
+    var title = waitForPropertyChange(webView, "title", 5000)
+    if(title === false)
+        log("title did not change within 5 seconds")
+    else
+        log("title changed to " + title)
+}
+\endcode
+
+\subsubsection gcf_investigator_agent_28 compare(v1,v2,msg)
+
+This function compares \c v1 with \c v2. If the values were equal then the function returns otherwise
+it prints \c msg and terminates the calling test function immediately.
+
+\subsubsection gcf_investigator_agent_29 verify(condition,msg)
+
+This function does nothing if \c condition is true. It prints \c msg and terminates the calling test
+function immediately, otherwise.
+
+\subsubsection gcf_investigator_agent_210 createSignalSpy(object,signal)
+
+This function creates a signal-spy on \c signal of \c object and returns the spy. On the returned spy object
+you can invoke
+
+\li \c wait(timeout) function to wait for \c timeout milliseconds for a signal emission to occur. The
+function would return true if a emission was detected within the timout, false otherwise.
+\li \c count property to find out then number of emissions captured by the spy
+\li \c at(index) function to fetch a array of parameters from the \c index 'th emission
+\li \c takeAt(index) function same as index, but this function removes the \c index 'th emission from the spy
+\li \c clear() function to remove all emissions from the spy
+
+Example:
+
+\code
+function test_function() {
+    var spy = createSignalSpy( interface("QWebView"), "titleChanged(QString)" )
+    ...
+    ...
+    if( spy.wait() ) {
+        var title = spy.takeAt( spy.count-1 )[0]
+        // ...
+    }
+}
+\endcode
+
+\section gcf_investigator_script GCF Investigator - Test Script
+
+The script executed by \b Agent component on the AUT is called "Test Script". Test scripts are JavaScript files
+that have a bunch of \c test_xxx() functions. These test functions are called one after the other, in the same
+order that they are declared. In addition to the \c test_xxx() functions, a test script can also contain
+the following optional functions
+
+\li \c initTestCase() - this function is called before any other test function in the script
+\li \c init() - this function is called before each test function in the script
+\li \c cleanup() - this function is called after each test function in the script
+\li \c cleanupTestCase() - this function is called after all test functions have been called in the script
+
+\b NOTE: it is perfectly fine to have other functions in the test script. As long as they dont start with
+\c test_ they are not automatically called by the \b Agent component.
+
+\section gcf_investigator_recorder GCF Investigator - Recorder
+
+The \b Recorder application simplifies the process of launching an AUT and recording user actions into
+a test script. Usage:
+
+\verbatim
+$GCFDIR/Investigator/Recorder <AUT> [output-test-script] [--autArgs <arg1> [arg2] [arg3] ...]
+\endverbatim
+
+Here
+
+\li \c AUT is a required command-line argument. It must contain the complete path of AUT.
+\li \c output-test-script is an optional command-line argument that could contain the path of the
+test script file into which the captured user actions are dumped.
+\li Arguments passed after --autArgs are passed as command line arguments to the AUT as is
+
+The advantage of using \b Recorder is that it can report AUT crashes on the terminal, to which you can
+respond and do something about.
+
+\section gcf_investigator_runner GCF Investigator - Runner
+
+The \b Runner application simplifies the process of launching an AUT and running a test-script on it.
+Usage:
+
+\verbatim
+$GCFDIR/Investigator/Runner <AUT> <test-script> [startup-delay] [--autArgs <arg1> [arg2] [arg3] ...]
+\endverbatim
+
+Here
+
+\li \c AUT is a required command-line argument. It must contain the complete path of AUT.
+\li \c test-script is required command-line argument that should contain the path of the
+test script file, which needs to be executed on the AUT.
+\li \c startup-delay is an optional command-line argument that would specify the number of
+seconds to wait before running the script on AUT.
+\li Arguments passed after --autArgs are passed as command line arguments to the AUT as is
+
+The advantage of using \b Runner is that it can report AUT crashes on the terminal, to which you can
+respond and do something about.
+*/

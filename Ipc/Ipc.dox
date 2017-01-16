@@ -1,0 +1,255 @@
+/**
+\defgroup gcf_ipc IPC module in GCF
+
+The "GCF IPC Module" extends offers support for inter-process communication in your
+GCF applications.
+
+Using this module you can remotely invoke methods on objects offered by components in
+another application. You can also create remote signal/slot connections! Please read
+the article on \ref gcf_using_ipc to know more about this.
+
+To include this module in GCF you can add the following line to your project file
+
+\verbatim
+CONFIG += GCFIpc3
+\endverbatim
+
+For this to work, you should have set \c QMAKEFEATURES environment variable to \c $GCFDIR/QMakePRF.
+If you have not configured the \c QMAKEFEATURES, you can enter the following line in your
+project file instead.
+
+\verbatim
+GCF_SOURCE_DIR = /path/to/gcf/source/
+include( $$GCF_SOURCE_DIR/QMakePRF/GCFIpc3.prf )
+\endverbatim
+*/
+
+/**
+\page gcf_using_ipc Using IPC in your applications
+
+The IPC module in GCF makes it possible for you to host objects in your application
+for communication with other applications AND to invoke methods on objects in other
+applications. In the following paragraphs we explain how certain key communication
+scenarios work.
+
+\section gcf_using_ipc_0 Enabling IPC communication with your application
+
+To allow incoming IPC communication, you should create an instance of \ref GCF::IpcServer
+and have it listen for incoming requests.
+
+\code
+GCF::IpcServer server;
+if( server.listen() )
+    // Listening for incoming requests
+\endcode
+
+\ref GCF::IpcServer is a subclass of \c QTcpServer. The \ref GCF::IpcServer::listen() method
+basically creates a server socket and listens for incoming socket connection requests.
+Every connection request received at this socket will be ackowledged and responded.
+
+An application can have any-number of instances of \ref GCF::IpcServer created. Each server
+should listen on a different port. You can implement your own mechanisms to publish the
+availablility of servers and communicate that information to client-GCF applications. You can
+also make use of \ref GCF::IpcServerDiscovery to discover servers in the Local Area Network.
+
+\section gcf_using_ipc_1 "Exposing" objects for IPC communication
+
+Any object in your application can be made available for IPC communication
+\li adding the object to the object tree (\ref GCF::ApplicationServices::objectTree()),
+if the object has not already been added to it.
+\li setting the \c allowmetaaccess key to \c true against the information key=value
+map of the object.
+
+The following code snippet shows you how
+
+\code
+class MyClass : public QObject
+{
+    Q_OBJECT
+
+public:
+    // ...
+
+    Q_INVOKABLE GCF::Result method1(const QVariant &p1, const QVariant &p2, ...)
+
+    // ...
+};
+
+MyClass *obj = new MyClass(gApp);
+QVariantMap objInfo;
+objInfo["allowmetaaccess"] = true;
+new GCF::ObjectTreeNode(gAppService->objectTree()->rootNode(), "MyService", obj, objInfo);
+
+// Now methods on obj can be invoked from other applications.
+\endcode
+
+To mark objects for remote access in the content file, you can
+
+\code
+<content>
+    ....
+    ....
+    <object name="..." allowMetaAccess="true" />
+    ....
+    ....
+</content>
+\endcode
+
+\section gcf_using_ipc_2 Service method rules
+
+Public invokable (signal, slot and Q_INVOKABLE) methods in a "exposed" object can be remotely
+invoked by other applications. Such methods are called "service methods". Service methods
+have to adhere to the following rules
+
+\li Method name must be unabiguous. No two service methods must have the same name, even
+though C++ allows for method overloading.
+
+\li Method parameters can be of type: \c int, \c bool, \c double, \c QString, \c QStringList,
+\c QVariant, \c QVariantList, \c QVariantMap or \c QByteArray. All other types must be
+represented in terms of these types. \b NOTE: Custom types can be registered using \c qRegisterMetaType
+and their streaming operators can be registered using \c qRegisterMetaTypeStreamOperators. Such types
+can be accepted as \c QVariant. Example:
+\code
+struct MyType { ... };
+
+// Register the type
+qRegisterMetaType<MyType>("MyType");
+
+// Register streaming operators for the type
+QDataStream &operator<<(QDataStream &out, const MyType &myObj) { ... }
+QDataStream &operator>>(QDataStream &in, MyType &myObj) { ... }
+qRegisterMetaTypeStreamOperators<MyType>("MyType");
+
+class MyClass : public QObject
+{
+    Q_OBJECT
+
+public:
+    // ...
+
+    Q_INVOKABLE GCF::Result serviceMethod(const QVariant& arg) {
+        MyType type = arg.value<MyType>();
+        return this->method(type);
+    }
+
+    GCF::Result method(const MyType &type) { ... }
+
+    // ...
+};
+\endcode
+
+\li Return types can be \c void, \c int, \c bool, \c double, \c QString, \c QStringList,
+\c QVariant, \c QVariantList, \c QVariantMap, \c QByteArray or \ref GCF::Result.
+
+\li Methods should return fast. They should never consume more than 60 seconds of clock
+time. If they do take longer than that, then callers should be made aware of that and
+they should adjust their call timeout using \ref GCF::IpcCall::setTimeoutDuration().
+
+\section gcf_using_ipc_3 Invoking service methods
+
+To invoke a service method, you can make use of the \ref GCF::IpcCall class. One instance
+of this class can be used to make only one service call. Example:
+
+\code
+QHostAddress addr = ...;
+quint16 port = ...;
+GCF::IpcCall *call = new GCF::IpcCall(addr, port, "Application.MyService",
+            "method1", QVariantList() << ... << ...);
+connect(call, SIGNAL(done(bool)), ..., SLOT(callDone(bool)));
+
+void abcd::callDone(bool val) {
+    GCF::IpcCall *call = qobject_cast<GCF::IpcCall *>(this->sender());
+    if(val) {
+        QVariant result = call->result();
+    } else {
+        QString errMsg = call->errorMessage();
+        // Display errMsg
+    }
+}
+\endcode
+
+The \ref GCF::IpcCall class always works in asynchronous mode. To use the class in blocking
+mode you can make use of the \ref GCF::IpcCall::waitForDone() method on the call object.
+This method waits for the call to complete before it returns. The function returns true if
+the call was successful, false otherwise. \b NOTE: the \c waitForDone() method waits for
+a 10 seconds (or a value set using \ref GCF::IpcCall::setTimeoutDuration()). Example:
+
+\code
+QHostAddress addr = ...;
+quint16 port = ...;
+GCF::IpcCall *call = new GCF::IpcCall(addr, port, "Application.MyService",
+            "method1", QVariantList() << ... << ...);
+if( call->waitForDone() ) {
+    QVariant result = call->result();
+} else {
+    QString errMsg = call->errorMessage();
+// Display errMsg
+}
+\endcode
+
+\section gcf_using_ipc_4 Signal/Slot connections across applications
+
+You can make use of \ref GCF::IpcRemoteObject to maintain a persistent connection with a
+remote object. Signal/Slot connections can be made between \ref GCF::IpcRemoteObject and
+any other object in the application to
+
+\li connect signal from a local object to a member (signal or slot) in a remote object
+\li connect signal from the remote object to a member (signal or slot) in a local object
+
+In addition to remote-signal/slot connections, \ref GCF::IpcRemoteObject can be used to
+fetch properties of the remote object and also invoke methods on the remote object.
+
+The following code snippet shows you how to create an instance of \ref GCF::IpcRemoteObject
+and prepare to use it.
+
+\code
+GCF::IpcRemoteObject *remoteObj = new GCF::IpcRemoteObject(addr, port, "Application.MyService");
+
+// Wait for the object to get activated
+GCF::SignalSpy spy(remoteObj, SIGNAL(activated()));
+spy.wait();
+
+if( remoteObj->isActivated() ) {
+    // Connection to the remote object is now activated
+}
+\endcode
+
+You can make use of the \ref GCF::ipcConnect() methods to make signal/slot connections
+between a local object and remote object. Example:
+
+\code
+GCF::IpcRemoteObject *remoteApp = new GCF::IpcRemoteObject(addr, port, "Application");
+
+// Wait for the object to get activated
+GCF::SignalSpy spy(remoteApp, SIGNAL(activated()));
+spy.wait();
+
+// When a local button is clicked, we want the remoteApp to quit.
+QPushButton *quitButton = ...;
+GCF::ipcConnect(quitButton, SIGNAL(clicked()), remoteApp, SLOT(quit()));
+\endcode
+
+\section gcf_using_ipc_5 Discovering remote servers
+
+You can use \ref GCF::IpcServerDiscovery class to discover address and port numbers of
+\ref GCF::IpcServer objects in GCF applications running on the local-area-network.
+The following example shows how \ref GCF::IpcServerDiscovery can be used in your applications
+
+\code
+quint port = 55001;
+GCF::IpcServerDiscovery discovery;
+discovery.start(port);
+
+// GCF::IpcServerDiscovery emits a foundServer() signal whenever it detects the
+// presense of a new server.
+\endcode
+
+\sa \ref GCF::IpcServer
+\sa \ref GCF::IpcCall
+\sa \ref GCF::IpcRemoteObject
+\sa \ref GCF::IpcServerDiscovery
+\sa \ref GCF::ipcConnect
+\sa \ref gcf_tictactoe
+\sa \ref gcf_communique
+
+*/

@@ -1,0 +1,238 @@
+/**
+\page gcf_content_xml GCF Content XML File Specification
+
+Components can offer a content file for loading while handling the pre-content-load event in
+\ref GCF::Component::contentLoadEvent(). The content file is a XML file whose primary purpose is to provide a list
+of objects that need to be loaded during \ref GCF::Component::load(). A typical content file would look like this
+
+\verbatim
+<content>
+
+    <object name="a" />
+    <object name="b" />
+    <object name="c" />
+    <object name="d" />
+
+</content>
+\endverbatim
+
+Basically the content-file contains \c content XML element as root and a series of \c object XML elements.
+Each \c object XML element must have a name attribute, otherwise it is ignored by GCF. Object names must
+be unique within the component, otherwise GCF will attempt to make it unique by adding some characters at
+the end of the name.
+
+The \c object XML element can contain additional attributes, some of which have implicit meanings. This page
+provides the complete file specification of a content-xml file.
+
+\tableofcontents
+
+\section gcf_content_xml_1 Element hierarchy
+
+The content XML file accepts the following element hierarchy
+
+- content
+    - object
+        - property
+        - connection
+        .
+    .
+.
+
+Attributes of all XML elements are case-insensitive. GCF converts attribute names to lower case after parsing
+the XML file.
+
+\section gcf_content_xml_2 content XML element
+
+The \c content XML element is the root of all elements in a content-xml file. This XML element has no attributes
+of interest. Any attribute specified for this XML element will be left ignored. There should be only one \c content
+XML element in a content-file.
+
+\section gcf_content_xml_3 object XML element
+
+\c object XML element is a direct child of the \c content XML element. Each \c object XML element declares
+the existence of one single named object in the component. The \c object XML element can have any number of
+attribtues. Attribute names are case-insensitive. But values are not.
+
+One attribute that MUST be mentioned in the \c object XML element is the \c name attribute. This attribute's
+value must be a unique name within the component, or atleast the content-xml file.
+
+When GCF processes the \c object XML element, it sends a \ref GCF::ContentObjectLoadEvent to the component.
+Along with this event GCF will send the value of the \c name attribute and a key=value map of all other
+attributes in the \c object XML element. This map will have all its keys in lower-case letters.
+
+The \ref GCF::ContentObjectLoadEvent::name() function will return the value of the \c name attribute
+in the \c object XML element. The \ref GCF::ContentObjectLoadEvent::info() function will return a \c QVariantMap
+of key=value pairs. Each pair is a attribute=value pair in the \c object XML element. [\b NOTE: values for
+attributes \c name and \c parent will not be available from \ref GCF::ContentObjectLoadEvent::info() "info()"]
+
+A component can handle this event in its \ref GCF::Component::contentObjectLoadEvent() implementation to
+\li actually load the object (as a \c QObject instance)
+\li Use the \ref GCF::ContentObjectLoadEvent::setObject() method on the event object, passed as parameter
+to the event handler, to send back pointer to the \c QObject that was just loaded
+
+In GCF, we have three major component classes: \ref GCF::Component, \ref GCF::QmlComponent and \ref GCF::GuiComponent.
+Each of these classes have their own implementation of \ref GCF::Component:contentObjectLoadEvent() "contentObjectLoadEvent()".
+
+- The \ref GCF::Component::contentObjectLoadEvent() "contentObjectLoadEvent()" function implementation
+in \ref GCF::Component simply request for \ref GCF::Component::loadObject() "loadObject()" to load a named object
+and returns a pointer to that via \ref GCF::ContentObjectLoadEvent::setObject() "setObject()" method.
+.
+
+
+- The \ref GCF::GuiComponent::contentObjectLoadEvent() "contentObjectLoadEvent()" function implementation
+in \ref GCF::GuiComponent looks for value of the \c type attribute.
+    - If type is \c "widget" then it invokes the \ref GCF::GuiComponent::loadWidget() "loadWidget()" virtual function
+    to create a \c QWidget.
+    - If type is \c "action" then it invokes the \ref GCF::GuiComponent::loadAction() "loadAction()" virtual function
+    to create a \c QAction.
+    - If type is \c "menu" then it invokes the \ref GCF::GuiComponent::loadMenu() "loadMenu()" virtual function
+    to create a \c QMenu.
+    - If type is \c "actiongroup" then it invokes the \ref GCF::GuiComponent::loadActionGroup() "loadActionGroup()"
+    virtual function to create a \c QActionGroup.
+    - If type is \c "toolbar" then it invokes the \ref GCF::GuiComponent::loadToolBar() "loadToolBar()"
+    virtual function to create a \c QToolBar.
+    - If type is \c "menubar" then it invokes the \ref GCF::GuiComponent::loadMenuBar() "loadMenuBar()"
+    virtual function to create a \c QMenuBar.
+    - For all other types, \ref GCF::Component::contentObjectLoadEvent() is called. Which in-turn calls
+     \ref GCF::Component::loadObject() "loadObject()"
+    .
+.
+
+- The \ref GCF::QmlComponent::contentObjectLoadEvent() "contentObjectLoadEvent()" function implementation
+in \ref GCF::QmlComponent looks for value of the \c type attribute. If the value of the type attribute is
+\c "qml" then, it looks for the value of the \c url attribute. The class then loads a .qml file available
+at the URL specified in the \c url attribute. The URL attribute could contain a .qml file URL for loading from
+    - a HTTP location. Example: http://something.com/folder/MyCoolItem.qml
+    - a FTP location. Example: ftp://something.com/folder/MyCoolItem.qml
+    - local file system
+        - Example: file:///Users/username/folder/MyCoolItem.qml
+        - Example: ../../folder/MyCoolItem.qml
+        .
+    - a QRC location. Example: qrc://Folder/MyCoolItem.qml
+    .
+.
+
+\subsection gcf_content_xml_31 parent attribute
+
+After the \ref GCF::Component::contentObjectLoadEvent() returns, GCF looks for value of the \c parent
+attribute in the \c object XML element. The value of \c parent attribute has to be a path to an already
+registered object in the application. If the \c path corresponds to an object owned by another component,
+then a \ref GCF::ContentObjectMergeEvent is sent to that component. This event can be handled in the
+\ref GCF::Component::contentObjectMergeEvent() to perform object-merging. Components can customize the
+way in which merging happens.
+
+- The \ref GCF::Component::contentObjectMergeEvent() "contentObjectMergeEvent()" implementation in
+\ref GCF::Component class simply makes use of the \c QObject::setParent() method to merge child into
+parent.
+.
+
+- The \ref GCF::GuiComponent::contentObjectMergeEvent() "contentObjectMergeEvent" implementation in
+\ref GCF::GuiComponent class looks for the \c type attribute associated with the parent and takes
+an appropriate action.
+    - if parent type is \c widget - \ref GCF::GuiComponent::mergeWithWidget() "mergeWithWidget()" is called.
+    Note if the child is not a widget, then \ref GCF::Component::contentObjectMergeEvent() "contentObjectMergeEvent"
+    is called.
+    - if parent type is \c actiongroup - \ref GCF::GuiComponent::mergeWithActionGroup() "mergeWithActionGroup()".
+    Note if the child is not a \c QAction, then \ref GCF::Component::contentObjectMergeEvent() "contentObjectMergeEvent()"
+    is called.
+    - if parent type is \c menu - \ref GCF::GuiComponent::mergeWithMenu() "mergeWithMenu()" is called.
+    - if parent type is \c toolbar - \ref GCF::GuiComponent::mergeWithToolBar() "mergeWithToolBar()" is called.
+    - if parent type is \c menubar - \ref GCF::GuiComponent::mergeWithMenuBar() "mergeWithMenuBar()" is called.
+    .
+.
+
+- \ref GCF::QmlComponent's implementation of \c contentObjectMergeEvent() ignores merging between
+two QML objects. This means that if the \c type attribute of both parent and child is \c "qml", then the
+merging is ignored.
+.
+
+\subsection gcf_content_xml_32 allowmetaaccess attribute
+
+Each \c object XML element can have an optional \c allowMetaAccess attribute. This attribute can have a value
+of \c "true" or \c "false". If no such attribute is specified, then the value is assumed to be \c "false" by
+default.
+
+The value of this attribute is checked when a method or property on this object is accessed during an IPC
+call. If the value of this attribute is \c "false", then the IPC call will be aborted.
+
+Read \ref gcf_ipc for more information on IPC.
+
+\section gcf_content_xml_4 property XML element
+
+The \c property XML element can be used to set the property of an object upon its creation and it can have the
+following child XML elements.
+
+- \c key
+- \c value
+.
+
+The \c key XML element should contain name of the property that needs to be set. The \c value XML element should
+contain the value of the property that needs to be set. You can use this to set \c int, \c bool, \c double, \c QString,
+and \c QByteArray properties only.
+
+Example:
+
+\verbatim
+<content>
+
+    <object name="window">
+        <property>
+            <key>windowTitle</key>
+            <value>title string for the window</value>
+        </property>
+    </object>
+
+</content>
+\endverbatim
+
+\section gcf_content_xml_5 connection XML element
+
+The \c connection XML element can be used to establish a signal slot connection between the object in question
+and any other object in the application. The rule here is that either the sending signal or the receiving
+slot/member MUST belong to the object in question. You cannot use the \c connection XML element to establish
+signal/slot connections between two random objects.
+
+The \c connection XML element can have the following child XML elements.
+
+- \c sender
+- \c receiver
+.
+
+The text specified for either \c sender or \c receiver XML element can be in the
+following format
+
+\htmlonly
+<pre>
+{Component}.{Object}::{MemberSignature}
+</pre>
+\endhtmlonly
+
+\li if {Component} is not specified, then the object is considered to be from this component.
+
+\li if both {Component} and {Object} are not specified, then the method is considered to belong to the object
+in question (referred to by the enclosing \c object XML)
+
+Example:
+
+\verbatim
+<content>
+
+    <object name="CalendarWidget"
+            parent="Application.BaseComponent.Window">
+
+        <connection>
+            <sender>clicked(QDate)</sender>
+            <receiver>Application.DateEdit.DateEditWidget::setDate(QDate)</receiver>
+        </connection>
+
+        <connection>
+            <sender>Application.DateEdit.DateEditWidget::dateChanged(QDate)</sender>
+            <receiver>setSelectedDate(QDate)</receiver>
+        </connection>
+
+    </object>
+
+</content>
+\endverbatim
+
+*/

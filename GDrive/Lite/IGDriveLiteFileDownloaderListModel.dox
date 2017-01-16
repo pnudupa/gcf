@@ -1,0 +1,151 @@
+/**
+\class GCF::IGDriveLiteFileDownloaderListModel
+\brief Provides access to all downloaders from this component as a model
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF3/IGDriveLiteFileDownloaderListModel&gt;
+</pre>
+\endhtmlonly
+
+File downloader model helps to create and maintain list of file downloaders.
+It is caller's responsibility to delete the downloader created using the
+\ref GCF::IGDriveLite::createFileDownloader(). You can access the details about a downloader at a
+specific index by using the enumeration values of
+\ref GCF::IGDriveLiteFileDownloaderListModel::Field. Also this model provides
+a list of helper functions to control the downloaders at specific indexes.
+
+Downloaders and uploaders can be visualized in QML or a List-View. For example:
+
+\image html gdrive/downloads-and-uploads-qml.png
+ */
+
+/*! \enum GCF::IGDriveLiteFileDownloaderListModel::Field
+The enumeration values of Field represents details of \ref GCF::IGDriveLiteDownloader.
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::SourceFileId
+ * file id of the downloading file of downloader. [Role-name: \c "downloaderSourceFileId"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::SourceFileName
+ * file name of the downloading file of downloader. [Role-name: \c "downloaderSourceFileName"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::SourceFileIcon
+ * icon of the downloading file of downloader. [Role-name: \c "downloaderSourceFileIcon"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::DownloadedFileName
+ * file name as which the drive has downloaded the file. [Role-name: \c "downloaderDownloadedFileName"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::Downloader
+ * downloader object. [Role-name: \c "downloader"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::DownloaderTitle
+ * title of the downloader. [Role-name: \c "downloaderTitle"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::DownloaderDescription
+ * description set on the downloader. [Role-name: \c "downloaderDescription"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::DownloaderIcon
+ * icon of the downloader. [Role-name: \c "downloaderIcon"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::DownloaderIconUrl
+ * icon url of the downloader. [Role-name: \c "downloaderIconUrl"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::DownloaderProgress
+ * download progress of the downloader. [Role-name: \c "downloaderProgress"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::DownloaderStatus
+ * status of the downloader. [Role-name: \c "downloaderStatus"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::DownloaderIsStarted
+ * whether downloading started. [Role-name: \c "downloaderIsStarted"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::DownloaderIsSuspended
+ * whether downloader is suspended. [Role-name: \c "downloaderIsSuspended"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::DownloaderIsComplete
+ * whether download is complete. [Role-name: \c "downloaderIsComplete"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::DownloaderIsRunning
+ * whether downloader is in runnning state. [Role-name: \c "downloaderIsRunning"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::DownloaderHasError
+ * whether download has any error. [Role-name: \c "downloaderHasError"]
+ */
+
+/*! \var GCF::IGDriveLiteFileDownloaderListModel::Field GCF::IGDriveLiteFileDownloaderListModel::DownloaderError
+ * error while downloading. [Role-name: \c "downloaderError"]
+ */
+
+/**
+\fn GCF::IGDriveLiteFileDownloaderListModel::downloader(const QString &id) const
+Returns downloader for the file id in the current list of downloaders.
+
+\param id \c QString id of item
+\return \ref GCF::IGDriveLiteFileDownloader
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloaderListModel::downloaderAt(int index)
+Returns the downloader at the specified index.
+
+\param index index of donwloader.
+\return \ref GCF::IGDriveLiteFileDownloader
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloaderListModel::downloaderCount()
+Total number of downloaders in the model.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloaderListModel::allDownloadsComplete()
+This signal is emitted when all the downloaders in the current list has been
+completed downloading.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloaderListModel::cancelAllDownloads()
+Cancels all the ongoing downloads in the current list of downloads.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloaderListModel::clearCompletedDownloads()
+Removes all the downloaders that have completed downloading.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloaderListModel::abortDownloadAt(int index)
+Aborts download of downloader at the specific index.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloaderListModel::retryDownloadAt(int index)
+Retries the download of downloader at specified index.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloaderListModel::suspendDownloadAt(int index)
+Suspends the download of downloader at specified index.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloaderListModel::resumeDownloadAt(int index)
+Resumes the download of downloader at specified index.
+*/

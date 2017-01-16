@@ -1,0 +1,3 @@
+QT += gui qml quick
+INCLUDEPATH += $$PWD/../Include
+LIBS += -L$$PWD/../Binary -lGCF3 -lGCFQuick3

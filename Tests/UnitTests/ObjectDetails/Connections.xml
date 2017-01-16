@@ -1,0 +1,53 @@
+<content>
+
+    <object name="sender1" type="sender" />
+    <object name="receiver1" type="receiver" >
+
+        <connection>
+            <sender>sender1::emptySignal()</sender>
+            <receiver>emptySlot()</receiver>
+        </connection>
+
+        <connection>
+            <sender>sender1::stringSignal(QString)</sender>
+            <receiver>stringSlot(QString)</receiver>
+        </connection>
+
+        <connection>
+            <sender>sender1::integerSignal(int)</sender>
+            <receiver>integerSlot(int)</receiver>
+        </connection>
+
+        <connection>
+            <sender>unknownSender::unknownSignal()</sender>
+            <receiver>unknownSlot()</receiver>
+        </connection>
+
+    </object>
+
+    <object name="receiver2" type="receiver" />
+    <object name="sender2" type="sender">
+
+        <connection>
+            <sender>emptySignal()</sender>
+            <receiver>receiver2::emptySlot()</receiver>
+        </connection>
+
+        <connection>
+            <sender>stringSignal(QString)</sender>
+            <receiver>receiver2::stringSlot(QString)</receiver>
+        </connection>
+
+        <connection>
+            <sender>integerSignal(int)</sender>
+            <receiver>receiver2::integerSlot(int)</receiver>
+        </connection>
+
+        <connection>
+            <sender>unknownSignal()</sender>
+            <receiver>unknownReceiver::unknownSlot()</receiver>
+        </connection>
+
+    </object>
+
+</content>

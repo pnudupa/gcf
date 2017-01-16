@@ -1,0 +1,199 @@
+/**
+\class GCF::SignalSpy SignalSpy.h <GCF3/SignalSpy>
+\brief Enables introspection of signal emissions from a QObject
+\ingroup gcf_core
+
+
+This class is very similar to \c QSignalSpy, in that it can connect to any signal of any
+QObject instance and report signal emissions. Every signal emission is recorded as a
+\c QVariantList. A list of emissions captured can be fetched from the \ref emissions()
+function.
+
+The following example records all signal emissions for the clicked() signal of a \c QPushButton:
+
+\code
+QPushButton *button = ...;
+QSignalSpy spy(button, SIGNAL(clicked(bool)));
+
+// do something that triggers the signal
+button->animateClick();
+
+// Now spy would have recorded one signal emission.
+if( spy.count() == 1 )
+{
+    QVariantList emission = spy.takeFirst();
+    bool clicked = emission.at(0).toBool();
+    // process clicked..
+}
+\endcode
+
+You can also use GCF::SignalSpy to block-wait for a signal emission. Example:
+
+\code
+QNetworkAccessManager nam;
+QNetworkReply *reply = nam.get(....);
+
+GCF::SignalSpy spy(reply, SIGNAL(finished()));
+bool success = spy.wait(); // blocking wait. The application will not freeze,
+                           // event loop will continue
+
+if(success) {
+    // While waiting, the signal-spy caught finished() signal from reply.
+}
+\endcode
+
+\note The only difference between \c QSignalSpy and GCF::SignalSpy is this: while
+\c QSignalSpy requires usage of qtestlib module, GCF::SignalSpy doesnt.
+*/
+
+
+/**
+\fn GCF::SignalSpy::SignalSpy(QObject *sender, const char *signal, QObject *parent=0)
+
+Constructs a signal spy to listen for \c signal emissions from \c sender. If an invalid
+signal or null sender is passed as parameter; then \ref isValid() will return false.
+
+\param sender pointer to an object that is sending a signal (which needs spying)
+\param signal signal name of the signal (constructed using the SIGNAL macro). This
+would be the signal that the needs spying.
+\param parent pointer to a parent QObject for this signal-spy instance.
+*/
+
+/**
+\fn GCF::SignalSpy::~SignalSpy()
+
+Destructor
+*/
+
+/**
+\fn bool GCF::SignalSpy::isValid() const
+
+\return true if this spy is initialized on a valid QObject instance and signal.
+False otherwise.
+*/
+
+/**
+\fn QObject *GCF::SignalSpy::sender() const
+
+\return pointer to the sender object that is sending the signal, which is being
+spied on by this instance.
+
+\note The function returns NULL if the sender was destroyed after the spy was
+created.
+*/
+
+/**
+\fn QByteArray GCF::SignalSpy::signal() const
+
+\return complete normalized signature of the signal that this spy is spying on.
+*/
+
+/**
+\fn bool GCF::SignalSpy::wait(int timeout=5000)
+
+Starts an event-loop internally and waits for timeout milliseconds or a signal emission
+to occur.
+
+\return true if the signal emission occurred within timeout milliseconds,
+false if the wait stopped due to the timeout.
+*/
+
+/**
+\fn void GCF::SignalSpy::clear()
+
+Clears all recorded signal emissions. Each signal emission is recorded as a
+\c QVariantList of arguments (emitted by the signal).
+*/
+
+/**
+\fn int GCF::SignalSpy::count()
+
+\return the number of signal emissions recorded.
+*/
+
+/**
+\fn bool GCF::SignalSpy::isEmpty() const
+
+\return true if \ref count() is ZERO, false otherwise.
+*/
+
+/**
+\fn const QVariantList &GCF::SignalSpy::first() const
+
+\return a const reference to the first (earliest) signal emission captured by this spy.
+*/
+
+/**
+\fn const QVariantList &GCF::SignalSpy::last() const
+
+\return a const reference to the last (most recent) signal emission captured by this spy.
+*/
+
+/**
+\fn QVariantList &GCF::SignalSpy::takeFirst()
+
+\return copy of the first (earliest) signal emission captured by this spy.
+
+\note Before returning the emission is removed from the internal list of emissions. After this
+function returns \ref count() is reduced by 1
+*/
+
+/**
+\fn QVariantList &GCF::SignalSpy::takeLast()
+
+\return copy of the last (most recent) signal emission captured by this spy.
+
+\note Before returning, the emission is removed from the internal list of emissions. After this
+function returns \ref count() is reduced by 1
+*/
+
+/**
+\fn QVariantList GCF::SignalSpy::takeAt(int index)
+
+\return copy of the signal emission at \c index
+
+\note Before returning, the emission is removed from the internal list of emissions. After this
+function returns \ref count() is reduced by 1
+*/
+
+/**
+\fn QVariantList GCF::SignalSpy::at(int index) const
+
+\return copy of the signal emission at \c index
+*/
+
+/**
+\fn void GCF::SignalSpy::removeAt(int index)
+
+Removes signal emission information at \c index.
+
+\note index has to be >= 0 and < \ref count()
+*/
+
+/**
+\fn const QList< QVariantList > &GCF::SignalSpy::emissions()
+
+\return const reference to the internal list of emissions maintained by this spy
+*/
+
+/**
+\fn void GCF::SignalSpy::handleSignalEmission(const QVariantList &args)
+
+This virtual function is called whenever a signal emission is detected. By default
+the function implemented to emits the \ref caughtSignal() signal.
+
+\param args list of parameters emitted by the signal.
+*/
+
+/**
+\fn void GCF:SignalSpy::caughtSignal(const QVariantList &args)
+
+This signal is emitted whenever a signal emission is captured.
+
+\param args list of parameters emitted by the signal.
+*/
+
+
+
+
+

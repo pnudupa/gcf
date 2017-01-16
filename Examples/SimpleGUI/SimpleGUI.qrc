@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/SimpleGUI">
+        <file>DialComponent.xml</file>
+        <file>AppWindowComponent.xml</file>
+        <file>CalendarComponent.xml</file>
+    </qresource>
+</RCC>

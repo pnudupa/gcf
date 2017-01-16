@@ -1,0 +1,5 @@
+<content>
+    <object name="ToolBar1" type="toolbar" />
+    <object name="Action1" type="action" parent="ToolBar1" />
+    <object name="ChildMenu1" type="menu" parent="ToolBar1" />
+</content>

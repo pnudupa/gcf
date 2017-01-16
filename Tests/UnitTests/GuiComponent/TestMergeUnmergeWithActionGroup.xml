@@ -1,0 +1,4 @@
+<content>
+    <object name="ActionGroup1" type="actiongroup" />
+    <object name="Action1" type="action" parent="ActionGroup1" />
+</content>

@@ -1,0 +1,364 @@
+/**
+\class GCF::MapToObjectEventListener MapToObject.h <GCF3/MapToObject>
+\brief This listens to GCF::MapToObject's events.
+\ingroup gcf_core
+
+When set as event listener on \c GCF::MapToObject the corresponding virtual
+functions in this class will be called when a object pointer is added, removed
+or deleted from the \ref GCF::MapToObject.
+
+To set this as event listener of GCF::MapToObject you need to use the method
+GCF::MapToObject::setEventListener(GCF::MapToObjectEventListener* listener).
+*/
+
+/**
+\fn GCF::MapToObjectEventListener::MapToObjectEventListener()
+
+Default constructor.
+*/
+
+/**
+\fn GCF::MapToObjectEventListener::~MapToObjectEventListener()
+
+Destructor.
+*/
+
+/**
+\fn GCF::MapToObjectEventListener::listenerType() const
+
+Returns the listener type. By default listener type is
+"GCF::MapToObjectEventListener".
+\return the current listener type
+*/
+
+/**
+\fn GCF::MapToObjectEventListener::objectInserted(QObject *obj)
+
+By default there is no implementation. This function will be called
+when a Value- \c QObject pointer pair is inserted into the listening 
+\ref GCF::MapToObject.
+\param obj \c QObject pointer which was inserted into the listening 
+ref GCF::MapToObject.
+*/
+
+/**
+\fn GCF::MapToObjectEventListener::objectRemoved(QObject *obj)
+
+By default there is no implementation. This function will be called
+when a Value- \c QObject pointer pair is removed from the listening 
+\ref GCF::MapToObject.
+\param obj \c QObject pointer which was removed from the listening 
+\ref GCF::MapToObject.
+*/
+
+/**
+\fn GCF::MapToObjectEventListener::objectDeleted(QObject *obj)
+
+By default there is no implementation. This function will be called
+when an \c QObject is in the listening \ref GCF::MapToObject.
+\param obj \c QObject pointer which was deleted.
+*/
+
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+\class GCF::MapToObject MapToObject.h <GCF3/MapToObject>
+\brief This class manages a map of <T>-QObject pairs. <T> is a template class.
+\ingroup gcf_core
+
+
+This class can be used as a replacement for \c QMap<T, QObject*>, when you want
+ Value versus valid pointers to \c QObject to be stored in the map.
+This class automatically notifies and removes Value - invalid \c QObject pairs,
+as and when the object pointers inside \c MapToObject are deleted elsewhere in the
+application.
+
+Three types of events can happen on \ref GCF::MapToObject
+\li A \c Value - \c QObject pointer pair got added to the map.
+\li A \c Value - \c QObject pointer - got removed from the map.
+\li A \c QObject pointer in Value - \c QObject pair's ,got deleted.
+
+You can listen to this class by setting \ref GCF::MapToObjectEventListener
+using setEventListener(MapToObjectEventListener *listener) method. When a new
+\ref  Value - \c QObject pointer pair is inserted or removed from the \c MapToObject,
+\c MapToObjectEventListener will notify it.
+
+If you want to have several listeners receive event notifications on an object
+map, then you can install a \ref GCF::MapToObjectEventBroadcaster on the object
+map and register all event listeners with the broadcaster.
+*/
+
+/**
+\fn GCF::MapToObject::MapToObject()
+
+Default constructor.
+*/
+
+/**
+\fn GCF::MapToObject::MapToObject(const MapToObject &other)
+
+Copy constructor. \c MapToObject does not copy the \ref GCF::MapToObjectEventListener that
+is currently set on the other \ref GCF::MapToObject.
+
+\param other \ref MapToObject from which value-objects pairs will be copied.
+*/
+
+/**
+\fn GCF::MapToObject::MapToObject(const QMap<T,QObject*>& map)
+
+Copies the value-object pairs from QMap<T,QObject*>& map to this.
+*/
+
+/**
+\fn GCF::MapToObject::~MapToObject()
+
+Destructor.
+*/
+
+/**
+\fn GCF::MapToObject::setEventListener(MapToObjectEventListener *listener)
+
+Sets an event listener on the this. If there was a already an event listener
+set then it will be replaced with the new one.
+
+\param listener the \ref GCF::MapToObjectEventListener which needs to be set as
+event listener.
+*/
+
+/**
+\fn GCF::MapToObject::eventListener() const
+
+\return currently set event listener on this.
+*/
+
+/**
+\fn GCF::MapToObject::operator = (const MapToObject &other)
+
+Overloaded equal to operator. It copies everything from \ref GCF::MapToObject
+except the GCF::MapToObjectEventListener that is currently set on 'other'
+\ref GCF::MapToObject.
+
+\param other \ref MapToObject from which value-objects pairs will be copied.
+*/
+
+/**
+\fn GCF::MapToObject::insert(const T &value, QObject *object)
+
+Inserts the Value - \c QObject pointer pair into the map.
+
+\param value template class value which needs to be inserted into the map
+\param object \c QObject pointer which needs to be inserted into the map
+against value.
+*/
+
+/**
+\fn GCF::MapToObject::remove(const T &value)
+
+Removes the Value - \c QObject pointer pair from the map.
+
+\param value template class value which needs to be removed from the map.
+*/
+
+/**
+\fn GCF::MapToObject::operator [] (const T &value)
+
+Returns \c QObject pointer for value existing
+in the map. You have to make sure that the value exists in the map before
+calling this function.
+
+\param value template class value for which \c QObject pointer needs to be
+returned from the map.
+\return \c QObject pointer stored against value.
+*/
+
+/**
+\fn GCF::MapToObject::count() const
+
+\return the map object count.
+*/
+
+/**
+\fn GCF::MapToObject::isEmpty() const
+
+\return true if the map is empty otherwise false.
+*/
+
+/**
+\fn GCF::MapToObject::contains(const T &value) const
+
+\return true if the map contains the value otherwise false.
+*/
+
+/**
+\fn GCF::MapToObject::value(const T &key) const
+
+\return \c QObject pointer stored against template class value 'key'
+in the map.
+*/
+
+/**
+\fn GCF::MapToObject::keys() const
+
+Returns keys of map. Since \ref GCF::MapToObject stores Template class value
+versus \c QObject pointer, keys() will return \c QList<T>.
+
+\return \c QList<T> of all template class values stored as keys.
+*/
+
+/**
+\fn GCF::MapToObject::values() const
+
+Returns list of \c QObject pointers stored in the map. Since
+\ref GCF::MapToObject stores \c QObject pointer versus Template class value,
+value() will return \c QList<T>.
+
+\return \c QObjectList of \c QObject pointers stored as values of map.
+*/
+
+/**
+\fn GCF::MapToObject::toMap() const
+
+\return stored template class value - \c QObject pointer pairs as
+\c QMap<T,QObject*>.
+*/
+
+/**
+\fn GCF::MapToObject::map() const
+
+\return constant reference to template class value - \c QObject pointer map.
+*/
+
+/**
+\fn GCF::MapToObject::removeAll()
+
+Removes all template class value - \c QObject pointer stored in this map.
+*/
+
+/**
+\fn GCF::MapToObject::deleteAll()
+
+Deletes all \c QObject pointer stored in this map and removes the value stored
+in this map.
+*/
+
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+\class GCF::MapToObjectEventBroadcaster MapToObject.h <GCF3/MapToObject>
+\brief MapToObjectEventBroadcaster broadcasts inserted, removed and deleted events
+of \ref MapToObject.
+\ingroup gcf_core
+
+
+MapToObjectEventBroadcaster broadcasts inserted, removed and deleted events of
+\ref MapToObject to all the \ref GCF::MapToObjectEventListener's added to it.
+You can add or remove a \ref GCF::MapToObjectEventListener
+to this using \ref addListener(MapToObjectEventListener *listener)/
+\ref removeListener(MapToObjectEventListener *listener) functions.
+
+This class inherits from GCF::MapToObjectEventListener. To send notifications to
+GCF::MapToObjectEventListeners added to this; you first need to set
+event broadcast listener as \ref GCF::MapToObjectEventListener of the \ref GCF::MapToObject.
+*/
+
+/**
+\fn GCF::MapToObjectEventBroadcaster::addListener(MapToObjectEventListener
+*listener)
+
+Adds the \ref GCF::MapToObjectEventListener to the broadcast list. After listener
+gets added, it will also get notifications for events on
+currently listening \ref GCF::MapToObject.
+\param listener \ref GCF::MapToObjectEventListener that needs to be added
+to the broadcast list.
+*/
+
+/**
+\fn GCF::MapToObjectEventBroadcaster::removeListener(MapToObjectEventListener
+*listener)
+
+Removes the \ref GCF::MapToObjectEventListener from the broadcast list.
+\param listener \ref GCF::MapToObjectEventListener that needs to be removed
+ from the broadcast list.
+*/
+
+/**
+\fn GCF::MapToObjectEventBroadcaster::removeAllListeners()
+
+Removes all \ref MapToObjectEventListeners from the broadcast list.
+*/
+
+/**
+\fn GCF::MapToObjectEventBroadcaster::listenerAt(int index) const
+
+Returns the \ref GCF::MapToObjectEventListener at the specified index.
+\param index index of which \ref GCF::MapToObjectEventListener needs to be
+returned.
+\return \ref MapToObjectEventListener at the specified index.
+*/
+
+/**
+\fn GCF::MapToObjectEventBroadcaster::listenerType() const
+
+Returns the listener type of this class. Default listener type is
+"GCF::MapToObjectEventBroadcaster".
+\return listener type string.
+*/
+
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+\class GCF::MapToObjectWatcher MapToObject.h <GCF3/MapToObject>
+\brief This watches over MapToObject to emit signals when the
+objects are inserted, removed or deleted from GCF::MapToObject.
+\ingroup gcf_core
+
+
+You can set this to watch over a \ref GCF::MapToObject by using
+\ref GCF::MapToObjectWatcher::watch(MapToObject &list) method.
+
+Only one watcher can watch over \ref GCF::MapToObject at a time.If there is
+already a watcher watching MapToObject when a new one is set, then
+it will be replaced with the new one.
+*/
+
+/**
+\fn GCF::MapToObjectWatcher::MapToObjectWatcher()
+
+Default constructor.
+*/
+
+/**
+\fn GCF::MapToObjectWatcher::~MapToObjectWatcher()
+
+Destructor.
+*/
+
+/**
+\fn GCF::MapToObjectWatcher::watch(MapToObject &list)
+
+Sets the \ref GCF::MapToObject to watch. If there is already a watcher
+watching that MapToObject, then it will be replaced with this.
+*/
+
+/**
+\fn GCF::MapToObjectWatcher::objectInserted(QObject *obj)
+
+This signal will be emitted when a Value - \c QObject pointer pair is inserted
+as value to the \ref GCF::MapToObject.
+\param obj \c QObject pointer inserted.
+*/
+
+/**
+\fn GCF::MapToObjectWatcher::objectRemoved(QObject *obj)
+This signal will be emitted when a Value - \c QObject pointer pair is removed 
+from the values of \ref GCF::MapToObject.
+\param obj \c QObject pointer removed.
+*/
+
+/**
+\fn GCF::MapToObjectWatcher::objectDeleted(QObject *obj)
+This signal will be emitted when \c QObject inside
+\ref MapToObject is deleted inside application.
+\param obj \c QObject pointer deleted.
+*/
+

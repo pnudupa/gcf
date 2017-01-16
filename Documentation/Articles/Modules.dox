@@ -1,0 +1,35 @@
+/**
+\page gcf_modules Modules in GCF
+
+One of the central changes in version 3 of GCF is that it is now modular. GCF is now
+spread across the following modules
+
+\li \ref gcf_core "GCF3" - core of GCF. Contains all component management mechanisms and a few helper
+classes.
+\li \ref gcf_gui "GCFGui3" - offers support for GUI components. By default GCF3 offers support for
+components that use \c QtCore only. If you are writing GUI applications; you must link
+against \c GCFGui3 module.
+\li \ref gcf_quick "GCFQuick3" - offers support for QML components. [NOTE: This module is available
+only for Qt 5]
+\li \ref gcf_ipc "GCFIpc3" - offers support for inter-process communication between your GCF applications.
+
+If you want to use any of the above modules, you can simply add the module name to \c CONFIG
+line in the project file \b OR include the corresponding \c prf file. For example:
+
+\verbatim
+include($$GCFDIR/QMakePRF/GCFGui3.prf) # for using the GCFGui3 module
+
+# OR
+
+CONFIG += GCFQuick3
+\endverbatim
+
+For further information on each module, click on any of the links below
+
+\li \ref gcf_core
+\li \ref gcf_gui
+\li \ref gcf_quick
+\li \ref gcf_ipc
+
+*/
+

@@ -1,0 +1,5 @@
+<content>
+    <object name="MenuBar1" type="menubar" />
+    <object name="Action1" type="action" parent="MenuBar1"/>
+    <object name="Action2" type="action" parent="MenuBar1"/>
+</content>

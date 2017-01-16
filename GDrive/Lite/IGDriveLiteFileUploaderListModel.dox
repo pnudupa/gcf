@@ -1,0 +1,145 @@
+/**
+\class GCF::IGDriveLiteFileUploaderListModel
+\brief Helper class for accessing details of file uploaders as model.
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF3/IGDriveLiteFileUploaderListModel&gt;
+</pre>
+\endhtmlonly
+
+File uploader model helps to create and maintain list of file uploaders.
+It is users responsibility to delete the uploader created using
+\ref GCF::IGDriveLite::createFileUploader().
+
+You can access the details about a uploader at a specific index by using
+the enumeration values of \ref GCF::IGDriveLiteFileUploaderListModel::Field.
+Also this model provides a list of helper functions to control the uploaders
+at specific indexes.
+
+Downloaders and uploaders can be visualized in QML or a List-View. For example:
+
+\image html gdrive/downloads-and-uploads-qml.png
+ */
+
+/*! \enum GCF::IGDriveLiteFileUploaderListModel::Field
+The enumeration values of Field represents details of \ref GCF::IGDriveLiteUploader.
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploadFolderId
+ * folder id of the uploader to which file will be uploaded. [Role-name: \c "uploaderUploadFolderId"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploadFileName
+ * uploader file name which will be uploaded. [Role-name: \c "uploaderUploadFileName"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::Uploader
+ * uploader object.  [Role-name: \c "uploader"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploaderTitle
+ * title of the uploader. [Role-name: \c "uploaderTitle"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploaderDescription
+ * description set on the uploader. [Role-name: \c "uploaderDescription"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploaderIcon
+ * icon of the uploader. [Role-name: \c "uploaderIcon"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploaderIconUrl
+ * icon url of the uploader. [Role-name: \c "uploaderIconUrl"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploaderProgress
+ * upload progress of the uploader. [Role-name: \c "uploaderProgress"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploaderStatus
+ * status of the uploader. [Role-name: \c "uploaderStatus"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploaderIsStarted
+ * whether uploading started. [Role-name: \c "uploaderIsStarted"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploaderIsSuspended
+ * whether uploader is suspended. [Role-name: \c "uploaderIsSuspended"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploaderIsComplete
+ * whether upload is complete. [Role-name: \c "uploaderIsComplete"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploaderIsRunning
+ * whether uploader is in runnning state. [Role-name: \c "uploaderIsRunning"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploaderHasError
+ * whether upload has any error. [Role-name: \c "uploaderHasError"]
+ */
+
+/*! \var GCF::IGDriveLiteFileUploaderListModel::Field GCF::IGDriveLiteFileUploaderListModel::UploaderError
+ * error while uploading. [Role-name: \c "uploaderError"]
+ */
+
+/**
+\fn GCF::IGDriveLiteFileUploaderListModel::uploader(const QString &localFileName)
+Returns uploader for the specified file name in the current list of uploaders.
+
+\param localFileName file name to upload.
+\return \ref GCF::IGDriveLiteFileUploader
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploaderListModel::uploaderAt(int index)
+Returns the uploader at the specified index.
+
+\param index index of donwloader.
+\return \ref GCF::IGDriveLiteFileUploader
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploaderListModel::uploaderCount()
+Total number of uploaders in the model.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploaderListModel::allUploadsComplete()
+This signal is emitted when all the uploaders in the current list has been
+completed uploading.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploaderListModel::cancelAllUploads()
+Cancels all the ongoing uploads in the current list of uploads.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploaderListModel::clearCompletedUploads()
+Removes all the uploaders that have completed uploading.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploaderListModel::abortUploadAt(int index)
+Aborts upload of uploader at the specific index.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploaderListModel::retryUploadAt(int index)
+Retries the upload of uploader at specified index.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploaderListModel::suspendUploadAt(int index)
+Suspends the upload of uploader at specified index.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploaderListModel::resumeUploadAt(int index)
+Resumes the upload of uploader at specified index.
+*/

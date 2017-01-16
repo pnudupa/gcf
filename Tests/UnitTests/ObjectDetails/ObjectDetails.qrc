@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Properties.xml</file>
+        <file>Connections.xml</file>
+    </qresource>
+</RCC>

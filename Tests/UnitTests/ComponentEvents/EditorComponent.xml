@@ -1,0 +1,6 @@
+<content>
+
+    <object name="textEditor" parent="Application.PlatformComponent.workspace" />
+    <object name="systemEditor" parent="TreeComponent.editorArea" />
+
+</content>

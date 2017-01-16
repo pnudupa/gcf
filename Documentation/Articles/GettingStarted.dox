@@ -1,0 +1,688 @@
+/**
+\page gcf_getting_started Getting started with GCF
+
+GCF provides simple and robust framework for creating component based
+applications. A component, in GCF, is an entity that makes available one
+or more objects that can work in tandem with objects offered by other
+components in the application.
+
+Components are loaded explicitly by an application. An application can
+invent its own mechanism for figuring out what components to load. It
+could for example hard-code names of components to load, or it could
+read them from a file, or it could load all components from a given
+directory. We refer to such applications (the ones that load GCF components)
+as GCF Applications.
+
+Suggested video:
+
+\htmlonly
+<iframe src="http://player.vimeo.com/video/77784760?byline=0" width="500" height="313" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+\endhtmlonly
+
+\tableofcontents
+
+\section gcf_usinggcf Using GCF
+
+GCF is simply a Qt/C++ library. Therefore using GCF would be like using any
+other C++ library in your Qt Application. Please read the article on
+" \ref gcf_howtoinstall " to understand ways to setup GCF on your computer.
+
+It is important to remember at this point that you must
+\li Setup the \c GCFDIR environment variable to point to the source directory of
+GCF 3. After setting up this environment variable, you must be able to find
+\li Setup the \c QMAKEFEATURES environment variable to point to $GCFDIR/QMakePRF
+folder.
+\c $GCFDIR/QMakePRF/GCF3.prf
+\li On Windows, set \c PATH environment variable to include \c %GCFDIR%/Binary
+\li On Linux, set \c LD_LIBRARY_PATH environment variable to include \c %GCFDIR%/Binary
+\li On Mac, set \c DYLD_LIBRARY_PATH environment variable to include \c %GCFDIR%/Binary
+\li Restart your computer (or atleast Qt Creator)
+
+\note Environment variables are best set in .bashrc on Linux and Mac, so that they
+apply across login sessions.
+
+Once setup, you can include GCF in your applications by simply including the following
+line in your project file.
+
+\verbatim
+CONFIG += GCF3
+\endverbatim
+
+\b NOTE: if for some reason the above \c CONFIG line doesnt work, then you can explicitly
+include the \c prf file as follows
+
+\verbatim
+include($$GCFDIR/QMakePRF/GCF3.prf)
+\endverbatim
+
+\section gcf_keyconcepts Key Concepts
+
+The following key-concepts are critical for understanding GCF and the application architecture
+it proposes. We recommend that you read this section even if you are a seasoned GCF developer.
+
+\li \ref gcf_modules
+\li \ref gcf_application
+\li \ref gcf_component
+\li \ref gcf_component_settings
+\li \ref gcf_component_content
+\li \ref gcf_objecttree
+
+For a comprehensive explanation of the component model offered by GCF, please read
+\ref gcf_component_model "an article on that here".
+
+\subsection gcf_modules Modules in GCF
+
+One of the central changes in version 3 of GCF is that it is now modular. GCF is now
+spread across the following modules
+
+\li \b GCF3 - core of GCF. Contains all component management mechanisms and a few helper
+classes.
+\li \b GCFGui3 - offers support for GUI components. By default GCF3 offers support for
+components that use \c QtCore only. If you are writing GUI applications; you must link
+against \c GCFGui3 module.
+\li \b GCFQuick3 - offers support for QML components. [NOTE: This module is available
+only for Qt 5]
+\li \b GCFIpc3 - offers support for inter-process communication between your GCF applications.
+
+If you want to use any of the above modules, you can simply add the module name to \c CONFIG
+line in the project file \b OR include the corresponding \c prf file. For example:
+
+\verbatim
+include($$GCFDIR/QMakePRF/GCFGui3.prf) # for using the GCFGui3 module
+
+# OR
+
+CONFIG += GCFQuick3
+\endverbatim
+
+\subsection gcf_application GCF Application
+
+The function of a GCF application is to provide a base component (also called application component),
+onto which all other components will merge their content objects; AND to load all components required
+for the application. Unlike GCF 2.x, in version 3 - you will have to create your own mechanism to
+figure out what components to load.
+
+Your \b application should be written such that it links against \c GCF3 OR \c GCFGui3 OR \c GCFQuick3
+and creates an instance of any one subclass of \ref GCF::ApplicationServices.
+
+\image html class_g_c_f_1_1_application_services.png
+
+Subclasses of \ref GCF::ApplicationServices bring both GCF and Qt application functionality
+your application. For instance
+\li \ref GCF::Application brings \c QCoreApplication and \ref GCF::ApplicationServices to your
+applications. Applications written using this class can load only components that are written using
+\c GCF3.
+\li \ref GCF::GuiApplication brings \c QApplication and \ref GCF::ApplicationServices to your
+applications. Such applications can load both \c GCF3 components and \c GCFGui3 components. [\b NOTE:
+such applications \b cannot load \c GCFQuick3 components]
+\li \ref GCF::QmlApplication brings \c QGuiApplication and \ref GCF::ApplicationServices to your
+applications. Such applications can load both \c GCF3 components and \c GCFQuick3 components. [\b NOTE:
+such applications \b cannot load \c GCFGui3 components]
+
+In the rest of this document the term 'GCF application' AND 'application' will mean an executable
+Qt application that has an instance of \ref GCF::Application OR \ref GCF::GuiApplication OR
+\ref GCF::QmlApplication.
+
+\subsection gcf_component GCF Component
+
+Components are the building blocks of a GCF application. Components are basically instances if
+of \ref GCF::Component (or its subclasses \ref GCF::QmlComponent, \ref GCF::GuiComponent).
+Instances of components can be
+\li created \b explicitly - by creating instances of your component classes and
+loading them using the \ref GCF::Component::load() method.
+\li loaded \b dynamically from shared objects (or DLLs) - by making use of the
+\ref GCF::ApplicationServices::loadComponent() function.
+
+To load components explicily you can either package your component class as a static library
+and link your application to it \b OR implement your component classes within your application
+codebase itself \b OR by explicitly link to a component (shared) library, such that its
+constructor can be accessed from your application.
+
+To load components dynamically you must ensure that the component is installed in a
+known location ( \ref GCF::searchPathsForLibs() ) AND that all dependencies of the component
+are available in \c %PATH% or \c $LD_LIBRARY_PATH or \c DYLD_LIBRARY_PATH. You must also
+ensure that such components are "exposed" using the \c GCF_EXPORT_COMPONENT macro.
+
+\subsection gcf_component_settings GCF Component Settings
+
+Every component can optionally provide one settings file (in INI format). This settings file
+is read and written into during the course of the components life time. Read \ref gcf_component_loading
+for more information.
+
+\subsection gcf_component_content GCF Component Content
+
+Every component can optionally provide a content file (in XML format). The content file
+will list out names and relationships of all content objects offered by the component.
+Read \ref gcf_component_contentfile for more information.
+
+\subsection gcf_objecttree GCF Application Object Tree
+
+One of the key objects that an application (instance of a subclass of \ref GCF::ApplicationServices)
+object creates is \b object-tree (which is an instance of \ref GCF::ObjectTree). Content objects
+exposed by all components are registered in this object tree. The object tree can be accessed
+using \ref GCF::ApplicationServices::objectTree() method.
+
+The root node of this object tree contains a pointer to the application object, which could be
+an instance of \ref GCF::Application OR \ref GCF::QmlApplication OR \ref GCF::GuiApplication.
+
+Immediate children of this root node normally contain pointer to a component. Put in another way,
+if you application loads 20 components then there will be 20 child-nodes (\ref GCF::ObjectTreeNode)
+of the root node in the object-tree; each node containing a pointer to one component. We shall
+call such nodes as component nodes.
+
+Immediate children of component nodes contain points to content objects exposed by the component
+either via \ref gcf_component_contentfile or explicitly added via \ref GCF::Component::addContentObject()
+method. We shall call such nodes as content-object nodes.
+
+There could be additional nodes in the object-tree; but the above kinds of are minimum.
+
+Against each node we have a \c QVariantMap dictionary. This dictionary contains a set of key=value
+property-value pairs. The content of this dictionary is normally loaded while parsing the
+\ref gcf_component_contentfile or via the third parameter of \ref GCF::Component::addContentObject().
+Object-tree-node for an object can be queried using \ref GCF::ApplicationServices::node() method.
+And from that node the \c QVariantMap information dictionary can be fetched (or even altered).
+
+In the rest of this document we will be using the term 'exposed object' a lot. The term 'exposed object'
+refers to an object that is registered into the application's object-tree. All components and their
+content-objects are 'exposed object's.
+
+\section gcf_getting_started_example Simple Application example
+
+This example shows you all the key-concepts (described above) in action. The application is
+architected such that it offers a base component (or the application component) and loads two
+other components. One of the components offers a \c QDateEdit widget as content-object and
+the other a \c QCalendarWidget as content-object. Both these content-objects are merged into
+a \c QWidget with \c QVBoxLayout offered by the application component. Feature wise; changing
+the date in \c QDateEdit alters the current date in \c QCalendarWidget and vice versa.
+
+Through this example you will come to know
+
+\li How to create a GCF application, implement an application component and instantiate it.
+\li How to create dynamically loadable components and load them from the application
+\li How to authoer content-files such that content-objects can be merged with other components
+\li How to create signal-slot connections from the content-file
+\li How to write project files for applications and components
+\li How to organize directory structure of your project
+
+At the end of this tutorial you will be able to see a window like the one shown below and
+interact with it.
+
+\image html simple_gui.png
+
+Following sections are intented to be used as a hand-holding guide. Please follow the instructions
+proposed in the following section and actively participate in creating the example application.
+At the end of it, you will have an understanding of all key-concepts in GCF 3.
+
+\subsection gcf_example_directory_structure Directory Structure
+
+We recommend the following directory structure
+
+\verbatim
+- SimpleApplication # project folder
+  - Binary # directory into which application binary is dumped
+    - Components # directory into which components are dumped
+  - Application # source code of the application
+  - CalendarComponent # source code of calendar component
+  - DateEditComponent # source code of date-edit component
+\endverbatim
+
+Please create the above directory structure.
+
+\verbatim
+$ mkdir SimpleApplication
+$ cd SimpleApplication
+$ mkdir Binary
+$ mkdir Application
+$ mkdir CalendarComponent
+$ mkdir DateEditComponent
+$ cd Binary
+$ mkdir Components
+$ cd ..
+$ touch SimpleApplication.pro
+$ touch Application/Application.pro
+$ touch CalendarComponent/CalendarComponent.pro
+$ touch DateEditComponent/DateEditComponent.pro
+\endverbatim
+
+\subsection gcf_example_project SimpleApplication.pro
+
+Type the following contents into SimpleApplication.pro
+
+\verbatim
+TEMPLATE = subdirs
+CONFIG += ordered
+
+SUBDIRS += \
+    Application \
+    CalendarComponent \
+    DateEditComponent
+\endverbatim
+
+Essentially you are creating a \c subdirs Qt project and defining it as a collection of
+three sub-projects: \c Application, \c CalendarComponent and \c DateEditComponent.
+
+\subsection gcf_simpleexample_application SimpleExample - Application
+
+The application offers a base (or application) component. The only content object
+offered by this component is a \c QWidget window, that has a \c QVBoxLayout installed on it.
+This way content-objects from other components added to this window show up one below the
+other.
+
+\subsubsection gcf_simpleexample_application_1 AppWindowComponent class
+
+Create a \c AppWindowComponent class as follows in a file called \c AppWindowComponent.h.
+
+\code
+#include <GCF3/GuiComponent>
+#include <QWidget>
+
+class AppWindowComponent : public GCF::GuiComponent
+{
+    Q_OBJECT // recommended even if you dont have signals/slots/properties
+             // or invokable methods in your component class.
+
+public:
+    // Constructor
+    AppWindowComponent(QObject *parent=0) : GCF::GuiComponent(parent),
+    m_window(0) { }
+
+protected:
+    // Destructor is protected, because we don't want instances of this
+    // component to be created on the stack.
+    ~AppWindowComponent() { }
+
+    // Reimplemnted from GCF::Component to set the content file to load
+    void contentLoadEvent(GCF::ContentLoadEvent *e) {
+        if(e->isPreContentLoad())
+            e->setContentFile(":/AppWindowComponent.xml");
+        GCF::GuiComponent::contentLoadEvent(e);
+    }
+
+    // Reimplemented to map content-object-name 'Window' to m_window
+    QWidget *loadWidget(const QString &name, const QVariantMap &info) {
+        m_window = GCF::GuiComponent::loadWidget(name, info);
+        return m_window;
+    }
+
+    // Reimplemented to show m_window upon activion of this component
+    void activationEvent(GCF::ActivationEvent *e) {
+        if(m_window)
+            m_window->show();
+    }
+
+    // Reimplemented to hide m_window upon deactivation of this component
+    void deactivationEvent(GCF::DeactivationEvent *e) {
+        if(m_window)
+            m_window->hide()
+    }
+
+private:
+    // Will be used for storing the pointer to top level widget for showing.
+    QWidget *m_window;
+};
+\endcode
+
+\sa \ref GCF::GuiComponent
+\sa \ref GCF::Component::contentLoadEvent(), \ref GCF::Component::activationEvent() and
+\ref GCF::Component::deactivationEvent()
+\sa \ref GCF::GuiComponent::loadWidget()
+
+\subsubsection gcf_simpleexample_application_2 AppWindowComponent.xml - Content file
+
+\c AppWindowComponent::contentLoadEvent() was implemented in \c AppWindowComponent class
+to load a \c AppWindowComponent.xml content file. Type the following content into this
+XML file.
+
+\verbatim
+<content>
+    <object name="Window" type="widget" windowTitle="SimpleApplication" layout="vertical">
+        <property>
+            <key>minimumWidth</key>
+            <value>800</value>
+        </property>
+        <property>
+            <key>minimumHeight</key>
+            <value>600</value>
+        </property>
+    </object>
+</content>
+\endverbatim
+
+The content file exposes the object with name \c Window of type \c widget.
+Sets the title of \c Window object as "SimpleApplication". It also sets the minimum width
+and minimum height of the \c Window as 800 and 600.
+
+\subsubsection gcf_simpleexample_application_3 Application.qrc - Resource file
+
+\c AppWindowComponent::contentLoadEvent() expects the content file to be available in the
+resource file system as \c :/AppWindowComponent.xml. For this purpose, create a \c Application.qrc
+with the following contents.
+
+\verbatim
+<RCC>
+    <qresource prefix="/">
+        <file>AppWindowComponent.xml</file>
+    </qresource>
+</RCC>
+\endverbatim
+
+\subsubsection gcf_simpleexample_application_4 The main() function
+
+The \c main() function is where we bring it all together. Type the following code into a
+\c Main.cpp file.
+
+\code
+#include <GCF3/GuiApplication>
+#include "AppWindowComponent.h"
+
+int main(int argc, char **argv)
+{
+    // Create instance of GCF::GuiApplication since we are using Qt
+    // widgets module for the example application.
+    GCF::GuiApplication a(argc, argv);
+    a.setOrganizationName("MyCompany");
+
+    // Create object of component class AppWindowComponent in heap
+    AppWindowComponent *appWindowComp = new AppWindowComponent;
+    appWindowComp->load();
+
+    // Load the components
+    a.loadComponent("Components/CalendarComponent");
+    a.loadComponent("Components/DateEditComponent");
+
+    return a.processArgumentsAndExec();
+}
+\endcode
+
+\sa \ref GCF::GuiApplication
+\sa \ref GCF::Component::load()
+\sa \ref GCF::ApplicationServices::loadComponent()
+
+\subsubsection gcf_simpleexample_application_5 The Application.pro file
+
+At this point the directory structure is as follows
+
+\verbatim
+- SimpleApplication
+  - Binary
+    - Components
+  - Application
+    - Application.pro # empty
+    - Application.qrc
+    - AppWindowComponent.h
+    - AppWindowComponent.xml
+    - Main.cpp
+  - CalendarComponent
+    - CalendarComponent.pro # empty
+  - DateEditComponent
+    - DateEditComponent.pro # empty
+\endverbatim
+
+Type the following contents into \c Application/Application.pro
+
+\verbatim
+CONFIG += GCFGui3
+CONFIG -= app_bundle
+TEMPLATE = app
+DESTDIR = $$PWD/../Binary
+TARGET = SimpleApplication
+
+SOURCES += Main.cpp
+HEADERS += AppWindowComponent.h
+RESOURCES += Application.qrc
+OTHER_FILES += AppWindowComponent.xml
+\endverbatim
+
+With this your application is now ready to compile. To compile your application run the following
+commands on a terminal (or command prompt).
+
+\verbatim
+$ cd path/to/SimpleApplication
+$ qmake -recursive
+$ make
+\endverbatim
+
+At this point you can execute the \c Binary/SimpleApplication exeuctable. It will launch and show
+a blank window. This is because components \c DateEditComponent and \c CalendarComponent are
+not yet available.
+
+\subsubsection gcf_simpleexample_application_6 Logs
+
+GCF has an internal logging engine, through with it logs a lot of information into a log file.
+The logs are generated into a directory called \c Logs under \ref GCF::applicationDataDirectoryPath().
+Everytime your GCF application is launched, a new log file is created. To know more about logging
+please read the class documentation of \ref GCF::Log.
+
+\subsection gcf_simpleexample_calendarcomponent The calendar component project
+
+The calendar component would make available a \c QCalendarWidget content-object that would be
+merged into \c Application.AppWindowComponent.Window.
+
+\subsubsection gcf_simpleexample_calendarcomponent_1 The CalendarComponent class
+
+The \ref CalendarComponent class is defined as follows in \c CalendarComponent.h
+
+\code
+#include <GCF3/GuiComponent>
+
+class CalendarComponent : public GCF::GuiComponent
+{
+    Q_OBJECT
+
+public:
+    CalendarComponent(QObject *parent=0) : GCF::GuiComponent(parent) { }
+
+protected:
+    ~CalendarComponent() { }
+
+    void contentLoadEvent(GCF::ContentLoadEvent *e) {
+        if(e->isPreContentLoad())
+            e->setContentFile(":/CalendarComponent.xml");
+        GCF::GuiComponent::contentLoadEvent(e);
+    }
+
+    QWidget *loadWidget(const QString &name, const QVariantMap &info) {
+        Q_UNUSED(info);
+        if(name == "Calendar")
+            return new QCalendarWidget;
+        return GCF::GuiComponent::loadWidget(name, info);
+    }
+};
+\endcode
+
+The \c CalendarComponent class requests loading of \c :/CalendarComponent.xml settings file
+and offers a \c QCalendarWidget instance against \c "Calendar" name.
+
+We need the component class to be 'exported' from the shared-library. For this we type
+the following code in \c CalendarComponent.cpp
+
+\code
+#include "CalendarComponent.h"
+
+GCF_EXPORT_COMPONENT(CalendarComponent)
+\endcode
+
+Using \ref GCF_EXPORT_COMPONENT will ensure that the component class can be instantiated
+by a GCF Application. The macro basically declares a special "C" function that is used
+by \ref GCF::ApplicationServices::loadComponent() to create an instance of your component.
+
+\sa \ref GCF::GuiComponent
+\sa \ref GCF::Component::contentLoadEvent()
+\sa \ref GCF::GuiComponent::loadWidget()
+
+\subsubsection gcf_simpleexample_calendarcomponent_2 The CalendarComponent.qrc file
+
+\c CalendarComponent::contentLoadEvent() expects the content file to be available in the
+resource file system as \c :/CalendarComponent.xml. For this purpose, create a
+CalendarComponent.qrc with the following contents.
+
+\verbatim
+<RCC>
+    <qresource prefix="/">
+        <file>CalendarComponent.xml</file>
+    </qresource>
+</RCC>
+\endverbatim
+
+\subsubsection gcf_simpleexample_calendarcomponent_3 The CalendarComponent.xml content file
+
+Content file of this component will be as follows
+
+\verbatim
+<content>
+    <object name="Calendar" type="widget" parent="Application.AppWindowComponent.Window" />
+</content>
+\endverbatim
+
+Notice how we make use of the \c type attribute to declare that the content-object is of type
+\c widget. Also notice the use of \c parent attribute to request merging of the \c Calendar
+content-object with \c Application.AppWindowComponent.Window.
+
+\subsubsection gcf_simpleexample_calendarcomponent_4 The CalendarComponent.pro project file
+
+The project file of calendar component will contain the following
+
+\verbatim
+DESTDIR = $$PWD/../Binary/Components
+TEMPLATE = lib
+CONFIG -= app_bundle
+CONFIG += GCFGui3
+
+HEADERS += CalendarComponent.h
+SOURCES += CalendarComponent.cpp
+OTHER_FILES += CalendarComponent.xml
+RESOURCES += CalendarComponent.qrc
+\endverbatim
+
+At this point we have the \c CalendarComponent ready. But we still need the \c DateEdit component
+to complete \c SimpleApplication.
+
+\subsection gcf_simpleexample_dateeditcomponent The date-edit component project
+
+There is not much difference between the calendar-compont and the date-edit component. You start
+off by creating a \c DateEditComponent.h file with the following class definition
+
+\code
+#include <GCF3/GuiComponent>
+
+class DateEditComponent : public GCF::GuiComponent
+{
+    Q_OBJECT
+
+public:
+    DateEditComponent(QObject *parent=0) : GCF::GuiComponent(parent) { }
+
+protected:
+    ~DateEditComponent() { }
+
+    void contentLoadEvent(GCF::ContentLoadEvent *e) {
+        if(e->isPreContentLoad())
+            e->setContentFile(":/DateEditComponent.xml");
+        GCF::GuiComponent::contentLoadEvent(e);
+    }
+
+    QWidget *loadWidget(const QString &name, const QVariantMap &info) {
+        Q_UNUSED(info);
+        if(name == "DateEdit")
+            return new QDateEdit;
+        return GCF::GuiComponent::loadWidget(name, info);
+    }
+};
+\endcode
+
+Next you create a \c DateEditComponent.cpp file to expose the component class
+
+\code
+#include "DateTimeComponent.h"
+GCF_EXPORT_COMPONENT(DateTimeComponent)
+\endcode
+
+Next you create a \c DateEditComponent.qrc resource file as follows
+
+\verbatim
+<RCC>
+    <qresource prefix="/">
+        <file>DateEditComponent.xml</file>
+    </qresource>
+</RCC>
+\endverbatim
+
+Next you create a \c DateEditComponent.xml content file as follows
+
+\verbatim
+<content>
+    <object name="DateTime" type="widget" parent="Application.AppWindowComponent.Window"
+            layoutPosition="0" > <!-- so that the date-time shows at the top -->
+
+        <connection>
+            <sender>clicked(QDate)</sender>
+            <receiver>CalendarComponent.Calendar::setSelectedDate(QDate)</receiver>
+        </connection>
+        <connection>
+            <sender>CalendarComponent.DateEdit::clicked(QDate)</sender>
+            <receiver>setDate(QDate)</receiver>
+        </connection>
+
+    </object>
+</content>
+\endverbatim
+
+Notice the use of \c connection XML elements to install signal/slot connections. Read
+\ref gcf_component_contentfile for more information.
+
+Finally you create \c DateEditComponent.pro project file as follows
+
+\verbatim
+DESTDIR = $$PWD/../Binary/Components
+TEMPLATE = lib
+CONFIG -= app_bundle
+CONFIG += GCFGui3
+
+HEADERS += DateEditComponent.h
+SOURCES += DateEditComponent.cpp
+OTHER_FILES += DateEditComponent.xml
+RESOURCES += DateEditComponent.qrc
+\endverbatim
+
+At this point the directory structure is as follows
+
+\verbatim
+- SimpleApplication
+  - Binary
+    - Components
+  - Application
+    - Application.pro
+    - Application.qrc
+    - AppWindowComponent.h
+    - AppWindowComponent.xml
+    - Main.cpp
+  - CalendarComponent
+    - CalendarComponent.pro
+    - CalendarComponent.h
+    - CalendarComponent.cpp
+    - CalendarComponent.qrc
+    - CalendarComponent.xml
+  - DateEditComponent
+    - DateEditComponent.pro
+    - DateEditComponent.h
+    - DateEditComponent.cpp
+    - DateEditComponent.qrc
+    - DateEditComponent.xml
+\endverbatim
+
+With this your application is now ready to compile. To compile your application run the following
+commands on a terminal (or command prompt).
+
+\verbatim
+$ cd path/to/SimpleApplication
+$ qmake -recursive
+$ make
+\endverbatim
+
+Now launch the \c Binary/SimpleApplication executable and notice the output. You will get a
+window as shown below.
+
+\image html simple_gui.png
+
+Changing date in \c QDateEdit widget changes the date in \c QCalendarWidget and vice versa.
+*/

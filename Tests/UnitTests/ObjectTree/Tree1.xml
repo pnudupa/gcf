@@ -1,0 +1,40 @@
+<Eatables Type="1">
+
+    <Fruits Type="2">
+        <Apple Type="3"/>
+        <Banana Type="3"/>
+        <Jackfruit Type="3"/>
+        <Sapota Type="3"/>
+        <Pineapple Type="3"/>
+    </Fruits>
+
+    <Vegetables Type="2">
+        <Carrot Type="3"/>
+        <Beans Type="3"/>
+        <Cucumber Type="3"/>
+        <Tomato Type="3"/>
+        <Onion Type="3"/>
+    </Vegetables>
+
+    <FoodGrains Type="2">
+        <Rice Type="3"/>
+        <Dhal Type="4"/>
+        <Molake Type="3"/>
+    </FoodGrains>
+
+    <Dishes Type="2">
+        <Pulao Type="2">
+            <Rice Type="3"/>
+            <Beans Type="3"/>
+            <Carrot Type="3"/>
+        </Pulao>
+        <BisiBeleBhath Type="2">
+            <Rice Type="3"/>
+            <Dhal Type="3"/>
+            <Onion Type="3"/>
+            <Tomato Type="5"/>
+            <Beans Type="3"/>
+        </BisiBeleBhath>
+    </Dishes>
+
+</Eatables>

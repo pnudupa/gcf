@@ -1,0 +1,26 @@
+/**
+\defgroup gcf_gui GCF Gui Module
+
+The "GCF Gui Module" extends \ref gcf_core to provide support for QtGui+QtWidgets based
+applications. The module works on both Qt 4.8 and on Qt 5.
+
+It offers a \ref GCF::GuiApplication class that subclasses from \ref GCF::ApplicationServices
+and \c QApplication to offer support for widget objects in your application. And it offers
+a \ref GCF::GuiComponent class that subclasses \ref GCF::Component and implements several
+event hanldler functions to offer GUI friendly features.
+
+To include this module in GCF you can add the following line to your project file
+
+\verbatim
+CONFIG += GCFGui3
+\endverbatim
+
+For this to work, you should have set \c QMAKEFEATURES environment variable to \c $GCFDIR/QMakePRF.
+If you have not configured the \c QMAKEFEATURES, you can enter the following line in your
+project file instead.
+
+\verbatim
+GCF_SOURCE_DIR = /path/to/gcf/source/
+include( $$GCF_SOURCE_DIR/QMakePRF/GCFGui3.prf )
+\endverbatim
+*/

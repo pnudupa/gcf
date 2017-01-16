@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>cancel-download.png</file>
+        <file>ShareWindowQt4.qml</file>
+        <file>ShareWindowQt5.qml</file>
+        <file>unshare.png</file>
+        <file>JobsWindowQt4.qml</file>
+        <file>JobsWindowQt5.qml</file>
+    </qresource>
+</RCC>

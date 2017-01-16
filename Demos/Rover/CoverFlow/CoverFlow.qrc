@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/Content">
+        <file>CoverFlow.xml</file>
+    </qresource>
+    <qresource prefix="/Qml">
+        <file>FolderCoverFlowView.qml</file>
+    </qresource>
+</RCC>

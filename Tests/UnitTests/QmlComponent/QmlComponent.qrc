@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>TestQmlComponent5.qml</file>
+        <file>QmlComponent1.xml</file>
+        <file>QmlComponent2.xml</file>
+        <file>TestQmlComponent1.qml</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,20 @@
+<content>
+
+    <object name="Window1" type="widget" />
+    <object name="Layout1" type="layout:vertical" parent="Window1" />
+
+    <object name="Window2" type="widget" />
+    <object name="Layout2" type="layout:horizontal" parent="Window2" />
+
+    <object name="Window3" type="widget" />
+    <object name="Layout3" type="layout:grid" parent="Window3" />
+
+    <object name="Window4" type="widget" />
+    <object name="Layout4" type="layout:form" parent="Window4" />
+
+    <object name="Window5" type="widget" layout="vertical" />
+    <object name="Window6" type="widget" layout="horizontal" />
+    <object name="Window7" type="widget" layout="grid" />
+    <object name="Window8" type="widget" layout="form" />
+
+</content>

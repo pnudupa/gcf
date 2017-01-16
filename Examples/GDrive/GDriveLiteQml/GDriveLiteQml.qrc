@@ -1,0 +1,38 @@
+<RCC>
+    <qresource prefix="/Qml">
+        <file>AuthenticationWizard.qml</file>
+        <file>DriveExplorer.qml</file>
+        <file>MainWindow.qml</file>
+        <file>ContentBrowser.qml</file>
+        <file>ContentItemProperties.qml</file>
+        <file>JobsWindow.qml</file>
+        <file>OptionButtonsToolBar.qml</file>
+        <file>OptionsButton.qml</file>
+        <file>LineEdit.qml</file>
+        <file>MoveOptionWindow.qml</file>
+        <file>Button.qml</file>
+        <file>SharePermissionPage.qml</file>
+        <file>SharePermissionEditorPage.qml</file>
+        <file>ShareWindow.qml</file>
+        <file>ItemPropertiesEditor.qml</file>
+        <file>QmlMessageBox.qml</file>
+        <file>QmlInputDialog.qml</file>
+        <file>RadioButton.qml</file>
+    </qresource>
+    <qresource prefix="/Icons">
+        <file>icon-404-error.jpg</file>
+        <file>upArrow.jpg</file>
+        <file>cancel-download.png</file>
+        <file>starOff.png</file>
+        <file>starOn.png</file>
+        <file>refresh.png</file>
+        <file>upload.png</file>
+        <file>unshare.png</file>
+        <file>checkBoxOff.png</file>
+        <file>checkBoxOn.png</file>
+        <file>radioButtonOn.png</file>
+        <file>radioButtonOff.png</file>
+        <file>createDirectory.png</file>
+        <file>apply.png</file>
+    </qresource>
+</RCC>

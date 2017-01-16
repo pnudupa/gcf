@@ -1,0 +1,67 @@
+/**
+\mainpage &nbsp;
+\htmlonly
+<div class="header_info">
+<div class="left_col">
+<div>
+<h1>GCF 3 Documentation</h1>
+<p>Generic Component Framework (GCF) - is a Qt based C++ library that empowers developers and organizations to leverage a well-designed component framework for building large applications (on Windows, Linux and Mac) using Qt. With GCF your applications enjoy enhanced maintainability, testability and extensibility.</p>
+<p>&nbsp;</p>
+<p>You are reading documentation for GCF Version 3.0.0</p>
+</div>
+</div>
+<div class="right_col">
+<iframe src="http://gcf.vcreatelogic.com/docs/news.html" frameborder="0" width="100%" height="100%"></iframe>
+</div>
+<div class="clear"></div>
+
+</div>
+<div class="content">
+<a href="gcf_modules.html"><div class="block">
+<span class="module"></span>
+<label>Module  Documentation</label>
+</div>
+</a>
+<a href="gcf_guides_and_videos.html">
+<div class="block">
+<span class="guide"></span>
+<label >Guides and Videos</label>
+</div>
+</a>
+<a href="classes.html"><div class="block">
+<span class="api"></span>
+<label>API Reference</label>
+</div></a>
+<a href="gcf_tools_and_inbuilt_components.html">
+<div class="block">
+<span class="articles"></span>
+<label>Tools, Inbuilt Components</label>
+</div>
+</a>
+<a href="gcf_examples.html">
+<div class="block">
+<span class="examples"></span>
+<label>Examples</label>
+</div>
+</a>
+<a href="gcf_installation.html">
+<div class="block">
+<span class="setup"></span>
+<label>Set Up</label>
+</div>
+</a>
+<a href="http://support.vcreatelogic.com/" target="_blank">
+<div class="block2">
+<span class="support"></span>
+<label>Support Request</label>
+</div>
+</a>
+<div class="clear"></div>
+</div>
+
+</div>
+
+</div>
+\endhtmlonly
+
+*/

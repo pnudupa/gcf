@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/Qml">
+        <file>Main.qml</file>
+        <file>Button.qml</file>
+        <file>ZoomButton.qml</file>
+    </qresource>
+</RCC>

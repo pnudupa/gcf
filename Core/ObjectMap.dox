@@ -1,0 +1,401 @@
+
+/**
+\class GCF::ObjectMapEventListener
+\brief This listens to \ref GCF::ObjectMap 's events.
+\ingroup gcf_core
+
+\htmlonly
+<pre>
+#include &lt;GCF3/ObjectMap&gt;
+</pre>
+\endhtmlonly
+
+When set as event listener on \c GCF::ObjectMap the corresponding virtual
+functions in this class will be called when a object pointer is inserted, removed
+or deleted from the \ref GCF::ObjectMap.
+
+To set this class as event listener of \ref GCF::ObjectMap you need to use the method
+\ref GCF::ObjectMap::setEventListener(GCF::ObjectMapEventListener* listener).
+*/
+
+/**
+\fn GCF::ObjectMapEventListener::ObjectMapEventListener()
+
+Default contructor.
+*/
+
+/**
+\fn GCF::ObjectMapEventListener::~ObjectMapEventListener()
+
+Destructor.
+*/
+
+/**
+\fn GCF::ObjectMapEventListener::listenerType() const
+
+Returns the listener type. By default listener type is
+"GCF::ObjectMapEventListener".
+\return the current listener type
+*/
+
+/**
+\fn GCF::ObjectMapEventListener::objectInserted(QObject *obj)
+
+By default there is no implementation. This function will be called
+when an \c QObject pointer - Value pair is inserted into the listening 
+\ref GCF::ObjectMap.
+\param obj \c QObject pointer - Value pair which was inserted into the
+\ref GCF::ObjectMap.
+*/
+
+/**
+\fn GCF::ObjectMapEventListener::objectRemoved(QObject *obj)
+
+By default there is no implementation. This function will be called
+when an \c QObject  pointer is removed from the \ref GCF::ObjectMap.
+\param obj \c QObject pointer which was removed from the listening 
+\ref GCF::ObjectMap.
+*/
+
+/**
+\fn GCF::ObjectMapEventListener::objectDeleted(QObject *obj)
+
+By default there is no implementation. This function will be called
+when \c QObject pointer inside the listening
+\ref ObjectMap is deleted inside application.
+\param obj \c QObject pointer which got deleted.
+*/
+
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+\class GCF::ObjectMap
+\brief This class manages a map of QObject-value pairs.
+\ingroup gcf_core
+
+\htmlonly
+<pre>
+#include &lt;GCF3/ObjectMap&gt;
+</pre>
+\endhtmlonly
+
+This class can be used as a replacement for \c QMap<QObject*, T>, when you want
+only valid pointers to \c QObject to be stored in the map. This class
+automatically notifies and removes invalid \c QObject - Value pairs, as and
+when the objects are deleted inside the application.
+
+Three types of events can happen on \ref GCF::ObjectMap
+\li A \c QObject pointer - Value pair got added to the map.
+\li A \c QObject pointer - Value got removed from the map.
+\li A \c QObject pointer in the map, got deleted
+
+You can listen to this by setting an \ref GCF::ObjectMapEventListener using
+\ref setEventListener(ObjectMapEventListener *listener) method. When a new
+\ref QObject pointer - Value pair is inserted to/removed from the \c ObjectMap,
+\c ObjectMapEventListener will notify it.
+
+If you want to have several listeners receive event notifications on an object
+map, then you can install a \ref GCF::ObjectMapEventBroadcaster on the object
+map and register all event listeners with the broadcaster.
+*/
+
+/**
+\fn GCF::ObjectMap::ObjectMap()
+
+Default constructor.
+*/
+
+/**
+\fn GCF::ObjectMap::ObjectMap(const ObjectMap &other)
+
+Copy constructor. ObjectMap does not copy the GCF::ObjectMapEventListener that
+is currently set on the other \ref GCF::ObjectMap.
+
+\param other \ref ObjectMap from which objects-value pairs will be copied.
+*/
+
+/**
+\fn GCF::ObjectMap::ObjectMap(const QMap<QObject*,T>& map)
+
+Copies the QObject-value pairs from QMap<QObject*,T> map to this.
+*/
+
+/**
+\fn GCF::ObjectMap::~ObjectMap()
+
+Destructor.
+*/
+
+/**
+\fn GCF::ObjectMap::setEventListener(ObjectMapEventListener *listener)
+
+Sets event listener on this. If there was a already an event listener
+set then it will be replaced with the new one.
+
+\param listener the \ref GCF::ObjectMapEventListener which needs to be set as
+event listener.
+*/
+
+/**
+\fn GCF::ObjectMap::eventListener() const
+
+\return currently set event listener on this.
+*/
+
+/**
+\fn GCF::ObjectMap::operator = (const ObjectMap &other)
+
+Overloaded equal to operator. It copies everything from \ref GCF::ObjectMap
+except the GCF::ObjectMapEventListener that is currently set on \c other
+\ref GCF::ObjectMap.
+
+\param other \ref ObjectMap from which objects-value pairs will be copied.
+*/
+
+/**
+\fn GCF::ObjectMap::insert(QObject *object, const T &value)
+
+Inserts the \c QObject pointer - Value pair into the map.
+
+\param object \c QObject pointer which needs to be inserted into the map.
+\param value template class value which needs to be inserted into the map
+against object pointer 'object'.
+*/
+
+/**
+\fn GCF::ObjectMap::remove(QObject *object)
+
+Removes the \c QObject pointer - Value pair from the map.
+
+\param object \c QObject pointer which needs to be removed from the map.
+*/
+
+/**
+\fn GCF::ObjectMap::operator [] (QObject *object)
+
+Returns reference to the value for \c QObject pointer existing
+in the map. You have to make sure that the object exists in the map before
+calling this function.
+
+\param object \c QObject pointer for which reference to value needs to be
+returned from the map.
+\return reference to the value.
+*/
+
+/**
+\fn GCF::ObjectMap::operator [] (QObject *object) const
+
+Returns a constant reference to the value for \c QObject pointer existing
+in the map. You have to make sure that the object exists in the map before
+calling this function.
+
+\param object \c QObject pointer for which const reference value needs to be
+returned from the map.
+\return const reference to the value.
+*/
+
+/**
+\fn GCF::ObjectMap::count() const
+
+\return the map object count.
+
+*/
+
+/**
+\fn GCF::ObjectMap::isEmpty() const
+
+\return true whether the map is empty otherwise false.
+*/
+
+/**
+\fn GCF::ObjectMap::contains(QObject *object) const
+
+\return true if the map contains the object otherwise false.
+
+*/
+
+/**
+\fn GCF::ObjectMap::value(QObject *object, const T &defVal=T()) const
+
+Returns a copy of the value stored against the \c QObject pointer \c object
+in the map otherwise returns the default value \c defVal.
+
+\return value corresponding to \c object in map if it exists otherwise returns
+default value.
+*/
+
+/**
+\fn GCF::ObjectMap::keys() const
+
+Returns keys of map. Since \ref GCF::ObjectMap stores \c QObject pointer versus
+value, keys() will return \c QObjectList.
+
+\return \c QObjectList of all the object pointers stored as keys.
+*/
+
+/**
+\fn GCF::ObjectMap::values() const
+
+Returns values of map. Since \ref GCF::ObjectMap stores \c QObject pointer
+versus Template class value, value() will return \c QList<T>.
+
+\return \c QList<T> of values stored as key-value pair.
+*/
+
+/**
+\fn GCF::ObjectMap::toMap() const
+
+\return stored \c QObject pointer - Value pairs as QMap<QObject*,T>.
+*/
+
+/**
+\fn GCF::ObjectMap::map() const
+
+\return constant reference to \c QObject pointer - Value map.
+*/
+
+/**
+\fn GCF::ObjectMap::removeAll()
+
+Removes all \c QObject pointer - Value stored in this map.
+*/
+
+/**
+\fn GCF::ObjectMap::deleteAll()
+
+Deletes all \c QObject pointer stored in this map and removes the value stored
+in this map.
+*/
+
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+\class GCF::ObjectMapEventBroadcaster
+\brief ObjectMapEventBroadcaster broadcasts inserted, removed and deleted events
+of \ref ObjectMap.
+\ingroup gcf_core
+
+\htmlonly
+<pre>
+#include &lt;GCF3/ObjectMap&gt;
+</pre>
+\endhtmlonly
+
+ObjectMapEventBroadcaster broadcasts inserted, removed and deleted events of
+\ref ObjectMap to all the \ref GCF::ObjectMapEventListener s added to it.
+You can add or remove a \ref GCF::ObjectMapEventListener
+to this using \ref addListener(ObjectMapEventListener *listener) or
+\ref removeListener(ObjectMapEventListener *listener) functions.
+
+This class inherits from \ref GCF::ObjectMapEventListener. To sent notifications
+to GCF::ObjectMapEventListeners added to this; you first need to set
+event broadcaster as \ref GCF::ObjectMapEventListener of the \ref GCF::ObjectMap.
+*/
+
+/**
+\fn GCF::ObjectMapEventBroadcaster::addListener(ObjectMapEventListener
+*listener)
+
+Adds the \ref GCF::ObjectMapEventListener to the broadcast list. From this
+onwards the added event listener will also get notifications for events on
+currently listening \ref GCF::ObjectMap.
+\param listener \ref GCF::ObjectMapEventListener that needs to be added
+to the broadcast list.
+*/
+
+/**
+\fn GCF::ObjectMapEventBroadcaster::removeListener(ObjectMapEventListener
+*listener)
+
+Removes the \ref GCF::ObjectMapEventListener from the broadcast list.
+\param listener \ref GCF::ObjectMapEventListener that needs to be removed
+ from the broadcast list.
+*/
+
+/**
+\fn GCF::ObjectMapEventBroadcaster::removeAllListeners()
+
+Removes all \ref ObjectMapEventListener's from the broadcast list.
+*/
+
+/**
+\fn GCF::ObjectMapEventBroadcaster::listenerAt(int index) const
+
+Returns the \ref GCF::ObjectMapEventListener at the specified index.
+\param index index of which \ref GCF::ObjectMapEventListener needs to be
+returned.
+\return \ref ObjectMapEventListener at the specified index.
+*/
+
+/**
+\fn GCF::ObjectMapEventBroadcaster::listenerType() const
+
+Returns the listener type of this class. Default listener type is
+"GCF::ObjectMapEventBroadcaster".
+\return listener type string.
+*/
+
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+\class GCF::ObjectMapWatcher
+\brief This watches over \ref GCF::ObjectMap to emit signals when the
+objects are inserted, removed or deleted from \ref GCF::ObjectMap.
+
+\ingroup gcf_core
+
+\htmlonly
+<pre>
+#include &lt;GCF3/ObjectMap&gt;
+</pre>
+\endhtmlonly
+
+You can set this to watch over a \ref GCF::ObjectMap by using
+\ref GCF::ObjectMapWatcher::watch(ObjectMap &list) method.
+
+Only one watcher can watch over \ref GCF::ObjectMap at a time.If there is
+already a watcher watching that ObjectMap when a new one is set, then
+it will be replaced with the new one.
+*/
+
+/**
+\fn GCF::ObjectMapWatcher::ObjectMapWatcher()
+
+Default constructor.
+*/
+
+/**
+\fn GCF::ObjectMapWatcher::~ObjectMapWatcher()
+
+Destructor.
+*/
+
+/**
+\fn GCF::ObjectMapWatcher::watch(ObjectMap &list)
+
+Sets the \ref GCF::ObjectMap to watch. If there is already a watcher watching that
+ObjectMap, then it will be replaced with this.
+*/
+
+/**
+\fn GCF::ObjectMapWatcher::objectInserted(QObject *obj)
+
+This signal will be emitted when a \c QObject is added to the watching 
+\ref GCF::ObjectMap.
+\param obj \c QObject pointer added.
+*/
+
+/**
+\fn GCF::ObjectMapWatcher::objectRemoved(QObject *obj)
+This signal will be emitted when a \c QObject is removed from the
+watching \ref GCF::ObjectMap.
+\param obj \c QObject pointer removed.
+*/
+
+/**
+\fn GCF::ObjectMapWatcher::objectDeleted(QObject *obj)
+This signal will be emitted when \c QObject inside
+watching \ref ObjectMap is deleted from anywhere inside application.
+\param obj \c QObject pointer deleted.
+*/
+

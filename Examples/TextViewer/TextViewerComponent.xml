@@ -1,0 +1,46 @@
+<content>
+    <object name="Window" type="widget" windowTitle="Text Viewer" layout="horizontal">
+        <property>
+            <key>minimumWidth</key>
+            <value>800</value>
+        </property>
+        <property>
+            <key>minimumHeight</key>
+            <value>600</value>
+        </property>
+    </object>
+
+    <object name="TextEdit" type="widget" parent="Window" />
+
+    <object name="MenuBar" type="menubar" parent="Window" />
+    <object name="EditMenu" type="menu" parent="MenuBar" title="Edit"/>
+
+    <object name="CutAction" type="action" parent="EditMenu" text="Cut">
+        <connection>
+            <sender>triggered(bool)</sender>
+            <receiver>TextEdit::cut()</receiver>
+        </connection>
+    </object>
+
+    <object name="CopyAction" type="action" parent="EditMenu" text="Copy">
+        <connection>
+            <sender>triggered(bool)</sender>
+            <receiver>TextEdit::copy()</receiver>
+        </connection>
+    </object>
+
+    <object name="PasteAction" type="action" parent="EditMenu" text="Paste">
+        <connection>
+            <sender>triggered(bool)</sender>
+            <receiver>TextEdit::paste()</receiver>
+        </connection>
+    </object>
+
+    <object name="ClearAction" type="action" parent="EditMenu" text="Clear All">
+        <connection>
+            <sender>triggered(bool)</sender>
+            <receiver>TextEdit::clear()</receiver>
+        </connection>
+    </object>
+
+</content>

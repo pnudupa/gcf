@@ -1,0 +1,13 @@
+/**
+\page gcf_tools_and_inbuilt_components Tools, Inbuilt Components
+
+GCF 3.0.0 comes with the following tools
+
+\li \ref gcf_fiber - A tool for hosting GCF components, to allow access to them like web-services.
+\li \ref gcf_investigator - A tool to help automate UI testing
+
+With GCF 3.0.0, the following inbuilt components are bundled
+
+\li \ref gcf_gdrivelite
+
+*/

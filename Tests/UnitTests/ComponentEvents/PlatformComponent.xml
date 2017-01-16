@@ -1,0 +1,8 @@
+<content>
+
+    <object name="workspace" />
+    <object name="leftDockArea" />
+    <object name="rightDockArea" />
+    <object name="bottomDockArea" />
+
+</content>

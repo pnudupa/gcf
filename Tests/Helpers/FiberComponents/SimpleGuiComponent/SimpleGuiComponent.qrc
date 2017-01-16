@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/Content">
+        <file>SimpleGuiComponent.xml</file>
+    </qresource>
+</RCC>

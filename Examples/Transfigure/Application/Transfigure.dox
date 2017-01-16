@@ -1,0 +1,63 @@
+/**
+\page gcf_transfigure Transfigure Example
+
+This program showcases the use of GCFQuick3 module to build component based QML applications.
+Transfigure is an application using which you can load images, apply one or more effect
+filters on it and preview the filtered image. The whole point of this application is to
+showcase the use of GCFQuick3 module and the usage of GCF's component-architecture in a
+QML application.
+
+This page does not explain the source code of the example. We encourage you to study the
+source code to get a sense of how GCFQuick3 module can be leveraged in your applications.
+
+\tableofcontents
+
+\section gcf_transfigure_1 Launching Transfigure
+
+Launch the Transfigure application from the \c $GCFDIR/Binary/Examples folder. You will notice
+a window as shown below.
+
+\image html transfigure.png
+
+You can click on the \b Open button to select an image file and view it.
+
+\image html transfigure1.png
+
+The +, o and - buttons help you to zoom in and out of the image. You can click and drag the
+image to pan. Apart from basic viewing, you cannot do anything more with the image.
+
+\section gcf_transfigure_1 Launching Transfigure - with filters
+
+If you look at the $GCFDIR/Binary/Examples folder you will find the following
+
+\verbatim
+./Transfigure
+./TransfigureComponents
+./TransfigureComponents/libAdvancedFilters.dylib
+./TransfigureComponents/libBasicFilters.dylib
+\endverbatim
+
+A folder called \c TransfigureComponents contains two GCF components: AdvancedFilters
+and BasicFilters. You can load those components using the \c --loadComponents: command-line
+argument as follows.
+
+\verbatim
+$ cd $GCFDIR/Binary/Examples
+$ ./Transfigure --loadComponents:TransfigureComponents/BasicFilters,TransfigureComponents/AdvancedFilters
+\endverbatim
+
+When launched this way, you will now notice a long list of filters on the right panel.
+
+\image html transfigure2.png
+
+\note The Transfigure example chooses to load components only in response to the
+\c --loadComponents: command-line argument. While writing your GCF applications you can
+invent any other way of your choice.
+
+\section gcf_transfigure_2 Applying image filters
+
+After loading an image file you can click on any of the filter buttons to apply the
+image filter. Shown below is the result of applying "Pencil 1" filter on an image.
+
+\image html transfigure3.png
+*/

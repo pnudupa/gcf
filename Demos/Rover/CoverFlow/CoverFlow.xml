@@ -1,0 +1,5 @@
+<content>
+
+    <object name="coverFlowView" parent="Application.RoverApp.contentItemModel" title="Cover Flow" />
+
+</content>

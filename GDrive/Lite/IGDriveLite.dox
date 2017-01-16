@@ -1,0 +1,248 @@
+/**
+\class GCF::IGDriveLite
+\brief This interface gives access to all GDriveLite component functionalities.
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF3/IGDriveLite&gt;
+</pre>
+\endhtmlonly
+
+There will be only one instance of \c GDriveLite per GDrive component
+and it will handle only information about one active account.
+All google drive(GDrive) functionality access for that account will be
+provided through this interface.
+
+Once logged in using the \ref GCF::IGDriveLiteAuthenticator , this class will
+automatically refresh the token for accessing google drive till the end
+of application lifetime.
+
+\sa \ref gcf_gdrivelite_1, \ref gcf_gdrivelite_2
+*/
+
+/**
+\fn GCF::IGDriveLite::authenticator() const;
+Returns the \ref GCF::IGDriveLiteAuthenticator which can authenticate user and
+fetch the access token for further GDrive API access.
+
+\return \ref GCF::IGDriveLiteAuthenticator for authentication.
+*/
+
+/**
+\fn GCF::IGDriveLite::isAuthenticated() const
+
+\return whether the user has authenticated using
+\ref GCF::IGDriveLiteAuthenticator or not.
+*/
+
+/**
+\fn GCF::IGDriveLite::authenticatedUser() const
+
+\return the current authenticated user information.
+*/
+
+/**
+\fn GCF::IGDriveLite::accessToken() const
+
+\return current access token obtained using \ref GCF::IGDriveLiteAuthenticator.
+*/
+
+/**
+\fn GCF::IGDriveLite::refreshToken() const
+
+Returns the refresh token obtained while authentication. The refresh
+token is used to get new access tokens when the old ones expire.
+\return access token string.
+*/
+
+/**
+\fn GCF::IGDriveLite::errorMessage() const
+
+\return the error occurred while authenticating.
+*/
+
+/**
+\fn GCF::IGDriveLite::contentModel() const
+
+\return \ref GCF::IGDriveLiteContentModel.
+*/
+
+/**
+\fn GCF::IGDriveLite::createFileDownloader(const QString &id)
+
+Returns file downloader for provided GDrive file id \c id . If downloader already
+exists then returns it otherwise creates a new downloader and returns it.
+GDrive file id is the id assigned by google drive every time when a file is
+created or uploaded to the drive.
+
+It is caller's responsibility to delete the downloader after usage.
+For more details about file downloader refer
+\ref GCF::IGDriveLiteFileDownloader
+
+\return \ref GCF::IGDriveLiteFileDownloader which can download file with id \c id.
+*/
+
+/**
+\fn GCF::IGDriveLite::createFileDownloader(const GCF::GDriveContent::Item &item)
+
+This is an overloaded function which will take
+\ref GCF::GDriveContent::Item as parameter and create file downloader for the
+item.
+
+\return \ref GCF::IGDriveLiteFileDownloader which can download file with id \c id.
+*/
+
+/**
+\fn GCF::IGDriveLite::downloaders() const
+
+Returns the instance of \ref GCF::IGDriveLiteFileDownloaderListModel. There will be
+only one instance of GCF::IGDriveLiteFileDownloaderListModel per GDriveCompoent.
+Caller should not delete downloader model. For more details about downloader model refer
+\ref GCF::IGDriveLiteFileDownloaderListModel.
+
+\return \ref GCF::IGDriveLiteFileDownloaderListModel.
+*/
+
+/**
+\fn GCF::IGDriveLite::createFileUploader(const QString &localFileName)
+
+Returns file uploader for file 'localFileName' if already exists,
+otherwise will create a new file uploader and returns. It is caller's
+responsibility to delete the uploader after usage.For more details
+about uploader refer to \ref GCF::IGDriveLiteUploaderModel.
+
+\param localFileName full path of file with filename.
+*/
+
+/**
+\fn GCF::IGDriveLite::uploaders() const
+
+Returns the instance of GCF::IGDriveLiteFileUploaderListModel. There will be
+only one instance of GCF::IGDriveLiteFileUploaderListModel in GDriveCompoent.
+Caller should not delete the downloader model.
+For more detatils about uploader model refer
+\ref GCF::IGDriveLiteFileDownloaderListModel.
+
+\return \ref GCF::IGDriveLiteFileDownloaderListModel.
+*/
+
+/**
+\fn GCF::IGDriveLite::authenticationChanged()
+
+This signal will be emitted when the user login or logout using
+\ref GCF::IGDriveLiteAuthenticator
+*/
+
+/**
+\fn GCF::IGDriveLite::authenticatedUserChanged()
+
+This signal will be emitted when the user login or logout using
+\ref GCF::IGDriveLiteAuthenticator and the user information is updated.
+*/
+
+/**
+\fn GCF::IGDriveLite::createSharingModel(const QString &itemId) const
+
+Returns sharing model for the specified GDrive item id \c itemId if exists otherwise
+creates a sharing model for the specified GDrive item id and returns it.
+
+\param itemId GDrive item Id of the item that needs to be shared.
+*/
+
+/**
+\fn GCF::IGDriveLite::trash(const QString &itemId)
+
+Trashes GDrive item.
+
+\param itemId GDrive item Id of the item that needs to be trashed.
+\return \ref GCF::Result containing success or failure with error message if
+any.
+*/
+
+/**
+\fn GCF::IGDriveLite::deletePermanently(const QString &itemId)
+
+Deletes a GDrive item permanently without transferring it to trash.
+If item is a folder then all the files and folders inside will also be deleted
+permanently. You cannot retrieve the files after deleting using this method.
+
+\param itemId GDrive item Id of the item that needs to be deleted.
+\return \ref GCF::Result containing success or failure with error message if
+any.
+*/
+
+/**
+\fn GCF::IGDriveLite::restore(const QString &itemId)
+
+Restores a GDrive item if the item is already trashed. Item will be restored
+to the folder where it existed previously.
+
+\param itemId GDrive item Id of the item that needs to be restored.
+\return \ref GCF::Result containing success or failure with error message if
+any.
+*/
+
+/**
+\fn GCF::IGDriveLite::rename(const QString &itemId, const QString &newName)
+
+Renames the item with GDrive item id 'itemId' to newName.
+
+\param itemId GDrive item Id of the item that needs to be renamed.
+\return \ref GCF::Result containing success or failure with error message if
+any.
+*/
+
+/**
+\fn GCF::IGDriveLite::describe(const QString &itemId, const QString &description)
+
+Changes the description of the item with GDrive item id 'itemId' to description.
+
+\param itemId GDrive item Id of the item that needs to be described.
+\param description new description that needs to be set.
+\return \ref GCF::Result containing success or failure with error message if
+any.
+*/
+
+/**
+\fn GCF::IGDriveLite::move(const QString &itemId, const QString &folderId=QString())
+
+Moves the item with GDrive item id 'itemId' to the folder with folder id
+'folderId'.
+
+\param itemId GDrive item Id of the item that needs to be moved.
+\param folderId GDrive item Id of the folder to which item needs to be moved.
+\return \ref GCF::Result containing success or failure with error message if
+any.
+*/
+
+/**
+\fn GCF::IGDriveLite::star(const QString &itemId)
+
+Stars the item with GDrive item id 'itemId'.
+
+\param itemId GDrive item Id of the item that needs to be starred.
+\return \ref GCF::Result containing success or failure with error message if
+any.
+*/
+
+/**
+\fn GCF::IGDriveLite::unstar(const QString &itemId)
+
+Unstars the item with GDrive item id 'itemId' if it is starred.
+
+\param itemId GDrive item Id of the item that needs to be unstarred.
+\return \ref GCF::Result containing success or failure with error message if
+any.
+*/
+
+/**
+\fn GCF::IGDriveLite::mkdir(const QString &folderName, const QString &parentId=QString())
+
+Creates a folder with name 'folderName' inside parent folder 'parentId'.
+
+\param parentId GDrive item Id of the folder item inside which folder needs
+to be created.
+\return \ref GCF::Result containing success or failure with error message if
+any.
+*/

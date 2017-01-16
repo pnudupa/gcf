@@ -1,0 +1,7 @@
+<content>
+
+    <object name="treeView" parent="PlatformComponent.leftDockArea" />
+    <object name="hierarchy" parent="Application.PlatformComponent.rightDockArea" />
+    <object name="editorArea" parent="Application.invalidParentName" />
+
+</content>

@@ -1,0 +1,34 @@
+/**
+\page gcf_tictactoe TicTacToe - Example application for GCF's IPC module.
+
+TicTacToe is a simple game application which showcases the usage of IPC module.
+This page explains how to run the example and play the game.
+
+\tableofcontents
+
+\section gcf_tictactoe_0 Launching TicTacToe
+Launching TicTacToe is very simple. Open the example in the QtCreator and run
+the application otherwise go to \c Binary/Demos folder inside \c GCF3 and then
+run the application.
+
+\note Before running the application please make sure that the \c GCF3/Binary
+is in your path variable.
+
+\section gcf_tictactoe_1 Playing the game.
+
+To play the game you need to open two instances of this application.
+You can launch the applications
+
+\li on same computer.
+\li or on different computers within the same LAN.
+
+Once both has been started, they figureout each other using IPC calls and both
+of the application becomes enabled. Now any of the user can start the game by
+clicking on the cell inside the application. Once a user marks his choice the
+same is shown in the other user's game window as marked by the opponent. Player
+turns comes alternatively and a user wins if 3 of his marks comes on the
+same row, column or in diagonal.
+
+\image html tic_tac_toe.png
+
+*/

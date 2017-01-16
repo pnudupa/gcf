@@ -1,0 +1,49 @@
+/**
+\class GCF::IGDriveLiteFileUploader
+\brief An interface to upload a file into google-drive
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF3/IGDriveLiteFileUploader&gt;
+</pre>
+\endhtmlonly
+
+Instances of objects that implement this interface are created using
+\ref GCF::IGDriveLite::createFileUploader()
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploader::~IGDriveLiteFileUploader()
+Destructor.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploader::setUploadFolderId(const QString &uploadFolderId)
+Sets the upload folder Id of folder inside which the file will be uploaded.
+\param uploadFolderId id of folder
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploader::uploadFolderId()
+Returns upload folder id of folder inside which the file will be uploaded.
+
+\return \c QString upload folder id.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploader::uploadFileName()
+Name of the file which is going to be uploaded.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploader::uploadedItem() const
+Returns the item for the file that has been recently uploaded by the uploader.
+If no file has been uploaded then returns an invalid item.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileUploader::uploadProgressChanged(int val)
+
+This signal is emitted when the upload progress is changed.
+*/

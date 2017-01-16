@@ -1,0 +1,24 @@
+<content>
+
+    <!-- The following should pass -->
+    <object name="object2" type="qml" url="TestQmlComponent2.qml" />
+    <object name="object3" type="qml"
+            url="../../../Tests/UnitTests/QmlComponent/TestQmlComponent3.qml" />
+    <object name="object4" type="qml"
+            url="http://code.vcreatelogic.com/TestQmlComponent4.qml" />
+    <object name="object5" type="qml"
+            url="qrc:///TestQmlComponent5.qml" />
+
+    <!-- The following should fail -->
+
+    <!-- file not found -->
+    <object name="object1" type="qml" url="TestQmlComponent1.qml" />
+    <object name="object6" type="qml" url="qrc:///TestQmlComponent25.qml" />
+    <object name="object7" type="qml" url="../../Tests/Sample.qml" />
+    <object name="object8" type="qml" url="C:/Sample.qml" />
+    <object name="object9" type="qml" url="/Sample.qml" />
+
+    <!-- scheme not supported -->
+    <object name="object10" type="qml" url="jaggesh:///wow.qml" />
+
+</content>

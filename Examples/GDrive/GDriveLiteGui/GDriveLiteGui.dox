@@ -1,0 +1,105 @@
+/**
+\page gcf_gdrivelitegui GDriveLiteGui - Example application for GCF's GDriveLite
+
+The GDriveLiteGui example showcases the capacity of \ref gcf_gdrivelite when used
+within a GUI (or widgets) application. The \ref gcf_gdriveliteqml "GDriveLiteQml" example
+shows how the \ref gcf_gdrivelite component can be used in a QML application.
+
+This page explains how to run the example and use the different kinds of functionality
+offered by it. It does not explain the source code and implementation of the example
+program.
+
+We encourage you to take a look the source code of the example program and get a
+sense of how the \ref gcf_gdrivelite "API" is used in it. This will help you with
+using \ref gcf_gdrivelite "API" in your programs as well.
+
+\tableofcontents
+
+\section gcf_gdrivelitegui_0 Launching GDriveLiteGui
+
+To launch the program you will need to pass the \c --clientID and \c --clientSecret commandline
+parameters. The values passed to these parameters can be obtained from your
+\ref gcf_gdrivelite_0 "Google API Console".
+
+Start terminal (or command-prompt) and launch the GDriveLiteGui example from the command-line
+as follows
+
+\htmlonly
+<pre style="background: #000000">
+<font color="white">$ ./GDriveLiteGui --clientID:78399023134.apps.googleusercontent.com --clientSecret:QiA5B6kXo0gNWcn-6UKpggsJ</font>
+</pre>
+\endhtmlonly
+
+When the application is launched, you should see a login dialog as shown in the picture below.
+
+\image html gdrive/gdrivelitegui1.png
+
+In this dialog, you can enter your login credentials. [Note: You can enter login credentials
+of any Google Account, not just the account using which you registered the application in
+\ref gcf_gdrivelite_0 "Google API Console".] After login in, you will need to accept authorization
+for the GDriveLiteGui application. Once that is done, you will see a main-window as follows
+
+\image html gdrive/gdrivelitegui2.png
+
+On the left hand side you will notice a tree view. This view sources its data from
+\ref GCF::IGDriveLiteContentModel. The list/icon view on the top-half of the central area also
+sources its data from \ref GCF::IGDriveLiteContentModel. The bottom-half of the central area
+shows all attributes provided by Google Drive SDK against the selected item. Thumbnail of the
+selected item is shown towards the top-right. A user-pic of the selected file is shown right below it.
+
+\section gcf_gdrivelitegui_1 Uploading files
+
+To upload a file, select any folder in "My Drive" and right click on it. From the list of
+options select Upload.
+
+\image html gdrive/gdrivelitegui3.png
+
+From the file-dialog box, shown next, select the file you want to upload. GDriveLiteGui will
+start uploading the file.
+
+\image html gdrive/gdrivelitegui4.png
+
+This workflow demonstrates the use of \ref GCF::IGDriveLiteFileUploader and
+\ref GCF::IGDriveLiteFileUploaderList (or more specifically its base class \ref GCF::JobListModel)
+
+\section gcf_gdrivelitegui_2 Downloading files
+
+To download a file, select any file in "My Drive" and right click on it. From the list of
+options select Download. Choose a directory on your computer where you want to download the
+file. GDriveLiteGui will download the file into that directory.
+
+This workflow demonstrates the use of \ref GCF::IGDriveLiteFileDownloader and
+\ref GCF::IGDriveLiteFileDownloaderList (or more specifically its base class \ref GCF::JobListModel)
+
+\section gcf_gdrivelitegui_3 Sharing/Unsharing files and folders
+
+To share a file/folder; select an item in the tree-view on the left (within My Drive). Right
+click and select Share. This launches the sharing dialog box. This dialog-box shows all
+sharing permissions currently set on the file.
+
+\image html gdrive/sharing-model-qml.png
+
+Click on the "+" item (marked in blue) to add sharing permissions. This will launch another
+dialog box where you can enter the email-id of the person you want to share the file with. Once
+you click "Ok" on that dialog box, the share permissions gets added to the list.
+
+To remove sharing permissions, simply click on the "x" button on any of the share permission
+items.
+
+This workflow demonstrates the use of \ref GCF::IGDriveLiteContentSharingModel
+
+\section gcf_gdrivelitegui_4 Other options
+
+Context menu on an item in the tree view shows other options as well. The following list
+explains each of them.
+
+\li Rename - allows you to rename a file/folder [\ref GCF::IGDriveLite::rename()]
+\li Describe - allows you to describe a file/folder [\ref GCF::IGDriveLite::describe()]
+\li Star/Unstar - allows you to flag a file/folder with a star or remove the star
+[\ref GCF::IGDriveLite::star(), \ref GCF::IGDriveLite::unstar()]
+\li Move - allows you to move a file/folder to another folder [\ref GCF::IGDriveLite::move()]
+\li Create directory - allows you to create a new directory [\ref GCF::IGDriveLite::mkdir()]
+\li Trash/Untrash/Delete permanently - allows you to support trash, untrash and delete fully
+workflows [\ref GCF::IGDriveLite::trash(), \ref GCF::IGDriveLite::restore() and
+\ref GCF::IGDriveLite::deletePermanently()]
+*/

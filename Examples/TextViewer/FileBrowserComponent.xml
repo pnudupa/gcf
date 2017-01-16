@@ -1,0 +1,13 @@
+<content>
+    <object name="FileBrowser" type="widget" parent="TextViewerComponent.Window"
+            layoutPosition="0,0">
+        <property>
+            <key>maximumWidth</key>
+            <value>300</value>
+        </property>
+        <connection>
+            <sender>FileBrowserComponent::fileDoubleClicked(QString)</sender>
+            <receiver>TextViewerComponent::openFile(QString)</receiver>
+        </connection>
+    </object>
+</content>

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/ObjectTrees">
+        <file>Tree1.xml</file>
+    </qresource>
+</RCC>

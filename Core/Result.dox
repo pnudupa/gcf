@@ -1,0 +1,141 @@
+/**
+\class GCF::Result GCFGlobal.h <GCF3/GCFGlobal>
+\brief This class allows representation of the result of a process and/or function
+\ingroup gcf_core
+
+
+This class can be used to capture in one object the following
+\li success/failure flag
+\li error code and error message in case of failure
+\li data in case of success
+
+This class can be used as a return data-type in almost any function, specially functions
+that return true/false. The benefit of using this class in such a function is that you
+can return a error code+message incase of failure and concrete result in case of success.
+
+Example:
+\code
+GCF::Result divide(const double a, const double b)
+{
+    if(b == 0)
+        return GCF::Result(false, "DIV_BY_ZERO", "b is ZERO");
+
+    const double retVal = a/b;
+    return GCF::Result(true, QString(), QString(), retVal);
+}
+\endcode
+
+This would allow the caller of your method to get a sense of what went wrong, incase of
+an error.
+
+Example:
+\code
+GCF::Result result = ::divide(20, 0);
+if(!result)
+    QMessageBox::information(..., "Error", result.message());
+else
+    ....
+\endcode
+*/
+
+/**
+\fn GCF::Result::Result()
+
+Default constructor. Constructs result with success-flag as false.
+*/
+
+/**
+\fn GCF::Result::Result(bool val)
+
+Constructs result with success-flag as \c val.
+
+@param val success-flag of the result
+*/
+
+/**
+\fn GCF::Result::Result(bool val, const QString &code, const QString &msg=QString(), const QVariant &data=QVariant())
+
+Constructs a result from the given parameters
+
+@param val success-flag of the result
+@param code erorr-code of the result
+@param msg error-message of the result
+@param data data (or result) of the result
+*/
+
+/**
+\fn GCF::Result::Result(const Result &other)
+
+Copy constructor
+*/
+
+/**
+\fn bool GCF::Result::isSuccess() const
+
+\return success-flag of the result
+*/
+
+/**
+\fn QString GCF::Result::code() const
+
+\return error code of the result, if \ref isSuccess() returns false. Empty string otherwise.
+*/
+
+/**
+\fn QString GCF::Result::message() const
+
+\return error message of the result, if \ref isSuccess() returns false. Empty string otherwise.
+*/
+
+/**
+\fn QVariant GCF::Result::data() const
+
+\return data of the result, if \ref isSuccess() return true. Invalid \c QVariant otherwise.
+*/
+
+/**
+\fn operator GCF::Result::bool() const
+
+Same as \ref isSuccess().
+
+\return success-flag of the result
+*/
+
+/**
+\fn GCF::Result &GCF::Result::operator = (const Result &other)
+
+Assignment operator
+*/
+
+/**
+\fn GCF::Result &GCF::Result::operator = (bool val)
+
+Assignment operator
+*/
+
+/**
+\fn bool GCF::Result::operator == (const Result &other) const
+
+Comparison operator
+*/
+
+/**
+\fn bool GCF::Result::operator == (bool val) const
+
+Comparison operator
+*/
+
+/**
+\fn QString GCF::Result::toString() const
+
+\return a string representation of the result.
+
+\note \c operator<< on \c QDebug has been overloaded to print into debug output string
+representations of \ref GCF::Result. So you can stream this object into \c qDebug(). Example:
+\code
+GCF::Result result = ...
+qDebug() << result;
+\endcode
+*/
+
+

@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/Content">
+        <file>RoverApp.xml</file>
+    </qresource>
+    <qresource prefix="/Qml">
+        <file>ContentView.qml</file>
+        <file>FolderListView.qml</file>
+        <file>FolderGridView.qml</file>
+    </qresource>
+    <qresource prefix="/Images">
+        <file>FolderIcon.png</file>
+        <file>FileIcon.png</file>
+    </qresource>
+</RCC>

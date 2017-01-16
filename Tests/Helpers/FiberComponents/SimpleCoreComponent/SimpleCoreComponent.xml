@@ -1,0 +1,6 @@
+<content>
+
+    <object name="Core" />
+    <object name="TestService" />
+
+</content>

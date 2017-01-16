@@ -1,0 +1,16 @@
+<content>
+
+    <object name="window">
+        <property>
+            <key>windowTitle</key>
+            <value>Rover - a simple file/folder browser</value>
+        </property>
+    </object>
+
+    <object name="contentViewQmlEngine" />
+
+    <object name="contentItemModel" />
+    <object name="listView" parent="contentItemModel" title="List" />
+    <object name="gridView" parent="contentItemModel" title="Grid" />
+
+</content>

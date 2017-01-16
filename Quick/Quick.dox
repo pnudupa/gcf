@@ -1,0 +1,27 @@
+/**
+\defgroup gcf_quick GCF Quick Module
+
+The "GCF Quick Module" extends \ref gcf_core to provide support for QtGui+QtQuick based
+applications. <b>The module works only on Qt 5</b>.
+
+It offers a \ref GCF::QmlApplication class that subclasses from \ref GCF::ApplicationServices
+and \c QGuiApplication to offer support for QML items in your application. And it offers
+a \ref GCF::QmlComponent class that subclasses \ref GCF::Component and implements several
+event hanldler functions to offer QML friendly features.
+
+To include this module in GCF you can add the following line to your project file
+
+\verbatim
+CONFIG += GCFQuick3
+\endverbatim
+
+For this to work, you should have set \c QMAKEFEATURES environment variable to \c $GCFDIR/QMakePRF.
+If you have not configured the \c QMAKEFEATURES, you can enter the following line in your
+project file instead.
+
+\verbatim
+GCF_SOURCE_DIR = /path/to/gcf/source/
+include( $$GCF_SOURCE_DIR/QMakePRF/GCFQuick3.prf )
+\endverbatim
+
+*/

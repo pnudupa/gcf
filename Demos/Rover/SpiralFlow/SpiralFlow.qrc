@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/Content">
+        <file>SpiralFlow.xml</file>
+    </qresource>
+    <qresource prefix="/Qml">
+        <file>FolderSpiralFlowView.qml</file>
+    </qresource>
+</RCC>

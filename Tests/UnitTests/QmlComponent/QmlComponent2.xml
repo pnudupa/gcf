@@ -1,0 +1,10 @@
+<content>
+
+    <object name="a" />
+    <object name="b" />
+    <object name="c" />
+    <object name="d" />
+
+    <object name="qmlObj1" type="qml" url="qrc:///TestQmlComponent1.qml" />
+
+</content>

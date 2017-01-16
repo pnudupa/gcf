@@ -1,0 +1,397 @@
+/**
+\page gcf_fiber GCF Fiber
+
+\brief
+Fiber is a collection of tools provided as a part of GCF 3, which would help you host a component developed in GCF 3 <B>like a web service.</B> A client written in <B>any technology</B> on <B>any platform</B> can then access the exposed services as long as they follow a simple <B>JSON message format.</B>
+
+\section gcf_fiber_0 Introduction
+<HR>
+
+This article illustrates how Fiber can be used to provide the methods in components as web services; and the message format a client needs to use, to have a meaningful communication with Fiber.
+
+\li \ref gcf_fiber_1
+\li \ref gcf_fiber_2
+\li \ref gcf_fiber_3
+\li \ref gcf_fiber_4
+\li \ref gcf_fiber_5
+\li \ref gcf_fiber_6
+
+\section gcf_fiber_1 Setting up Fiber at the server
+<HR>
+
+- First thing to do, is to get the GCF 3 development environment ready. Refer to GCF 3's FAQ document to read about the same.
+- Next you would need a web server. Ideally any thing that can run PHP would do just fine. But its worth mentioning here that we have tested it only with <B> Apache on Linux, and Windows.</B>
+- Update the document root of the web server to point to <B><I> path-to-GCF3/Fiber/Fiber/Scripts </I></B> where you must find the PHP files of the Fiber. 
+- Write your web service classes and expose them via writing a GCF component. See \ref gcf_fiber_3
+- Update system path with the location of the library files for your component so that it can be found by Fiber when required (Components will be loaded by Fiber only when a client tries to access it for the first time) 
+- Test your set-up by running <B><I> path-to-GCF3/Tests/UnitTests/FiberTest </I></B>. If the tests work fine, your set-up is fine. 
+
+\section gcf_fiber_2 Starting and stopping Fiber
+<HR>
+Fiber can be started/stopped using the command line utility <B> FiberCtl </B> that comes with Fiber. 
+
+- Start Fiber by executing the following command
+  <BR><BR> <CODE><B> FiberCtl start </B> </CODE>
+<BR><BR> Now clients should be able to access the web services provided by your component/s over the web! <BR><BR>
+- Stop Fiber by executing the following command
+  <BR><BR> <CODE><B> FiberCtl stop </B> </CODE>
+<BR><BR> Also <CODE><B> FiberCtl status </B> </CODE> can be used to find out whether Fiber is already running or not
+
+\section gcf_fiber_3 Authoring components with services
+<HR>
+
+In Fiber the web services should be provided through dynamically loadable components. These are normal GCF 3 components with the following rules
+- The component should be available in a library file
+- All exposed <B> objects </B> in the component that intends to offer services should have <B> allowmetaaccess </B> property set to <B>true</B>
+- Only <B> public </B> methods that are <B>invokable (Q_INVOKABLE, slots)</B> in exposed objects would be accessible as services.
+
+The components that host the web services could either be <B> Core </B> or <B> Gui </B> components.
+\li \ref gcf_fiber_3_sub0
+\li \ref gcf_fiber_3_sub1
+
+\note It is strongly adviced that the gui components written to be loaded by Fiber doesn't call show on any widgets. This would make automatic recovery from crash difficult.
+
+\subsection gcf_fiber_3_sub0 Sample core service component
+
+In SimpleCoreComponent.h
+
+\code
+
+#include <GCF3/Component>
+#include <GCF3/Application>
+
+class SimpleCoreComponent : public GCF::Component
+{
+    Q_OBJECT
+
+public:
+    SimpleCoreComponent(QObject *parent=0)
+        : GCF::Component(parent) {
+    }
+
+    Q_INVOKABLE void dummyService() { }
+
+protected:
+    void initializeEvent(GCF::InitializeEvent *e) {
+        if(e->isPreInitialize())
+            return;
+
+        GCF::ObjectTreeNode *node = gAppService->objectTree()->node(this);
+        if(node)
+            node->writableInfo()["allowmetaaccess"] = true;
+    }
+
+    void contentLoadEvent(GCF::ContentLoadEvent *e) {
+        if(e->isPreContentLoad())
+            e->setContentFile(":/Content/SimpleCoreComponent.xml");
+        GCF::Component::contentLoadEvent(e);
+    }
+
+    QObject *loadObject(const QString &name, const QVariantMap &) {
+        if(name == "Core")
+            return this;
+        return 0;
+    }
+};
+
+\endcode
+
+In SimpleCoreComponent.cpp
+
+\code
+#include "SimpleCoreComponent.h"
+
+GCF_EXPORT_COMPONENT(SimpleCoreComponent)
+\endcode
+
+\subsection gcf_fiber_3_sub1 Sample gui service component
+
+In SimpleGuiComponent.h
+
+\code
+
+#include <GCF3/GuiComponent>
+
+class SimpleGuiComponent : public GCF::GuiComponent
+{
+    Q_OBJECT
+
+public:
+    SimpleGuiComponent(QObject *parent = 0)
+        :GCF::GuiComponent(parent) {
+    }
+    
+    Q_INVOKABLE void dummyService() { }
+
+protected:
+    void initializeEvent(GCF::InitializeEvent *e) {
+        if(e->isPreInitialize())
+            return;
+
+        GCF::ObjectTreeNode *node = gAppService->objectTree()->node(this);
+        if(node)
+            node->writableInfo()["allowmetaaccess"] = true;
+    }
+
+    void contentLoadEvent(GCF::ContentLoadEvent *e) {
+        if(e->isPreContentLoad())
+            e->setContentFile(":/Content/SimpleGuiComponent.xml");
+        GCF::GuiComponent::contentLoadEvent(e);
+    }
+
+    QObject *loadObject(const QString &name, const QVariantMap &) {
+        if(name == "Core")
+            return this;
+
+        return 0;
+    }
+};
+
+\endcode
+
+In SimpleGuiComponent.cpp
+
+\code
+#include "SimpleGuiComponent.h"
+
+GCF_EXPORT_COMPONENT(SimpleGuiComponent)
+\endcode
+
+\section gcf_fiber_4 Fiber message format
+<HR>
+
+There are mainly 3 different types of messages that the Fiber recognizes. They are
+\li \ref gcf_fiber_2_sub0
+\li \ref gcf_fiber_2_sub1
+\li \ref gcf_fiber_2_sub2
+
+\note Some of the message formats discussed below makes use of an <B>integer</B> field called <B>requestID</B>. It might be a better idea to treat it as a <B>string</B> value at the client end, for reliable cross-platform cross-architecture behaviour (as in, store it as a string and don't engage in an integer like manipulation on the same).
+
+\subsection gcf_fiber_2_sub0 Session management request
+
+Session management request messages can be used to request the Fiber for the creation or termination of a dedicated session. Refer to the table below for the message format for constructing a session management request.
+
+\note Sessions created like this would be terminated only when an explicit terminate request on that session is made. However if you suspect that you would be dealing with irresponsible clients, you should consider configuring the session handler to terminate on a time-out. See \ref gcf_fiber_6
+
+<TABLE>
+    <TR><TH> Request parameters </TH></TR>
+    <TR> <TD><B>Key</B></TD> <TD><B>Data-type</B></TD> <TD><B>Possible values</B></TD> </TR>
+    <TR>
+        <TD> requestType </TD>
+        <TD> string </TD>
+        <TD> <B>SESSION_MGMT</B> </TD>
+    </TR>
+    <TR>
+        <TD> sessionCommand </TD>
+        <TD> string </TD>
+        <TD> <B>create</B> - to create a session <BR> <B>terminate</B> - to terminate a session </TD>
+    </TR>
+    <TR>
+        <TD> sessionName </TD>
+        <TD> string </TD>
+        <TD> <B>ID</B> of the session that needs to be terminated. Needs to be specified only for <B>terminate</B> requests</TD>
+    </TR>
+    
+    <TR><TH> Response parameters </TH></TR>
+    <TR> <TD><B>Key</B></TD> <TD><B>Data-type</B></TD> <TD><B>Possible values</B></TD> </TR>
+    <TR>
+        <TD> success </TD>
+        <TD> bool </TD>
+        <TD> <B>true</B> - if session created successfully <BR> <B>false</B> - if session creation failed </TD>
+    </TR>
+    <TR>
+        <TD> result </TD>
+        <TD> string </TD>
+        <TD> <B>ID</B> of the created session on success; empty string otherwise </TD>
+    </TR>
+    <TR>
+        <TD> error </TD>
+        <TD> string </TD>
+        <TD> <B>error message</B> on failure; empty string otherwise </TD>
+    </TR>
+</TABLE>
+
+\subsection gcf_fiber_2_sub1 Service invocation request
+
+Service invocation requests can be made to the Fiber, to request it to invoke a service and return its response. Depending on whether the request is made as a blocking call or not, Fiber would respond either with the actual result or a requestID which can be used to retrieve the result when it becomes available. We recommend that you use "non-blocking" calls as much as possible, and resort to the "blocking" calls only in the case of extremely simple service methods. Refer to the table below for the message format that is expected.
+
+\note To see how to retrieve the result of a non-blocking call see \ref gcf_fiber_2_sub2
+
+<TABLE>
+    <TR><TH> Request parameters </TH></TR>
+    <TR> <TD><B>Key</B></TD> <TD><B>Data-type</B></TD> <TD><B>Possible values</B></TD> </TR>
+    <TR>
+        <TD> requestType </TD>
+        <TD> string </TD>
+        <TD> <B>SERVICE_REQUEST</B> </TD>
+    </TR>
+    <TR>
+        <TD> sessionType </TD>
+        <TD> string </TD>
+        <TD> <B>CORE</B> - to invoke service on a core only session <BR> <B>GUI</B> - to invoke service on a gui session </TD>
+    </TR>
+    <TR>
+        <TD> sessionName </TD>
+        <TD> string </TD>
+        <TD> <B>ID</B> of the session to be used. Leave blank / exclude this field to invoke service on the default session, but this is not recommended </TD>
+    </TR>
+    <TR>
+        <TD> blockingCall </TD>
+        <TD> bool </TD>
+        <TD> <B>true</B> - if the response should contain the result of invocation <BR> <B>false</B> - to receive a requestID as response, which can be used to retrieve the actual response when it becomes available </TD>
+    </TR>
+    <TR>
+        <TD> serviceLibrary </TD>
+        <TD> string </TD>
+        <TD> Name of the library file that contains the component </TD>
+    </TR>
+    <TR>
+        <TD> serviceComponent </TD>
+        <TD> string </TD>
+        <TD> Name of the component that contains the service </TD>
+    </TR>
+    <TR>
+        <TD> serviceObject </TD>
+        <TD> string </TD>
+        <TD> Name of the object in the component that implements the service </TD>
+    </TR>
+    <TR>
+        <TD> serviceMethod </TD>
+        <TD> string </TD>
+        <TD> Name of the service method</TD>
+    </TR>
+    <TR>
+        <TD> args </TD>
+        <TD> list </TD>
+        <TD> Array of arguments (maximum 9) to be supplied to the service method.<BR> Contents of the list could be a mix of any of the following types - bool, int, double, string, list, map <BR>Exclude this parameter if the service method doesn't have a parameter </TD>
+    </TR>
+    
+    <TR><TH> Response parameters </TH></TR>
+    <TR> <TD><B>Key</B></TD> <TD><B>Data-type</B></TD> <TD><B>Possible values</B></TD> </TR>
+    <TR>
+        <TD> success </TD>
+        <TD> bool </TD>
+        <TD> <B>true</B> - if the service method was invoked successfully <BR> <B>false</B> - if service invocation failed </TD>
+    </TR>
+    <TR>
+        <TD> result </TD>
+        <TD> bool / int / double / string / list / map </TD>
+        <TD> <B>requestID</B> - if the request was not a blocking one <BR> <B> result of service method </B> - if the request was a blocking call </TD>
+    </TR>
+    <TR>
+        <TD> error </TD>
+        <TD> string </TD>
+        <TD> <B>error message</B> on failure; empty string otherwise </TD>
+    </TR>
+</TABLE>
+
+\subsection gcf_fiber_2_sub2 Meta method invocation request
+
+This kind of requests can be made to invoke some meta methods on the Fiber. Right now, the meta methods available on the Fiber deals with retrieving the results of non-blocking calls made using \ref gcf_fiber_2_sub1. It can also be used to cancel any of the previously made non-blocking requests, for which the results are not downloaded yet.
+
+<TABLE>
+    <TR><TH> Request parameters </TH></TR>
+    <TR> <TD><B>Key</B></TD> <TD><B>Data-type</B></TD> <TD><B>Possible values</B></TD> </TR>
+    <TR>
+        <TD> requestType </TD>
+        <TD> string </TD>
+        <TD> <B>SERVICE_REQUEST</B> </TD>
+    </TR>
+    <TR>
+        <TD> sessionType </TD>
+        <TD> string </TD>
+        <TD> <B>CORE</B> - to invoke service on a core only session <BR> <B>GUI</B> - to invoke service on a gui session </TD>
+    </TR>
+    <TR>
+        <TD> sessionName </TD>
+        <TD> string </TD>
+        <TD> <B>ID</B> of the session to be used. Leave blank / exclude this field to invoke service on the default session, but this is not recommended </TD>
+    </TR>
+    <TR>
+        <TD> metaCall </TD>
+        <TD> bool </TD>
+        <TD> <B>true</B> </TD>
+    </TR>
+    <TR>
+        <TD> metaMethod </TD>
+        <TD> string </TD>
+        <TD> <B>availableResponses</B> - to retrieve the list of requestIDs for which results are available <BR>
+             <B>responseSize</B> - to retrieve the size of response available for the specified requestID <BR>
+             <B>response</B> - to retrieve the <B> specified chunk </B> of response for specified requestID <BR>
+             <B>cancelRequests</B> - to cancel the non-blocking method invocation requests for specified list of requestIDs </TD>
+    </TR>
+    <TR>
+        <TD> requestID </TD>
+        <TD> int </TD>
+        <TD> requestID to be used. <B>Only</B> for <B>responseSize</B> and <B>response</B> meta call </TD>
+    </TR>
+    <TR>
+        <TD> requestIDs </TD>
+        <TD> list </TD>
+        <TD> list of requestIDs to be used. <B>Only</B> for <B>cancelRequests</B> meta call. </TD>
+    </TR>
+    <TR>
+        <TD> responseLength </TD>
+        <TD> int </TD>
+        <TD> <B>chunk size</B> in bytes. This is the size of response that would be retrieved from the response available at Fiber. The specified size is sliced from the beginning of response available at the Fiber, and sent back to the client. <BR>
+            <B>Only</B> required while making <B>response</B> meta call. <BR>
+            Excluding this parameter or specifying -1 as value would result in retrieving the entire response available; and this is not recommended </TD>
+    </TR>
+    
+    <TR><TH> Response parameters </TH></TR>
+    <TR> <TD><B>Key</B></TD> <TD><B>Data-type</B></TD> <TD><B>Possible values</B></TD> </TR>
+    <TR>
+        <TD> success </TD>
+        <TD> bool </TD>
+        <TD> <B>true</B> - if the service method was invoked successfully <BR> <B>false</B> - if service invocation failed </TD>
+    </TR>
+    <TR>
+        <TD> result </TD>
+        <TD> int / string / list </TD>
+        <TD> Depending on the meta call the result would contain one of the following <BR> 
+            - list of requestIDs for which results are available <BR>
+            - size of response available (in bytes) for a requestID <BR>
+            - chunk of response requested <BR>
+            - list of requestIDs which were cancelled successfully </TD>
+    </TR>
+    <TR>
+        <TD> error </TD>
+        <TD> string </TD>
+        <TD> <B>error message</B> on failure; empty string otherwise </TD>
+    </TR>
+</TABLE>
+
+\section gcf_fiber_5 Accessing Fiber using the message format
+<HR>
+
+Clients can be written to communicate with Fiber in <B>any technology</B> as long as it is possible to 
+    - make HTTP requests and receive the corresponding responses
+    - create and interpret JSON objects, represent JSON objects as strings, and construct JSON objects from string.
+    
+The ideal flow of events in a client would be
+    - A JSON object, with the necessary key=value pair entries must be created (based on \ref gcf_fiber_4).
+    - The JSON object created in the above step should be converted to a string.
+    - Send the above mentioned string as a request by making an HTTP post request to the address in which Fiber is listening.
+    - Wait for the HTTP response to be available and read it completely.
+    - Treat the received data as plain text, and attempt to create a JSON object out of it.
+    - If the above step succeed, you must be able to extract the result from the object; in the format specified for the corresponding request as discussed in \ref gcf_fiber_4.
+    
+\note Clients should be making requests to the following address <B>http://your-webserver:port/FiberScript.php</B>
+
+\section gcf_fiber_6 Advanced tweaking
+<HR>
+
+Fiber has some configuration options at the server side that can be tweaked and tuned to some extent, so that it can adapt to your requirements.
+
+\subsection gcf_fiber_6_sub0 Configuration settings
+
+The session handler at the Fiber can be configured to terminate automatically, if it remains idle for a specific amount of time. This can be configured by editing the <B>path-toGCF3/Binary/FiberConfig/FiberRequestHandler.ini</B> file.
+
+\subsection gcf_fiber_6_sub1 Hooks in PHP script
+
+Fiber has provisions for inserting additional policing of requests, like security check, before Fiber handles any data. There are hooks from the Fiber's PHP scripts that would be invoked, before and after processing any request received. You could place calls to your own routines, in these hooks so that additional features like security checking can be implemented, if necessary. To do this refer to the file <B>path-to-GCF3/Fiber/Fiber/Scripts/FiberAccessHooks.php</B>. <BR>
+<BR> - <I>postReceiveRequest</I> will be called immediately after receiving the request. 
+<BR> - <I>postProcessRequest</I> will be called immediately after processing the request and before sending the response to the client.
+<BR> - <I>postSendResponse</I> will be called immediately after sending the response to the client
+
+*/

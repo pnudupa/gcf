@@ -1,0 +1,66 @@
+/**
+\class GCF::IGDriveLiteFileDownloader
+\brief An interface to download a file from Google Drive
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF3/IGDriveLiteFileDownloader&gt;
+</pre>
+\endhtmlonly
+
+Instances of objects that implement this interface are created using
+\ref GCF::IGDriveLite::createFileDownloader()
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloader::~IGDriveLiteFileDownloader()
+Destructor.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloader::id()
+Id of the file item that needs to be downloaded.
+\return \c QString id of item
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloader::item()
+Returns Item whose contents needs to be downloaded.
+
+\return \ref GCF::GDriveContent::Item
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloader::setPreferredDownloadMimeType(const QString &mimeType)
+Sets the preferred download mime type to download. When a document is been created
+using google docs in google drive. We are given an option to download it as pdf,
+image, etc. By setting a mime type the downloader will download in that format.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloader::preferredDownloadMimeType() const
+Returns the currently set download mime type for the current file Item.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloader::usedDownloadMimeType()
+
+Returns the used mime type to download the file.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloader::setDownloadedFileName(const QString &fName)
+Sets the download file name to 'fName'.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloader::downloadedFileName()
+The name of file as which the current item has been downloaded.
+*/
+
+/**
+\fn GCF::IGDriveLiteFileDownloader::downloadProgressChanged(int)
+
+This signal is emitted when the download progress is changed.
+*/

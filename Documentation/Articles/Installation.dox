@@ -1,0 +1,79 @@
+/**
+\page gcf_installation Setting up GCF 3 on your computer
+
+\tableofcontents
+
+\section gcf_installation_0 Software Requirements
+
+GCF is built using Qt/C++. It has the following minimum software requirements
+
+- Operating Systems
+    - Windows XP, Windows Vista, Windows 7, Windows 8
+    - Ubuntu Linux 12.04 and later
+    - Apple Mac OS 10.8+
+    .
+- Qt
+    - Version 4.8.x (Tested against 4.8.4)
+    - Version 5.x (Tested against 5.0.1 and 5.1.0)
+    .
+- Compilers
+    - On Windows: MinGW and Visual Studio 2010 (not tested on Visual Studio 2012)
+    - On Mac and Linux: GCC 4.2+
+    .
+
+\section gcf_installation_1 Compiling GCF 3.0
+
+To compile GCF 3.0.0, download the source code ZIP file and uncompress it in your
+home directory. Follow the instructions below
+
+\verbatim
+$ qmake -recursive
+$ make
+\endverbatim
+
+After the compilation process is done, all binaries can be found in the Binary folder.
+
+\section gcf_installation_2 Environment variables
+
+The following environment variables must be setup to use GCF 3 in your applications
+
+\li Setup the \c GCFDIR environment variable to point to the source directory of
+GCF 3. After setting up this environment variable, you must be able to find
+\li Setup the \c QMAKEFEATURES environment variable to point to $GCFDIR/QMakePRF
+folder.
+\c $GCFDIR/QMakePRF/GCF3.prf
+\li On Windows, set \c PATH environment variable to include \c %GCFDIR%/Binary
+\li On Linux, set \c LD_LIBRARY_PATH environment variable to include \c %GCFDIR%/Binary
+\li On Mac, set \c DYLD_LIBRARY_PATH environment variable to include \c %GCFDIR%/Binary
+\li Restart your computer (or atleast Qt Creator)
+
+\note Environment variables are best set in .bashrc on Linux and Mac, so that they
+apply across login sessions.
+
+\section gcf_installation_3 Video tutorials
+
+\htmlonly
+<p>&nbsp;</p>
+<table cellpadding="10" cellspacing="0" border="1">
+
+<tr>
+<td colspan="2">
+<center>
+<iframe src="http://player.vimeo.com/video/77392071" width="600" height="375" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+</center>
+</td>
+</tr>
+<tr>
+<td>
+<iframe src="http://player.vimeo.com/video/77394067" width="500" height="373" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+</td>
+<td>
+<iframe src="http://player.vimeo.com/video/77400173" width="500" height="375" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+</td>
+</td>
+
+</table>
+
+\endhtmlonly
+
+*/

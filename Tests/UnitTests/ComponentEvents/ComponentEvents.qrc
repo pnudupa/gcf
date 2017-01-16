@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/SimpleContentComponent">
+        <file>ComponentContent.xml</file>
+    </qresource>
+    <qresource prefix="/GenericComponent">
+        <file>EditorComponent.xml</file>
+        <file>PlatformComponent.xml</file>
+        <file>TreeComponent.xml</file>
+        <file>DuplicateObjects.xml</file>
+        <file>LoadUnloadObjects.xml</file>
+        <file>MergeUnmergeObjects.xml</file>
+        <file>ActivateDeactivateObjects.xml</file>
+    </qresource>
+</RCC>

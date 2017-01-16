@@ -1,0 +1,5 @@
+<content>
+
+    <object name="spiralFlowView" parent="Application.RoverApp.contentItemModel" title="Spiral Flow" />
+
+</content>

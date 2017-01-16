@@ -1,0 +1,18 @@
+<RCC>
+    <qresource prefix="/">
+        <file>TestLoadUnloadWidget.xml</file>
+        <file>TestLoadUnloadAction.xml</file>
+        <file>TestLoadUnloadActionGroup.xml</file>
+        <file>TestLoadUnloadMenu.xml</file>
+        <file>TestLoadUnloadMenuBar.xml</file>
+        <file>TestLoadUnloadToolBar.xml</file>
+        <file>TestMergeLayoutWithWidget.xml</file>
+        <file>TestMergeUnmergeWithWidget.xml</file>
+        <file>TestMergeUnmergeWithActionGroup.xml</file>
+        <file>TestMergeUnmergeWithMenu.xml</file>
+        <file>TestMergeUnmergeWithToolBar.xml</file>
+        <file>TestMergeUnmergeWithMenuBar.xml</file>
+        <file>TestActivateDeactivateObject.xml</file>
+        <file>TestActivateDeactivateWidget.xml</file>
+    </qresource>
+</RCC>

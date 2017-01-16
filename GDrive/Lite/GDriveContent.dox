@@ -1,0 +1,823 @@
+/**
+\class GCF::GDriveContent::Permission
+\brief
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF/GDriveContent.h&gt;
+</pre>
+\endhtmlonly
+
+This class provides access to fields in the \c Permission resource sent by Google Drive API. For information
+about this resource, please visit : https://developers.google.com/drive/v2/reference/#Permissions
+
+*/
+
+/**
+\fn QString GCF::GDriveContent::Permission::etag()
+
+\return the \c etag attribute of the Permission
+*/
+
+/**
+\fn QString GCF::GDriveContent::Permission::id()
+
+\return the \c id attribute of the Permission
+*/
+
+/**
+\fn QString GCF::GDriveContent::Permission::selfLink()
+
+\return the \c selfLink attribute of the Permission
+*/
+
+/**
+\fn QString GCF::GDriveContent::Permission::name()
+
+\return the \c name attribute of the Permission
+*/
+
+/**
+\fn QString GCF::GDriveContent::Permission::emailAddress()
+
+\return the \c emailAddress attribute of the Permission
+*/
+
+/**
+\fn QString GCF::GDriveContent::Permission::domain()
+
+\return the \c domain attribute of the Permission
+*/
+
+/**
+\fn QStringList GCF::GDriveContent::Permission::additionalRoles()
+
+\return the \c additionalRoles attribute of the Permission
+*/
+
+/**
+\fn QString GCF::GDriveContent::Permission::role()
+
+\return the \c role attribute of the Permission
+*/
+
+/**
+\fn QString GCF::GDriveContent::Permission::type()
+
+\return the \c type attribute of the Permission
+*/
+
+/**
+\fn QString GCF::GDriveContent::Permission::value()
+
+\return the \c value attribute of the Permission
+*/
+
+/**
+\fn QString GCF::GDriveContent::Permission::authKey()
+
+\return the \c authKey attribute of the Permission
+*/
+
+/**
+\fn QString GCF::GDriveContent::Permission::withLink()
+
+\return the \c withLink attribute of the Permission
+*/
+
+/**
+\fn QString GCF::GDriveContent::Permission::photoLink()
+
+\return the \c photoLink attribute of the Permission
+*/
+
+/**
+\class GCF::GDriveContent::User
+\brief
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF/GDriveContent.h&gt;
+</pre>
+\endhtmlonly
+
+This class provides access to fields in the \c User resource sent by Google Drive API. For information
+about this resource, please visit : https://developers.google.com/drive/v2/reference
+*/
+
+/**
+\fn QString GCF::GDriveContent::User::displayName()
+
+\return the \c displayName attribute of the User
+*/
+
+/**
+\fn QString GCF::GDriveContent::User::picture()
+
+\return the \c picture attribute of the User
+*/
+
+/**
+\fn bool GCF::GDriveContent::User::isAuthenticatedUser()
+
+\return the \c isAuthenticatedUser attribute of the User
+*/
+
+/**
+\fn QString GCF::GDriveContent::User::permissionId()
+
+\return the \c permissionId attribute of the User
+*/
+
+/**
+\fn QString GCF::GDriveContent::User::id()
+
+\return the \c permissionId attribute of the User
+*/
+
+/**
+\class GCF::GDriveContent::Properties
+\brief
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF/GDriveContent.h&gt;
+</pre>
+\endhtmlonly
+
+This class provides access to fields in the \c Properties resource sent by Google Drive API. For information
+about this resource, please visit : https://developers.google.com/drive/v2/reference/#Properties
+
+*/
+
+/**
+\fn QString GCF::GDriveContent::Properties::etag()
+
+\return the \c etag attribute of the Properties
+*/
+
+/**
+\fn QString GCF::GDriveContent::Properties::selfLink()
+
+\return the \c selfLink attribute of the Properties
+*/
+
+/**
+\fn QString GCF::GDriveContent::Properties::key()
+
+\return the \c key attribute of the Properties
+*/
+
+/**
+\fn QString GCF::GDriveContent::Properties::visibility()
+
+\return the \c visibility attribute of the Properties
+*/
+
+/**
+\fn QString GCF::GDriveContent::Properties::value()
+
+\return the \c value attribute of the Properties
+*/
+
+/**
+\class GCF::GDriveContent::ImageMediaMetaData
+\brief
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF/GDriveContent.h&gt;
+</pre>
+\endhtmlonly
+
+This class provides access to fields in the \c ImageMediaData resource sent by Google Drive API. For information
+about this resource, please visit : https://developers.google.com/drive/v2/reference
+*/
+
+/**
+\fn int GCF::GDriveContent::ImageMediaMetaData::width()
+
+\return the \c width attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn int GCF::GDriveContent::ImageMediaMetaData::height()
+
+\return the \c height attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn int GCF::GDriveContent::ImageMediaMetaData::rotation()
+
+\return the \c rotation attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn double GCF::GDriveContent::ImageMediaMetaData::latitude()
+
+\return the \c latitude attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn double GCF::GDriveContent::ImageMediaMetaData::longitude()
+
+\return the \c longitude attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn double GCF::GDriveContent::ImageMediaMetaData::altitude()
+
+\return the \c altitude attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn QString GCF::GDriveContent::ImageMediaMetaData::date()
+
+\return the \c date attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn QString GCF::GDriveContent::ImageMediaMetaData::cameraMake()
+
+\return the \c cameraMake attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn QString GCF::GDriveContent::ImageMediaMetaData::cameraModel()
+
+\return the \c cameraModel attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn double GCF::GDriveContent::ImageMediaMetaData::exposureTime()
+
+\return the \c exposureTime attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn double GCF::GDriveContent::ImageMediaMetaData::aperture()
+
+\return the \c aperture attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn bool GCF::GDriveContent::ImageMediaMetaData::isFlashUsed()
+
+\return the \c isFlashUsed attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn double GCF::GDriveContent::ImageMediaMetaData::focalLength()
+
+\return the \c focalLength attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn int GCF::GDriveContent::ImageMediaMetaData::isoSpeed()
+
+\return the \c isoSpeed attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn QString GCF::GDriveContent::ImageMediaMetaData::meteringMode()
+
+\return the \c meteringMode attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn QString GCF::GDriveContent::ImageMediaMetaData::sensor()
+
+\return the \c sensor attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn QString GCF::GDriveContent::ImageMediaMetaData::exposureMode()
+
+\return the \c exposureMode attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn QString GCF::GDriveContent::ImageMediaMetaData::colorSpace()
+
+\return the \c colorSpace attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn QString GCF::GDriveContent::ImageMediaMetaData::whiteBalance()
+
+\return the \c whiteBalance attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn double GCF::GDriveContent::ImageMediaMetaData::exposureBias()
+
+\return the \c exposureBias attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn double GCF::GDriveContent::ImageMediaMetaData::maxApertureValue()
+
+\return the \c maxApertureValue attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn int GCF::GDriveContent::ImageMediaMetaData::subjectDistance()
+
+\return the \c subjectDistance attribute of the ImageMediaMetaData
+*/
+
+/**
+\fn QString GCF::GDriveContent::ImageMediaMetaData::lens()
+
+\return the \c lens attribute of the ImageMediaMetaData
+*/
+
+/**
+\class GCF::GDriveContent::ItemParent
+\brief
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF/GDriveContent.h&gt;
+</pre>
+\endhtmlonly
+
+This class provides access to fields in the \c ItemParemt resource sent by Google Drive API. For information
+about this resource, please visit : https://developers.google.com/drive/v2/reference
+*/
+
+/**
+\fn QString GCF::GDriveContent::ItemParent::id()
+
+\return the \c id attribute of the ItemParent
+*/
+
+/**
+\fn QString GCF::GDriveContent::ItemParent::selfLink()
+
+\return the \c selfLink attribute of the ItemParent
+*/
+
+/**
+\fn QString GCF::GDriveContent::ItemParent::parentLink()
+
+\return the \c parentLink attribute of the ItemParent
+*/
+
+/**
+\fn bool GCF::GDriveContent::ItemParent::isRoot()
+
+\return the \c isRoot attribute of the ItemParent
+*/
+
+/**
+\class GCF::GDriveContent::Item
+\brief
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF/GDriveContent.h&gt;
+</pre>
+\endhtmlonly
+
+This class provides access to fields in the \c Item resource sent by Google Drive API. For information
+about this resource, please visit : https://developers.google.com/drive/v2/reference
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::id()
+
+\return the \c id attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::etag()
+
+\return the \c etag attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::selfLink()
+
+\return the \c selfLink attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::webContentLink()
+
+\return the \c webContentLink attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::webViewLink()
+
+\return the \c webViewLink attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::alternateLink()
+
+\return the \c alternateLink attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::embedLink()
+
+\return the \c embedLink attribute of the Item
+*/
+
+/**
+\fn QVariantMap GCF::GDriveContent::Item::openWithLinks()
+
+\return the \c openWithLinks attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::defaultOpenWithLink()
+
+\return the \c defaultOpenWithLink attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::iconLink()
+
+\return the \c iconLink attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::thumbnailLink()
+
+\return the \c thumbnailLink attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::title()
+
+\return the \c title attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::mimeType()
+
+\return the \c mimeType attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::description()
+
+\return the \c description attribute of the Item
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::isStarred()
+
+\return the \c isStarred attribute of the Item
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::isHidden()
+
+\return the \c isHidden attribute of the Item
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::isTrashed()
+
+\return the \c isTrashed attribute of the Item
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::isRestricted()
+
+\return the \c isRestricted attribute of the Item
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::isViewed()
+
+\return the \c isViewed attribute of the Item
+*/
+
+/**
+\fn QDateTime GCF::GDriveContent::Item::createdDate()
+
+\return the \c createdDate attribute of the Item
+*/
+
+/**
+\fn QDateTime GCF::GDriveContent::Item::modifiedDate()
+
+\return the \c modifiedDate attribute of the Item
+*/
+
+/**
+\fn QDateTime GCF::GDriveContent::Item::modifiedByMeDate()
+
+\return the \c modifiedByMeDate attribute of the Item
+*/
+
+/**
+\fn QDateTime GCF::GDriveContent::Item::lastViewedByMeDate()
+
+\return the \c lastViewedByMeDate attribute of the Item
+*/
+
+/**
+\fn QDateTime GCF::GDriveContent::Item::sharedWithMeDate()
+
+\return the \c sharedWithMeDate attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::downloadUrl()
+
+\return the \c downloadUrl attribute of the Item
+*/
+
+/**
+\fn QVariantMap GCF::GDriveContent::Item::exportLinks()
+
+\return the \c exportLinks attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::indexableText()
+
+\return the \c indexableText attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::originalFileName()
+
+\return the \c originalFileName attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::fileExtension()
+
+\return the \c fileExtension attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::md5Checksum()
+
+\return the \c md5Checksum attribute of the Item
+*/
+
+/**
+\fn int GCF::GDriveContent::Item::fileSize()
+
+\return the \c fileSize attribute of the Item
+*/
+
+/**
+\fn int GCF::GDriveContent::Item::quotaBytesUsed()
+
+\return the \c quotaBytesUsed attribute of the Item
+*/
+
+/**
+\fn QStringList GCF::GDriveContent::Item::ownerNames()
+
+\return the \c ownerNames attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::lastModifyingUserName()
+
+\return the \c lastModifyingUserName attribute of the Item
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::isEditable()
+
+\return the \c isEditable attribute of the Item
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::isCopyable()
+
+\return the \c isCopyable attribute of the Item
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::canWritersShare()
+
+\return the \c canWritersShare attribute of the Item
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::isShared()
+
+\return the \c isShared attribute of the Item
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::isExplicitlyTrashed()
+
+\return the \c isExplicitlyTrashed attribute of the Item
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::isAppDataContents()
+
+\return the \c isAppDataContents attribute of the Item
+*/
+
+/**
+\fn QString GCF::GDriveContent::Item::headRevisionId()
+
+\return the \c headRevisionId attribute of the Item
+*/
+
+/**
+\fn QList<ItemParent> GCF::GDriveContent::Item::parents() const()
+
+\return the \c parents attribute of the Item
+*/
+
+/**
+\fn Permission GCF::GDriveContent::Item::userPermissions() const
+
+\return the \c userPermissions attribute of the Item
+*/
+
+/**
+\fn QList<User> GCF::GDriveContent::Item::owners() const
+
+\return the \c owners attribute of the Item
+*/
+
+/**
+\fn User GCF::GDriveContent::Item::lastModifyingUser() const
+
+\return the \c lastModifyingUser attribute of the Item
+*/
+
+/**
+\fn QList<Properties> GCF::GDriveContent::Item::properties() const
+
+\return the \c properties attribute of the Item
+*/
+
+/**
+\fn ImageMediaMetaData GCF::GDriveContent::Item::imageMediaMetaData() const
+
+\return the \c imageMediaData attribute of the Item
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::isOwnedByAuthenticatedUser() const
+
+\return \c true if the Item is owned by the AuthenticatedUser; \c false otherwise.
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::isFile() const
+
+\return \c true if the Item is a file; \c false otherwise.
+*/
+
+/**
+\fn bool GCF::GDriveContent::Item::isFolder() const
+
+\return \c true if the Item is a folder; \c false otherwise.
+*/
+
+/**
+\class GCF::GDriveContent::AuthenticatedUser
+\brief
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF/GDriveContent.h&gt;
+</pre>
+\endhtmlonly
+
+This class provides access to fields in the \c AuthenticatedUser resource sent by Google Drive API. For information
+about this resource, please visit : https://developers.google.com/drive/v2/reference
+*/
+
+/**
+\fn QString GCF::GDriveContent::AuthenticatedUser::etag()
+
+\return the \c etag attribute of the AuthenticatedUser
+*/
+
+/**
+\fn QString GCF::GDriveContent::AuthenticatedUser::selfLink()
+
+\return the \c selfLink attribute of the AuthenticatedUser
+*/
+
+/**
+\fn QString GCF::GDriveContent::AuthenticatedUser::name()
+
+\return the \c name attribute of the AuthenticatedUser
+*/
+
+/**
+\fn int GCF::GDriveContent::AuthenticatedUser::quotaBytesTotal()
+
+\return the \c quotaBytesTotal attribute of the AuthenticatedUser
+*/
+
+/**
+\fn int GCF::GDriveContent::AuthenticatedUser::quotaBytesUsed()
+
+\return the \c quotaBytesUsed attribute of the AuthenticatedUser
+*/
+
+/**
+\fn int GCF::GDriveContent::AuthenticatedUser::quotaBytesUsedAggregate()
+
+\return the \c quotaBytesUsedAggregate attribute of the AuthenticatedUser
+*/
+
+/**
+\fn int GCF::GDriveContent::AuthenticatedUser::quotaBytesUsedInThash()
+
+\return the \c quotaBytesUsedInThash attribute of the AuthenticatedUser
+*/
+
+/**
+\fn int GCF::GDriveContent::AuthenticatedUser::largestChangeId()
+
+\return the \c largestChangeId attribute of the AuthenticatedUser
+*/
+
+/**
+\fn int GCF::GDriveContent::AuthenticatedUser::remainingChangeIds()
+
+\return the \c remainingChangeIds attribute of the AuthenticatedUser
+*/
+
+/**
+\fn QString GCF::GDriveContent::AuthenticatedUser::rootFolderId()
+
+\return the \c rootFolderId attribute of the AuthenticatedUser
+*/
+
+/**
+\fn QString GCF::GDriveContent::AuthenticatedUser::domainSharingPolicy()
+
+\return the \c domainSharingPolicy attribute of the AuthenticatedUser
+*/
+
+/**
+\fn QString GCF::GDriveContent::AuthenticatedUser::permissionId()
+
+\return the \c permissionId attribute of the AuthenticatedUser
+*/
+
+/**
+\fn User GCF::GDriveContent::AuthenticatedUser::user() const
+
+\return the \c user attribute of the AuthenticatedUser
+*/
+
+/**
+\fn QString GCF::GDriveContent::AuthenticatedUser::id() const
+
+\return the \c permissionId attribute of the AuthenticatedUser
+*/
+
+/**
+\class GCF::GDriveContent::Child
+\brief
+\ingroup gcf_gdrivelite
+
+\htmlonly
+<pre>
+#include &lt;GCF/GDriveContent.h&gt;
+</pre>
+\endhtmlonly
+
+This class provides access to fields in the \c Child resource sent by Google Drive API. For information
+about this resource, please visit : https://developers.google.com/drive/v2/reference
+*/
+
+/**
+\fn QString GCF::GDriveContent::Child::id()
+
+\return the \c id attribute of the Child
+*/
+
+/**
+\fn QString GCF::GDriveContent::Child::selfLink()
+
+\return the \c selfLink attribute of the Child
+*/
+
+/**
+\fn QString GCF::GDriveContent::Child::childLink()
+
+\return the \c childLink attribute of the Child
+*/

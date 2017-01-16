@@ -1,0 +1,566 @@
+/**
+\page gcf_component_model GCF Component Model
+
+GCF (Generic Component Framework) is primarily a component-framework library. Its "killer feature"
+is a component model that you can leverage in your applications to build "pluggable" and extensible
+applications on Windows, Linux and Mac OS.
+
+This page provides an overview of the component model offered by GCF. A clear understand of the
+the component model will allow you to powerfully make use of it in your applications.
+
+\tableofcontents
+
+\section gcf_component_model_1 What is a component model?
+
+A quick search on Google reveals this answer
+
+\htmlonly
+<div style="border: solid; border-width: 2px; width: 50%; padding: 10px">
+An architecture and an API that allows developers to define reusable segments of code that can be
+combined to create a program.
+</div>
+\endhtmlonly
+
+GCF offers exactly that! <em>GCF offers an architecture and an API that allows developers to define
+reusable segments of Qt code that can be combined to create Qt applications</em>.
+
+This page explains architecture of the component model offered by GCF, with links to API (classes
+and methods) that implement the model.
+
+\section gcf_component_model_2 GCF Component model
+
+GCF's component model comprises of two key concepts:
+
+\li Concept #1: \b Component - defined as an entity that plugs its objects and services into the application
+
+AND
+
+\li Concept #2: \b Application - defined as an entity that locates components for loading and loads them
+
+The concepts are captured and implemented in terms of
+
+\li A \ref GCF::Component class from which you can subclass and implement virtual functions, to
+"plug" your objects and services into the application.
+
+AND
+
+\li A \ref GCF::ApplicationServices instance, to allow you to load components after locating them.
+
+AND
+
+\li A bunch of helper classes like \ref GCF::ObjectTree, \ref GCF::ObjectList and so on for capturing
+the data of the component model.
+
+Play the video below to get a sense of these concepts and how they come together in a GCF application.
+
+\htmlonly
+<p>&nbsp;</p>
+<iframe src="http://player.vimeo.com/video/77953239" width="500" height="313" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<p>&nbsp;</p>
+\endhtmlonly
+
+If you are unable to view the video, the following bullet points summarize the content of the video.
+
+\htmlonly
+<p>&nbsp;</p>
+<table cellpadding="10" cellspacing="0" border="0"><tr><td>
+\endhtmlonly
+\li A GCF application begins with the instantiation of a subclass of \ref GCF::ApplicationServices.
+This could be a \ref GCF::Application, \ref GCF::GuiApplication or \ref GCF::QmlApplication.
+
+\li Upon instantiation of the application, a \ref GCF::ObjectTree instance is created. This is
+accessible via \ref GCF::ApplicationServices::objectTree() [ or \c gAppService->objectTree() ]
+
+\li Initially the object tree has one node - called "Application Node". This node contains a
+pointer to the application instance.
+
+\li Each node in the object tree is an instance of \ref GCF::ObjectTreeNode.
+
+\li Applications would then start loading components by calling the \ref GCF::ApplicationServices::loadComponent()
+[ or \c gAppService->loadComponent() ] method.
+
+\li Components themselves are subclasses of \ref GCF::Component. They can be loaded from
+shared-libraries or statically as well.
+
+\li Upon loading of a component, a node for the same will get created in the object-tree under
+the "Application" node.
+
+\li For each object that the component chooses to register, a node is created under the component's
+node in the object tree.
+\htmlonly
+</td><td>
+\endhtmlonly
+\image html gcf-component-model1.png
+\htmlonly
+</td></tr></table>
+<p>&nbsp;</p>
+\endhtmlonly
+
+Once all the components are loaded, the application's object tree would contain one sub-tree per
+component. Each of those sub-trees would contain one node for every object registered by the component
+with the application. Each node in the object-tree would contain a pointer to the \c QObject that
+they register.
+
+The \ref gFindObject method allow searching of objects in the object tree. You can search for
+objects by
+
+\li their \b path, which is a dot (.) separated list of names from the "Application" node to the
+object's node.
+
+OR
+
+\li name of a class or interface that they implement
+
+Since registered objects are searchable, we call them "exposed" objects.
+
+\section gcf_component_model_3 Anatomy of the main() function of a GCF application
+
+The code snippet below shows a typical \c main() function of a GCF application.
+
+\code
+#include <GCF3/Application>
+#include <GCF3/Component>
+
+#include "BaseComponent.h"
+
+int main(int argc, char **argv)
+{
+    GCF::Application a(argc, argv);
+
+    // Load the first foundation component of the application
+    // In this code snippet, it is BaseComponent
+    BaseComponent *baseComponent = new BaseComponent;
+    baseComponent->load();
+
+    // Figure out names of components to load
+    QStringList componentNames = getComponentNamesFromSomewhere();
+
+    // Load those components
+    a.loadComponents(componentNames);
+
+    // Process command-line arguments
+    a.processArguments();
+
+    // Look for arguments we are interested in
+    QVariantMap argsMap = a.argumentsMap();
+    QStringList args = argsMap.keys();
+    Q_FOREACH(QString arg, args)
+    {
+        // if we interested in an arg,
+        // then we can look for its value from the map
+        // and process it.
+    }
+
+    // Run the event loop
+    return a.exec();
+}
+\endcode
+
+In the sub-sections below, each aspect of the \c main() function are explained in more detail.
+
+\subsection gcf_component_model_31 Creating an application instance
+
+You will need to create an instance of \ref GCF::Application OR \ref GCF::GuiApplication
+OR \ref GCF::QmlApplication before any component is instantiated and loaded in the application.
+
+\li The \ref GCF::Application class is available from \ref gcf_core. You should create an instance
+of this class only if you are creating non-gui and console-only applications.
+
+\li The \ref GCF::GuiApplication class is available from \ref gcf_gui module. You should create an instance
+of this class when you are creating a widgets application.
+
+\li The \ref GCF::QmlApplication class is available from \ref gcf_quick module. You should create an instance
+of this class when you are creating a Qt-Quick application.
+
+In GCF, there is a macro called \ref gAppService that always points to the \ref GCF::ApplicationServices
+part of a GCF application instance. There is a \ref gApp macro that always points to an instance of
+
+\li \ref GCF::Application in console-only applications,
+\li \ref GCF::GuiApplication in widgets applications and
+\li \ref GCF::QmlApplication in Qt Quick applications
+
+The following diagram shows the class diagram of application classes in GCF.
+
+\image html gcf-application-classes.png
+
+While \ref GCF::Application, \ref GCF::GuiApplication and \ref GCF::QmlApplication are direct
+subclasses of \ref GCF::ApplicationServices, they are all not direct subclasses of \c QCoreApplication.
+
+Because of this class design, the macro \ref gApp would return a NULL pointer if
+\li you include \c <GCF3/Application> in a GUI or Qt Quick application
+
+OR
+
+\li you include \c <GCF3/GuiApplication> in a Qt quick or console application
+
+OR
+
+\li you include \c <GCF3/QmlApplication> in a widgets or console application.
+
+However, the macro \ref gAppService would never be NULL if used in a GCF application.
+
+\subsection gcf_component_model_32 The foundation component
+
+All GCF applications should ideally offer a "foundation component" after which all other componts are loaded.
+Though it not compulsory, we encourage you to not write "surrogate" applications that can be
+configured to load any GCF component.
+
+Typically the "foundation component" would set the core personality of the application and offer
+core services. Auxiliary components can then extend the core application or build on top of the
+core services offered by the application to expand its business and technology possibility.
+
+In a GUI application, the "foundation component" would offer a main-window with predefined panels, menus,
+tool-bars, dialog boxes and service-dictionaries on to which auxiliary components will merge
+their UI elements (widgets, actions, menus etc..) and service objects.
+
+In a console-application, the "foundation component" would offer a set of core services, objects and
+service-dictionaries on to which auxiliary components will merge their service objects.
+
+The \ref gcf_component_model_6 "section on registering objects" explains how object merging works.
+
+\subsection gcf_component_model_33 Figuring out the components to load
+
+Once the "foundation component" is instantiated and loaded, you would want to load auxiliary components.
+
+If component classes are statically linked into your application, then you can simply create an
+instance of those components and invoke the \ref GCF::Component::load() "load()" method on them.
+
+If your components are available for loading from shared libraries, then you can invent a mechanism to
+source the list of shared libraries that you want to load. You could for example
+
+\li read component names from an INI, XML or plain-text file and load them.
+
+OR
+
+\li read component names from the Windows Registry and load them. (Of-course this would work only on
+Microsoft Windows).
+
+OR
+
+\li make use of \c QDirIterator to iterate over all shared libraries in a predefined directory
+and load components from them.
+
+OR
+
+\li hard-code the component names to load in the \c main() function
+
+OR
+
+\li fetch names of components to load from a license file or from a web-service.
+
+Once you are clear about the set of components to load, you can make use of
+\ref GCF::ApplicationServices::loadComponent() or \ref GCF::ApplicationServices::loadComponents() to load
+the components.
+
+\subsection gcf_component_model_34 Processing command-line arguments
+
+Users of your application can pass command-line arguments of the form \c "-key:value". Such arguments
+can be captured into \ref GCF::ApplicationServices::argumentsMap() "argumentsMap()" and processed in
+the \c main() function by calling either
+
+\li \ref GCF::ApplicationServices::processArguments() "processArguments()" on the application object
+
+OR
+
+\li \ref GCF::Application::processArgumentsAndExec() "processArgumentsAndExec()" instead of
+\c exec() on the application object.
+
+By default, GCF processes the \c -loadComponents: command-line argument as a comma (,) separated list
+of component names. It then loads those components one after the other.
+
+For example, users of your application could launch it from terminal like this
+
+\verbatim
+$ ./YourGCFApplication --loadComponents:Path1/Component1,Path2/Component2,Path3/Component3
+\endverbatim
+
+This would cause your application to also load GCF components from \c Path1/Component1, \c Path2/Component2
+and \c Path3/Component3 libraries. [\b NOTE: this would work only if you have explicitly invoked
+\ref GCF::ApplicationServices::processArguments() "processArguments()" OR
+\ref GCF::Application::processArgumentsAndExec() "processArgumentsAndExec()" on your application object
+in the \c main() function]
+
+\note If you are going to make use of \ref gcf_investigator to record and/or run test-scripts, then
+you have to process arguments.
+
+\subsection gcf_component_model_35 Triggering the event loop
+
+Finally, you should call the \c exec() (or \ref GCF::Application::processArgumentsAndExec() "processArgumentsAndExec()")
+function on the application object to trigger the event loop and actually "start" your application.
+
+\section gcf_component_model_4 Authoring GCF components
+
+As stated before, a component in GCF is defined as an entity that plugs its objects into the application.
+Stated in another way, GCF components are basically factories of objects. They instantiate objects
+and register with the application. The actual process of registering objects is
+\ref gcf_component_model_6 "explained in a later section".
+
+Creating a component in GCF is simply a matter of subclassing from \ref GCF::Component or any of
+its subclasses like \ref GCF::QmlComponent and \ref GCF::GuiComponent. You can then instantiate it
+and invoke the \ref GCF::Component::load() function on it to load the component.
+
+Instantiating the component is simply a matter of calling the component class's constructor, if
+the component class is linked into the application.
+
+If the component class is available in a dynamically loadable library, then you can either
+
+\li call \ref GCF::ApplicationServices::instantiateComponent() and then \ref GCF::Component::load()
+on the component returned by it
+
+OR
+
+\li call \ref GCF::ApplicationServices::loadComponent() to both instantiate and load the component
+from a library in one shot.
+
+For a component class to be loadable from a dynamically loadable library, you should make use of the
+\ref GCF_EXPORT_COMPONENT macro to export the component. This macro must be written exactly once in
+a library and in a source file.
+
+\section gcf_component_model_5 How component loading works
+
+Components can be loaded using any of the following means
+
+\li Create an instance of the component class and then call the \ref GCF::Component::load() "load()" method.
+\li Call the \ref GCF::ApplicationServices::loadComponent() method with a component-library name as parameter
+\li Call the \ref GCF::ApplicationServices::loadComponent() method with a component pointer ( \c GCF::Component* )
+as parameter.
+\li Call the \ref GCF::ApplicationServices::instantiateComponent() method to create an instance of the
+component from a shared-library and then call \ref GCF::Component::load() "load()" on it.
+
+During the load process several events are despatched by GCF to the component. These events can be
+handled by either reimplementing the \c QObject::event() method or any of the specialized event handler
+methods offered as virtual functions in \ref GCF::Component. We recommend doing the latter.
+
+The following video explains the flow of events during component load.
+
+\htmlonly
+<p>&nbsp;</p>
+<iframe src="http://player.vimeo.com/video/78147503?byline=0&amp;portrait=0" width="500" height="313" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<p>&nbsp;</p>
+\endhtmlonly
+
+\sa \ref gcf_component_loading
+
+\section gcf_component_model_5_5 How component unloading works
+
+By default all components are unloaded when the application is about to quit. However, components can be explicitly
+unloaded using any of the following means.
+
+Components can be unloaded using any of the following means
+
+\li Calling the \ref GCF::Component::unload() "unload()" method on the component object.
+\li Call the \ref GCF::ApplicationServices::unloadComponent() method with a component pointer ( \c GCF::Component* )
+as parameter.
+
+During the unload process several events are despatched by GCF to the component. These events can be handled by
+either reimplementing the \c QObject::event() method or any of the specialized event handler methods offered as
+virtual functions in \ref GCF::Component. We recommend doing the latter.
+
+The following video explains the flow of events during component unload.
+
+\htmlonly
+<p>&nbsp;</p>
+<iframe src="http://player.vimeo.com/video/78152875?byline=0&amp;portrait=0" width="500" height="313" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<p>&nbsp;</p>
+\endhtmlonly
+
+\sa \ref gcf_component_unloading
+
+\section gcf_component_model_6 Registering objects
+
+The process of including a pointer to an object into the object tree is called "registering the object".
+Once registered, the object is available for access from other components. The objects are "exposed",
+so to speak.
+
+\htmlonly
+<center><div style="border: solid; border-width: 2px; width: 80%; padding: 10px">
+Except for the application object, all objects registered with GCF have to be allocated on the heap.
+</div></center>
+\endhtmlonly
+
+A component can register its objects in three ways
+
+\li It can list its objects in a content-file and reimplement the \ref GCF::Component::contentObjectLoadEvent()
+event handler to load a named object, so that they are included in the object tree.
+
+\li You can call \ref GCF::Component::addContentObject() method anytime after the post-initialization
+event is delivered to \ref GCF::Component::initializeEvent(), with object-name and object-pointer as parameters
+to include the object in the object-tree.
+
+\li You can create an instance of \ref GCF::ObjectTreeNode under any pre-existing node in the object tree to
+include a pointer to your \c QObject.
+
+We will now look at each method independently.
+
+\subsection gcf_component_model_61 Component content file
+
+While handling the pre-content-load event in \ref GCF::Component::contentLoadEvent(), components can
+specify a content file for GCF to process and load. The content file is a XML file whose primary purpose is to
+provide a list of objects that need to be loaded during \ref GCF::Component::load(). A typical content file
+would look like this
+
+\verbatim
+<content>
+
+    <object name="a" />
+    <object name="b" />
+    <object name="c" />
+    <object name="d" />
+
+</content>
+\endverbatim
+
+Basically the content-file contains \c content XML element as root and a series of \c object XML elements.
+Each \c object XML element must have a name attribute, otherwise it is ignored by GCF. Object names must
+be unique within the component, otherwise GCF will attempt to make it unique by adding some characters at
+the end of the name.
+
+The \c object XML element can contain additional attributes, some of which have implicit meanings. Please
+read the page on \ref gcf_content_xml "Content XML File Specification" to know more about attributes and their
+meaning.
+
+Whenever GCF parses a \c object XML element, it sends a \ref GCF::ContentObjectLoadEvent to the component.
+Along with this event GCF will send the name of the object in question and a key=value map of all other
+attributes in the \c object XML element.
+
+The component can handle this event in \ref GCF::Component::contentObjectLoadEvent() to
+
+\li actually load the object (as a \c QObject instance)
+
+AND
+
+\li use the \ref GCF::ContentObjectLoadEvent::setObject() method on the event object, passed as parameter
+to the event handler, to send back pointer to the \c QObject that was just loaded
+
+After the \ref GCF::Component::contentObjectLoadEvent() returns, GCF looks for value of the \c parent
+attribute. The value of \c parent attribute has to be a path to an already registered object in the application.
+If the path corresponds to an object owned by another component, then a \ref GCF::ContentObjectMergeEvent
+is sent to that component. This event can be handled in the \ref GCF::Component::contentObjectMergeEvent()
+of the parent object's component to perform object-merging. Components can customize the way in which
+merging happens by reimplementing \ref GCF::Component::contentObjectMergeEvent() "contentObjectMergeEvent()".
+By default
+
+\li \ref GCF::Component's implementation of the \c contentObjectMergeEvent() simply makes use of
+\c QObject::setParent() to perform the merging.
+
+\li \ref GCF::GuiComponent's implementation of \c contentObjectMergeEvent() takes into account
+the kind of parent and child that is being merged and performs merging accordingly. For example, if the
+child is an \c QAction and parent is a \c QMenu, it inserts the action as a menu-item in the menu.
+For a complete list of combinations that are handled, please read the documentation of
+\ref GCF::GuiComponent::contentObjectMergeEvent()
+
+\li \ref GCF::QmlComponent's implementation of \c contentObjectMergeEvent() ignores merging between
+two QML objects.
+
+The following video explains the whole process of loading and merging of objects, with the help
+of an example.
+
+\htmlonly
+<p>&nbsp;</p>
+<iframe src="http://player.vimeo.com/video/78163068?byline=0&amp;portrait=0" width="500" height="313" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<p>&nbsp;</p>
+\endhtmlonly
+
+\subsection gcf_component_model_62 Using addContentObject() function
+
+During and after the post-initialization event, components can make use of \ref GCF::Component::addContentObject()
+to explicitly register objects with the application.
+
+\subsection gcf_component_model_63 Explicitly creating object-tree-nodes
+
+From any part of the application, you can create an instance of \ref GCF::ObjectTreeNode under any node in
+the \c gAppService->objectTree(). Example:
+
+\code
+QObject *object = createMyNewQObject();
+
+new GCF::ObjectTreeNode(gAppService->objectTree()->rootNode(), "abcd", object);
+
+// Now the object is registered as abcd under the root-node of the object tree.
+\endcode
+
+While \ref gcf_component_model_62 "addContentObject()" function can be used to add an object under the node
+of a component in the object-tree, creating object-tree-nodes by yourself allows you to include your object
+in any part of the object-tree.
+
+\note It is not possible to \ref gcf_component_model_63 "explicitly create nodes" OR use \ref gcf_component_model_62
+"addContentObject()" to add an object and merge it with another object in the applicaiton. Object merging is
+possible only when you use content-xml files.
+
+\section gcf_component_model_7 Searching for objects
+
+The ability to discover objects and functionality from different components is very important. GCF offers
+two ways for doing this
+
+\li \ref gcf_component_model_71
+\li \ref gcf_component_model_72
+
+\subsection gcf_component_model_71 Using gFindObject and gFindObjects
+
+Once an object is registered with GCF, it is considered to be "exposed". Exposed objects can be searched by
+making use of the \ref gFindObject() method. This method can be used to find objects based on their object
+path in \ref GCF::ApplicationServices::objectTree() "gAppService->objectTree()" or based on the class or interface
+type that they implement.
+
+Example:
+
+\code
+// Using gFindObject to search an object by its path
+QObject *itemRegistryObject1 = gFindObject("Application.ItemRegistryComponent.ItemRegistry");
+ItemRegistryClass *itemRegistry1 = qobject_cast<ItemRegistryClass*>(itemRegistryObject1);
+
+// Using gFindObject to search for an object by its class or interface
+ItemRegistryClass *itemRegistry2 = gFindObject<ItemRegistryClass>();
+\endcode
+
+You can make use of the \ref gFindObjects() method to get a list of all objects of a particular
+class or interface.
+
+\subsection gcf_component_model_72 Connecting to nodeAdded() signal of gAppService->objectTree()
+
+As mentioned before, every time an object is registered; a node for the same is created and included in the
+object-tree. The object-tree (of type \ref GCF::ObjectTree) emits a \ref GCF::ObjectTree::nodeAdded() signal.
+This signal can be connected to a slot to get notified whenever an object is included in the object tree.
+You could then examine the object that just got added and store it in an internal list if required.
+
+Example:
+
+\code
+class ItemRegistryFinder : public QObject
+{
+    Q_OBJECT
+
+public:
+    ItemRegistryFinder(QObject *parent) : QObject(parent) {
+        connect(gAppService->objectTree(),
+                SIGNAL(nodeAdded(GCF::ObjectTreeNode*,GCF::ObjectTreeNode*)),
+                this,
+                SLOT(onNodeAdded(GCF::ObjectTreeNode*,GCF::ObjectTreeNode*)));
+    }
+
+    // ....
+    Q_SLOT void onNodeAdded(GCF::ObjectTreeNode *parent, GCF::ObjectTreeNode *child) {
+        Q_UNUSED(parent);
+        if( qobject_cast<ItemRegistryClass*>(child->object()) ) {
+            m_itemRegistryObjects.append(child->object());
+            // do something else if needed
+        }
+    }
+    // ...
+
+private:
+    GCF::ObjectList m_itemRegistryObjects;
+};
+\endcode
+
+\section gcf_component_model_8 How application shut down works
+
+When an application is about to shut down, it unloads each and every component in the application
+in the reverse order of their loading. At the end of this cycle the application's event loop
+is terminated and the \c main() function returns, causing the application-process to quit.
+
+\section gcf_component_model_9 Suggested reading
+
+Next, please read the article on \ref gcf_getting_started. This will help you to understand the
+GCF 3 concepts in action!
+*/

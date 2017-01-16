@@ -1,0 +1,68 @@
+/**
+\defgroup gcf_core GCF Core Module
+
+The "GCF Core Module" is the foundation of all modules in GCF. The module works on both
+Qt 4.8 and on Qt 5.
+
+It implements a component model for you to leverage in your applications to build
+pluggable and extensible applications. Please read the article on \ref gcf_component_model
+to get a grasp of the component model in GCF.
+
+To include this module in GCF you can add the following line to your project file
+
+\verbatim
+CONFIG += GCF3
+\endverbatim
+
+For this to work, you should have set \c QMAKEFEATURES environment variable to \c $GCFDIR/QMakePRF.
+If you have not configured the \c QMAKEFEATURES, you can enter the following line in your
+project file instead.
+
+\verbatim
+GCF_SOURCE_DIR = /path/to/gcf/source/
+include( $$GCF_SOURCE_DIR/QMakePRF/GCF3.prf )
+\endverbatim
+
+\section gcf_core_0 Important macros
+
+\li \ref gAppService
+\li \ref gApp
+\li \ref GCF_EXPORT_COMPONENT
+
+\subsection gAppService gAppService
+
+\htmlonly
+<pre>
+#include &lt;GCF3/Application&gt;
+</pre>
+\endhtmlonly
+
+Pointer to the only instance of \ref GCF::ApplicationServices in the application. NULL if no
+GCF application object (\ref GCF::Application, \ref GCF::QmlApplication and \ref GCF::GuiApplication) is created.
+
+\subsection gApp gApp
+
+\htmlonly
+<pre>
+#include &lt;GCF3/Application&gt;
+</pre>
+\endhtmlonly
+
+\li Pointer to \ref GCF::Application, when used in a \ref gcf_core application.
+\li Pointer to \ref GCF::QmlApplication, when used in a \ref gcf_quick application.
+\li Pointer to \ref GCF::GuiApplication, when used in a \ref gcf_gui application.
+
+\subsection GCF_EXPORT_COMPONENT GCF_EXPORT_MACRO
+
+\htmlonly
+<pre>
+#include &lt;GCF3/Component&gt;
+</pre>
+\endhtmlonly
+
+This macro is used to export a component class from a shared-library. This macro is necessary
+if you want to be able to load the component using \ref GCF::ApplicationServices::loadComponent() "loadComponent()".
+
+The macro accepts one parameter. That is the name of the component class (including namespaces).
+
+*/
