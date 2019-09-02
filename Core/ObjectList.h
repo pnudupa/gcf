@@ -107,8 +107,7 @@ private:
     ObjectListData *d;
 };
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wweak-vtables"
+GCF_INTERFACE_BEGIN
 
 class ObjectListEventListener
 {
@@ -130,7 +129,7 @@ public:
     }
 };
 
-#pragma clang diagnostic pop
+GCF_INTERFACE_END
 
 #if QT_VERSION >= 0x050000
 class GCF_EXPORT ObjectListEventBroadcaster Q_DECL_FINAL : public ObjectListEventListener

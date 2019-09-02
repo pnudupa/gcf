@@ -26,8 +26,7 @@
 namespace GCF
 {
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wweak-vtables"
+GCF_INTERFACE_BEGIN
 
 class MapToObjectEventListener
 {
@@ -44,7 +43,7 @@ public:
     virtual void objectDeleted(QObject *object) { Q_UNUSED(object); }
 };
 
-#pragma clang diagnostic pop
+GCF_INTERFACE_END
 
 template <class T>
 class MapToObject : public GCF::ObjectListEventListener

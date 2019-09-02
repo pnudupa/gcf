@@ -49,8 +49,7 @@ protected:
 };
 
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wweak-vtables"
+GCF_INTERFACE_BEGIN
 
 class WaitEventLoop : public QObject
 {
@@ -209,7 +208,7 @@ private:
     QList< QVariantList > m_emissions;
 };
 
-#pragma clang diagnostic pop
+GCF_INTERFACE_END
 }
 
 #endif // SIGNALSPY_H

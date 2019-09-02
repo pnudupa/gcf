@@ -90,7 +90,9 @@ struct QmlComponentData
 
     QmlComponent *component;
     bool active;
+#ifdef Q_OS_MAC
     char unused[7]; // Padding for aligning structure
+#endif
     QQmlContext *context;
 
     QObject *loadQml(const QUrl &url);

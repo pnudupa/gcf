@@ -33,8 +33,7 @@ namespace GCF
 
 struct NotificationPair;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wweak-vtables"
+GCF_INTERFACE_BEGIN
 
 class SignalDespatch : public GCF::SignalSpy
 {
@@ -68,7 +67,9 @@ public:
 private:
     QHostAddress m_address;
     quint16 m_port;
+#ifdef Q_OS_MAC
     char unused[6] __attribute__((unused)); // For padding
+#endif
     QString m_object;
     QString m_method;
 };
@@ -116,7 +117,7 @@ private:
     QString m_member;
 };
 
-#pragma clang diagnostic pop
+GCF_INTERFACE_END
 
 struct IpcRemoteObjectData
 {
@@ -131,7 +132,9 @@ struct IpcRemoteObjectData
     QHostAddress address;
     quint16 port;
 
+#ifdef Q_OS_MAC
     char unused1[6]; // For padding
+#endif
     GCF::IpcMessage currentMessage;
     QList<GCF::IpcMessage> messageQueue;
 
@@ -143,7 +146,9 @@ struct IpcRemoteObjectData
     } activated;
 
     // Meta-Information about the remote object
+#ifdef Q_OS_MAC
     char unused2[4]; // For padding
+#endif
     QVariantMap properties;
     QStringList signalMethods;
     QStringList invokableMethods;

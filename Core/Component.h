@@ -119,8 +119,7 @@ private:
     ComponentData *d;
 };
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wweak-vtables"
+GCF_INTERFACE_BEGIN
 
 // Component Event Classes
 class GCF_EXPORT InitializeEvent : public QEvent
@@ -377,7 +376,7 @@ private:
     QVariantMap m_childInfo;
 };
 
-#pragma clang diagnostic pop
+GCF_INTERFACE_END
 
 namespace ComponentEvent
 {

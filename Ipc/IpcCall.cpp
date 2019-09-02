@@ -68,7 +68,9 @@ struct IpcCallData
 
     QHostAddress address;
     quint16 port;
-    char unused[6]; // Padding
+#ifdef Q_OS_MAC
+    char unused1[6]; // Padding
+#endif
     QString object;
     QString method;
     QVariantList arguments;
@@ -76,13 +78,17 @@ struct IpcCallData
     bool done;
 
     bool success;
-    char unused1[6]; // Padding
+#ifdef Q_OS_MAC
+    char unused2[6]; // Padding
+#endif
     QString errorMessage;
     QVariant result;
     int messageId;
     bool autoDelete;
 
-    char unused2[3]; // Padding
+#ifdef Q_OS_MAC
+    char unused3[3]; // Padding
+#endif
     QTcpSocket *socket;
     QTimer *timeoutTimer;
 

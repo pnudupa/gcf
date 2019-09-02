@@ -95,7 +95,9 @@ struct IpcServerDiscoveryData
     const quint16 defaultBroadcastPort;
     quint16 broadcastPort;
 
+#ifdef Q_OS_MAC
     char unused[4]; // Padding for structure alignment
+#endif
     QList<GCF::IpcServerInfo> foundServers;
     bool addFoundServer(const GCF::IpcServerInfo &info) {
         // Check for duplicates

@@ -48,13 +48,13 @@ protected:
     QmlApplicationServices();
     ~QmlApplicationServices();
     virtual void initQmlEngine(QQmlEngine *) { }
+    Q_DISABLE_COPY(QmlApplicationServices)
 
 private:
     QmlApplicationServicesData *d;
 };
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wweak-vtables"
+GCF_INTERFACE_BEGIN
 
 class QmlApplication : public QtApplicationClass, public QmlApplicationServices
 {
@@ -69,7 +69,7 @@ public:
     }
 };
 
-#pragma clang diagnostic pop
+GCF_INTERFACE_END
 
 }
 

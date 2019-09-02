@@ -33,8 +33,7 @@ class Log;
 class LogMessage;
 class LogMessageBranch;
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wweak-vtables"
+GCF_INTERFACE_BEGIN
 
 class LogMessageHandlerInterface
 {
@@ -47,7 +46,7 @@ public:
     virtual void flush() { }
 };
 
-#pragma clang diagnostic pop
+GCF_INTERFACE_END
 
 }
 

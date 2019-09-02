@@ -180,7 +180,9 @@ struct LogData
     QDateTime timestamp;
     bool logQtMessages;
     bool versionLogged;
+#ifdef Q_OS_MAC
     char unused[6]; // Padding added to align this struct
+#endif
 
     GCF::LogMessage *currentBranch() const {
         if(this->stack.count()) return this->stack.top();
@@ -188,15 +190,14 @@ struct LogData
     }
 };
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wweak-vtables"
+GCF_INTERFACE_BEGIN
 class Log2 : public Log
 {
 public:
     Log2() { }
     ~Log2() { }
 };
-#pragma clang diagnostic pop
+GCF_INTERFACE_END
 
 #if QT_VERSION >= 0x050000
 void qtMsgToLogHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -933,7 +934,9 @@ struct LogMessageData
 {
     LogMessageData() : logLevel(GCF::LogMessage::Info), parent(nullptr) { }
 
+#ifdef Q_OS_MAC
     char unused[4]; // Padding added to align this struct
+#endif
     int logLevel;
     QString context;
     QByteArray logCode;
