@@ -24,4 +24,9 @@ SUBDIRS += Demos
 
 # SUBDIRS += Tests
 
+macx {
+QMAKE_CXXFLAGS += -Wnoweak-tables
+QMAKE_CFLAGS += -Wnoweak-tables
+}
+
 

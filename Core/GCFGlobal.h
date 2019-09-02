@@ -48,17 +48,8 @@
 #define GCF_VERSION_REVISION 0
 #endif
 
-#ifdef Q_OS_MAC
-#define GCF_INTERFACE_BEGIN \
-    #pragma clang diagnostic push \
-    #pragma clang diagnostic ignored "-Wweak-vtables"
-
-#define GCF_INTERFACE_END \
-    #pragma clang diagnostic pop
-#else
 #define GCF_INTERFACE_BEGIN
 #define GCF_INTERFACE_END
-#endif
 
 namespace GCF
 {
