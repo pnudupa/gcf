@@ -161,8 +161,6 @@ void TicTacToe::dot(int i)
 {
     if(d->otherPlayer && d->otherPlayer->isActivated())
     {
-        d->myTurn = false;
-
         if(i < 0 || i >= 9)
             return;
 
@@ -174,8 +172,9 @@ void TicTacToe::dot(int i)
             return;
         emit dataChanged(index, index);
 
-        d->otherPlayer->call("cross", QVariantList() << i);
-        this->changeTurn();
+        if(!d->myTurn)
+            this->changeTurn();
+
         QMetaObject::invokeMethod(this, "checkIfGameComplete", Qt::QueuedConnection);
     }
 }
