@@ -70,7 +70,7 @@ public:
     GCF::Result invokeMethod(const QString &path, const QString &method, const QVariantList &args, bool secureCall=true) const;
     static GCF::Result invokeMethod(QObject *object, const QString &method, const QVariantList &args, bool secureCall=true);
     static GCF::Result invokeMethod(QObject *object, const QMetaMethod &method, const QVariantList &args, bool secureCall=true);
-    static GCF::Result isMethodInvokable(const QMetaMethod &method, QObject *object=0);
+    static GCF::Result isMethodInvokable(const QMetaMethod &method, QObject *object=nullptr);
 
     // Global list of jobs in the application
     GCF::JobListModel *jobs() const;
@@ -119,25 +119,25 @@ inline QObject *gFindObject(const QString &path) {
 }
 
 template <class T>
-inline T *gFindObject(const QString &path, GCF::ObjectTreeNode **objectNode=0) {
+inline T *gFindObject(const QString &path, GCF::ObjectTreeNode **objectNode=nullptr) {
     GCF::ObjectTreeNode *node = gAppService->objectTree()->node(path);
     if(objectNode)
         *objectNode = node;
-    return node ? qobject_cast<T*>(node->object()) : (T*)0;
+    return node ? qobject_cast<T*>(node->object()) : nullptr;
 }
 
 template <class T>
-inline T *gFindObject(GCF::ObjectTreeNode **objectNode=0) {
+inline T *gFindObject(GCF::ObjectTreeNode **objectNode=nullptr) {
     GCF::ObjectTreeNode *node = gAppService->objectTree()->findObjectNode<T>();
     if(objectNode)
         *objectNode = node;
     if(node)
         return qobject_cast<T*>(node->object());
-    return (T*)0;
+    return nullptr;
 }
 
 template <class T>
-inline QList<T*> gFindObjects(QList<GCF::ObjectTreeNode*> *objectNodes=0) {
+inline QList<T*> gFindObjects(QList<GCF::ObjectTreeNode*> *objectNodes=nullptr) {
     QList<GCF::ObjectTreeNode*> nodes = gAppService->objectTree()->findObjectNodes<T>();
     QList<T*> retList;
     for(int i=0; i<nodes.count(); i++)

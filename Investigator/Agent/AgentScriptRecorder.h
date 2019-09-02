@@ -27,7 +27,7 @@ class AgentScriptRecorder : public QObject
     Q_OBJECT
 
 public:
-    AgentScriptRecorder(QObject *parent = 0);
+    AgentScriptRecorder(QObject *parent=nullptr);
     ~AgentScriptRecorder();
 
     QString recordedTestCaseCode() const;

@@ -33,6 +33,9 @@ namespace GCF
 
 struct NotificationPair;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wweak-vtables"
+
 class SignalDespatch : public GCF::SignalSpy
 {
 public:
@@ -51,7 +54,7 @@ public:
     SignalDespatch(QObject *sender, const char *signal,
                    const QHostAddress &address, quint16 port,
                    const QString &object, const QString &method,
-                   QObject *parent=0)
+                   QObject *parent=nullptr)
         : GCF::SignalSpy(sender, signal, parent),
           m_address(address), m_port(port), m_object(object),
           m_method(method) { }
@@ -65,6 +68,7 @@ public:
 private:
     QHostAddress m_address;
     quint16 m_port;
+    char unused[6] __attribute__((unused)); // For padding
     QString m_object;
     QString m_method;
 };
@@ -78,7 +82,7 @@ public:
             const QVariantList &arguments,
             QObject *receiver,
             const char *member,
-            QObject *parent=0)
+            QObject *parent=nullptr)
         : GCF::IpcCall(addr, port, object, method, arguments, parent),
           m_receiver(receiver) {
         if(member) {
@@ -112,9 +116,11 @@ private:
     QString m_member;
 };
 
+#pragma clang diagnostic pop
+
 struct IpcRemoteObjectData
 {
-    IpcRemoteObjectData() : socket(0), activated(NOT_ACTIVATED) { }
+    IpcRemoteObjectData() : socket(nullptr), activated(NOT_ACTIVATED) { }
     ~IpcRemoteObjectData() {
         QList<NotificationPair*> npl = notificationPairs;
         notificationPairs.clear();
@@ -125,6 +131,7 @@ struct IpcRemoteObjectData
     QHostAddress address;
     quint16 port;
 
+    char unused1[6]; // For padding
     GCF::IpcMessage currentMessage;
     QList<GCF::IpcMessage> messageQueue;
 
@@ -136,6 +143,7 @@ struct IpcRemoteObjectData
     } activated;
 
     // Meta-Information about the remote object
+    char unused2[4]; // For padding
     QVariantMap properties;
     QStringList signalMethods;
     QStringList invokableMethods;
@@ -641,7 +649,7 @@ void GCF::IpcRemoteObject::onSocketDisconnected()
     d->invokableMethods.clear();
     d->signalMethods.clear();
     d->socket->deleteLater();
-    d->socket = 0;
+    d->socket = nullptr;
     d->currentMessage = GCF::IpcMessage();
     d->messageQueue.clear();
 
@@ -706,7 +714,7 @@ void GCF::IpcRemoteObject::onSocketIncomingMessage(const GCF::IpcMessage &messag
         QString propertyName = message.data().value("propertyName").toString();
         d->properties[propertyName] = message.result().data();
 
-        NotificationPair *npair = d->propertyNotifications.value(message.id(), 0);
+        NotificationPair *npair = d->propertyNotifications.value(message.id(), nullptr);
         if(npair)
         {
             d->propertyNotifications.remove(message.id());
@@ -833,7 +841,7 @@ GCF::Result GCF::ipcConnect(QObject *sender, const char *signal, const QHostAddr
     if(!signalDespatch->isValid())
     {
         delete signalDespatch;
-        signalDespatch = 0;
+        signalDespatch = nullptr;
         return GCF::Result(false, QString(), QString("Signal doesnt exist in the sender"));
     }
 

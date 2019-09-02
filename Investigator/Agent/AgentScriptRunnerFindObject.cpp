@@ -44,7 +44,7 @@ QObject *findRootObject(const QString &objectName)
     if(objectName.startsWith("Application.") || objectName == "Application")
         return gAppService->objectTree()->object(objectName);
 
-    return 0;
+    return nullptr;
 }
 
 QObject *findQChild(const QObject *parent, const QString &childObjectName)
@@ -68,7 +68,7 @@ QObject *findQChild(const QObject *parent, const QString &childObjectName)
             return child;
     }
 
-    return 0;
+    return nullptr;
 }
 
 QObjectList findChildrenByClassName(const QObject *parent, const QString &className)
@@ -80,7 +80,7 @@ QObjectList findChildrenByClassName(const QObject *parent, const QString &classN
 
     const QObjectList &children = parent->children();
 
-    const QMetaObject *classMetaObject = 0;
+    const QMetaObject *classMetaObject = nullptr;
     Q_FOREACH(QObject *child, children)
     {
         if(classMetaObject)
@@ -107,7 +107,7 @@ QObject *findClassInstance(const QObject *parent, const QString &classNameIndex)
         bool indexOk = false;
         index = classNameIndex.section('[', 1, 1).section(']', 0, 0).toInt(&indexOk);
         if(!indexOk) // Format error!!!
-            return 0;
+            return nullptr;
 
         className = classNameIndex.section('[', 0, 0);
     }
@@ -118,7 +118,7 @@ QObject *findClassInstance(const QObject *parent, const QString &classNameIndex)
     if(index >= 0 && index < children.count())
         return children.at(index);
 
-    return 0;
+    return nullptr;
 }
 
 #if QT_VERSION >= 0x050000
@@ -136,12 +136,12 @@ QObject *findQmlContextProperty(const QObject *parent, const QString& contextPro
         QQmlContext *qmlContext = qmlEngine->rootContext();
         QVariant contextProp = qmlContext ? qmlContext->contextProperty(contextPropName) : QVariant();
 
-        QMetaType::Type contextPropType = (QMetaType::Type)(contextProp.type());
+        QMetaType::Type contextPropType = QMetaType::Type(contextProp.type());
         if( contextPropType == QMetaType::QObjectStar )
             return contextProp.value<QObject*>();
     }
 
-    return 0;
+    return nullptr;
 }
 #else
 QObject *findQmlContextProperty(const QObject *parent, const QString& contextPropName)
@@ -181,7 +181,7 @@ QObject *findScrollAreaObject(const QObject *parent, const QString &objName)
         // For other children, findQChild does a good job. And it would have been called before
     }
 
-    return 0;
+    return nullptr;
 }
 
 QObject *findItemViewObject(const QObject *parent, const QString &objName)
@@ -217,7 +217,7 @@ QObject *findItemViewObject(const QObject *parent, const QString &objName)
         }
     }
 
-    return 0;
+    return nullptr;
 }
 
 QObject *findGraphicsObject(const QObject *parent, const QString& gObjName)
@@ -248,12 +248,12 @@ QObject *findGraphicsObject(const QObject *parent, const QString& gObjName)
         }
     }
 
-    return 0;
+    return nullptr;
 }
 
 QObject *findChildObject(QObject *parent, const QString &childObjectName)
 {
-    QObject *childObject = 0;
+    QObject *childObject = nullptr;
     if(!parent)
         return childObject;
 
@@ -281,14 +281,14 @@ QObject *findChildObject(QObject *parent, const QString &childObjectName)
     if(childObject)
         return childObject;
 
-    return 0;
+    return nullptr;
 }
 
 QObject *AgentScriptRunner::findObject(const QString &path)
 {
     QStringList comps = path.split('/', QString::SkipEmptyParts);
 
-    QObject *object = 0;
+    QObject *object = nullptr;
     if(comps.length() == 0)
         return object;
 
@@ -302,7 +302,7 @@ QObject *AgentScriptRunner::findObject(const QString &path)
         {
             object = ::findChildObject(object, comp);
             if(!object)
-                return 0;
+                return nullptr;
         }
     }
 

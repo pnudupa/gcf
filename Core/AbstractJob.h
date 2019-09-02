@@ -34,7 +34,7 @@ class GCF_EXPORT AbstractJob : public QObject
     Q_OBJECT
 
 public:
-    AbstractJob(const QString &kind, QObject *parent=0);
+    AbstractJob(const QString &kind, QObject *parent=nullptr);
     ~AbstractJob();
 
     Q_PROPERTY(QString kind READ kind CONSTANT)

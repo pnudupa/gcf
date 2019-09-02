@@ -26,6 +26,9 @@
 namespace GCF
 {
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wweak-vtables"
+
 class MapToObjectEventListener
 {
 public:
@@ -41,20 +44,22 @@ public:
     virtual void objectDeleted(QObject *object) { Q_UNUSED(object); }
 };
 
+#pragma clang diagnostic pop
+
 template <class T>
 class MapToObject : public GCF::ObjectListEventListener
 {
 public:
-    MapToObject() : m_listener(0) {
+    MapToObject() : m_listener(nullptr) {
         m_objectList.setEventListener(this);
     }
     MapToObject(const MapToObject &other)
-        : GCF::ObjectListEventListener(), m_listener(0) {
+        : GCF::ObjectListEventListener(), m_listener(nullptr) {
         m_map = other.m_map;
         m_objectList = other.m_objectList;
         m_objectList.setEventListener(this);
     }
-    MapToObject(const QMap<T,QObject*>& map) : m_listener(0) {
+    MapToObject(const QMap<T,QObject*>& map) : m_listener(nullptr) {
         QList<T> keys = map.keys();
         Q_FOREACH(T key, keys)
             this->insert(key, map.value(key));
@@ -73,7 +78,7 @@ public:
         if( this == &other )
             return *this;
 
-        m_listener = 0;
+        m_listener = nullptr;
         m_map = other.m_map;
         m_objectList = other.m_objectList;
         m_objectList.setEventListener(this);
@@ -166,7 +171,7 @@ public:
     }
     MapToObjectEventListener *listenerAt(int index) const {
         if(index < 0 || index >= m_listenerList.count())
-            return 0;
+            return nullptr;
         return m_listenerList.at(index);
     }
 
@@ -199,7 +204,7 @@ class GCF_EXPORT MapToObjectWatcher : public QObject, public MapToObjectEventLis
     Q_OBJECT
 
 public:
-    MapToObjectWatcher(QObject *parent=0) : QObject(parent) { }
+    MapToObjectWatcher(QObject *parent=nullptr) : QObject(parent) { }
     ~MapToObjectWatcher() { }
 
     template <class T>

@@ -989,7 +989,7 @@ This signal is emitted when a job in the model got completed.
 
 void GCF::JobListModel::objectRemoved(int index, QObject *obj)
 {
-    disconnect(obj, 0, this, 0);
+    disconnect(obj, nullptr, this, nullptr);
     this->beginRemoveRows(QModelIndex(), index, index);
     QMetaObject::invokeMethod(this, "endRemove", Qt::QueuedConnection);
 }

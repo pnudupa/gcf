@@ -71,6 +71,7 @@ namespace GCF
 
     private:
         QAtomicInt refCount;
+        char padding[4] __attribute__((unused));
     };
 }
 

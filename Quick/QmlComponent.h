@@ -34,7 +34,7 @@ class GCF_QUICK_EXPORT QmlComponent : public GCF::Component
     Q_OBJECT
 
 public:
-    QmlComponent(QObject *parent=0);
+    QmlComponent(QObject *parent=nullptr);
 
     Q_PROPERTY(bool active READ isActive NOTIFY activeChanged)
     bool isActive() const;

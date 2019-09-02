@@ -107,6 +107,9 @@ private:
     ObjectListData *d;
 };
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wweak-vtables"
+
 class ObjectListEventListener
 {
 public:
@@ -126,6 +129,8 @@ public:
         Q_UNUSED(index); Q_UNUSED(obj);
     }
 };
+
+#pragma clang diagnostic pop
 
 #if QT_VERSION >= 0x050000
 class GCF_EXPORT ObjectListEventBroadcaster Q_DECL_FINAL : public ObjectListEventListener
@@ -147,7 +152,7 @@ public:
     }
     ObjectListEventListener *listenerAt(int index) const {
         if(index < 0 || index >= m_listenerList.count())
-            return 0;
+            return nullptr;
         return m_listenerList.at(index);
     }
 
@@ -180,7 +185,7 @@ class GCF_EXPORT ObjectListWatcher : public QObject, public ObjectListEventListe
     Q_OBJECT
 
 public:
-    ObjectListWatcher(QObject *parent=0) : QObject(parent) { }
+    ObjectListWatcher(QObject *parent=nullptr) : QObject(parent) { }
     ~ObjectListWatcher() { }
 
     void watch(ObjectList &list);

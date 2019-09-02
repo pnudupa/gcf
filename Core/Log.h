@@ -33,15 +33,21 @@ class Log;
 class LogMessage;
 class LogMessageBranch;
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wweak-vtables"
+
 class LogMessageHandlerInterface
 {
 public:
+    virtual ~LogMessageHandlerInterface() { }
     virtual void handleLogMessage(GCF::LogMessage *msg) = 0;
     virtual void print(GCF::LogMessage *msg, QTextStream &ts) = 0;
     virtual void toSupport(const QString &msg) { Q_UNUSED(msg); }
     virtual void toClipboard(const QString &msg) { Q_UNUSED(msg); }
     virtual void flush() { }
 };
+
+#pragma clang diagnostic pop
 
 }
 
@@ -179,7 +185,7 @@ protected:
                  const QByteArray &logCode,
                  const QString &msg,
                  const QString &details,
-                 LogMessage *parent=0);
+                 LogMessage *parent=nullptr);
     void setMessage(const QString &msg);
 
 private:

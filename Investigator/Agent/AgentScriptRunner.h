@@ -30,7 +30,7 @@ class AgentScriptRunner : public QObject
     Q_OBJECT
 
 public:
-    AgentScriptRunner(AgentComponent *parent = 0);
+    AgentScriptRunner(AgentComponent *parent=nullptr);
     ~AgentScriptRunner();
 
     GCF::Result run(const QString &scriptFile);

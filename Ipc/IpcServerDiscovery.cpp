@@ -95,6 +95,7 @@ struct IpcServerDiscoveryData
     const quint16 defaultBroadcastPort;
     quint16 broadcastPort;
 
+    char unused[4]; // Padding for structure alignment
     QList<GCF::IpcServerInfo> foundServers;
     bool addFoundServer(const GCF::IpcServerInfo &info) {
         // Check for duplicates
@@ -267,7 +268,7 @@ void GCF::IpcServerDiscovery::sendBroadcastDatagram()
 
     QDataStream ds(&datagram, QIODevice::Append);
     ds << d->user();
-    ds << (quint32)servers.count();
+    ds << quint32(servers.count());
     Q_FOREACH(GCF::IpcServer *server, servers)
     {
         if(server->isListening())
@@ -277,7 +278,7 @@ void GCF::IpcServerDiscovery::sendBroadcastDatagram()
         }
         else
         {
-            ds << (quint16)0;
+            ds << quint16(0);
             ds << QString();
         }
     }
@@ -298,7 +299,7 @@ void GCF::IpcServerDiscovery::readBroadcastDatagram()
     while(d->broadcastSocket.hasPendingDatagrams())
     {
         QByteArray datagram;
-        datagram.resize(d->broadcastSocket.pendingDatagramSize());
+        datagram.resize( int(d->broadcastSocket.pendingDatagramSize()) );
 
         QHostAddress address;
         quint16 port = 0;

@@ -71,7 +71,7 @@ namespace GCF
 
 struct ObjectTreeData
 {
-    ObjectTreeData() : rootNode(0) { }
+    ObjectTreeData() : rootNode(nullptr) { }
 
     ObjectTreeNode *rootNode;
     GCF::ObjectMap<ObjectTreeNode*> nodeMap;
@@ -80,8 +80,8 @@ struct ObjectTreeData
 
 struct ObjectTreeNodeData
 {
-    ObjectTreeNodeData() : parent(0),
-        object(0), tree(0) { }
+    ObjectTreeNodeData() : parent(nullptr),
+        object(nullptr), tree(nullptr) { }
 
     ObjectTreeNode *parent;
     QString name;
@@ -116,8 +116,8 @@ GCF::ObjectTree::ObjectTree(QObject *parent)
 
     d = new ObjectTreeData;
 
-    QObject *rootObject = qApp ? (QObject*)qApp : (QObject*)this;
-    d->rootNode = new ObjectTreeNode(0, "Application", rootObject);
+    QObject *rootObject = qApp ? qobject_cast<QObject*>(qApp) : qobject_cast<QObject*>(this);
+    d->rootNode = new ObjectTreeNode(nullptr, "Application", rootObject);
     d->rootNode->d->tree = this;
     d->nodeMap.insert(d->rootNode->object(), d->rootNode);
     d->nodeMap.setEventListener(this);
@@ -177,7 +177,7 @@ GCF::ObjectTreeNode *GCF::ObjectTree::node(QObject *object) const
     if(object)
         return d->nodeMap.value(object);
 
-    return 0;
+    return nullptr;
 }
 
 /**
@@ -219,7 +219,7 @@ GCF::ObjectTreeNode *GCF::ObjectTree::findObjectNode(const QString &className) c
         ++it;
     }
 
-    return 0;
+    return nullptr;
 }
 
 /**
@@ -300,9 +300,9 @@ void GCF::ObjectTree::objectRemoved(QObject *object)
  */
 void GCF::ObjectTree::mapNode(GCF::ObjectTreeNode *node, QObject *object)
 {
-    if(object == 0)
+    if(object == nullptr)
         qDebug() << "Object is NULL!!!";
-    d->nodeMap.setEventListener(0);
+    d->nodeMap.setEventListener(nullptr);
     d->nodeMap.insert(object, node);
     emit nodeAdded(node->parent(), node);
     d->nodeMap.setEventListener(this);
@@ -313,7 +313,7 @@ void GCF::ObjectTree::mapNode(GCF::ObjectTreeNode *node, QObject *object)
  */
 void GCF::ObjectTree::unmapNode(GCF::ObjectTreeNode *node)
 {
-    d->nodeMap.setEventListener(0);
+    d->nodeMap.setEventListener(nullptr);
     d->nodeMap.remove(node->object());
     emit nodeRemoved(node->parent(), node);
     d->nodeMap.setEventListener(this);
@@ -425,7 +425,7 @@ GCF::ObjectTreeNode::ObjectTreeNode(const QString &name,
                                     const QVariantMap &info)
 {
     d = new ObjectTreeNodeData;
-    d->parent = 0;
+    d->parent = nullptr;
     d->name = this->uniqueName(name);
     d->object = object;
     d->info = info;
@@ -555,10 +555,10 @@ GCF::ObjectTreeNode *GCF::ObjectTreeNode::node(const QString &path) const
                 return n;
         }
 
-        return 0;
+        return nullptr;
     }
 
-    return 0;
+    return nullptr;
 }
 
 /**
@@ -571,7 +571,7 @@ GCF::ObjectTreeNode *GCF::ObjectTreeNode::node(const QString &path) const
 GCF::ObjectTreeNode *GCF::ObjectTreeNode::node(QObject *object) const
 {
     if(!object)
-        return 0;
+        return nullptr;
 
     if(d->object == object)
         return const_cast<ObjectTreeNode*>(this);
@@ -583,7 +583,7 @@ GCF::ObjectTreeNode *GCF::ObjectTreeNode::node(QObject *object) const
             return n;
     }
 
-    return 0;
+    return nullptr;
 }
 
 /**
@@ -599,7 +599,7 @@ QObject *GCF::ObjectTreeNode::object(const QString &path) const
     if(n)
         return n->object();
 
-    return 0;
+    return nullptr;
 }
 
 /**
@@ -621,7 +621,7 @@ QString GCF::ObjectTreeNode::path() const
  */
 void GCF::ObjectTreeNode::resetObjectPointer()
 {
-    d->object = 0;
+    d->object = nullptr;
 }
 
 /**
@@ -638,7 +638,7 @@ QString GCF::ObjectTreeNode::uniqueName(const QString &name) const
     while(1)
     {
         // Check to see if the name has any duplicates
-        bool unique = (d->parent->node(uname) == 0);
+        bool unique = (d->parent->node(uname) == nullptr);
 
         // If the name is unique, then we can use this name
         if(unique)
@@ -657,9 +657,9 @@ QString GCF::ObjectTreeNode::uniqueName(const QString &name) const
  */
 void GCF::ObjectTreeNode::registerWithTree()
 {
-    Q_ASSERT(d->parent != 0);
+    Q_ASSERT(d->parent != nullptr);
 
-    if(d->tree == 0)
+    if(d->tree == nullptr)
         d->tree = d->parent->owningTree();
 
     if(d->tree)

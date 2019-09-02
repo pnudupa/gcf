@@ -44,19 +44,19 @@ public:
                 compVal = comps.at(0).toUInt(&ok);
                 ok &= !comps.at(0).isEmpty();
                 ok &= compVal <= 0xffff;
-                m_major = (quint16)compVal;
+                m_major = quint16(compVal);
             }
             if(ok && comps.count() >= 2) {
                 compVal = comps.at(1).toUInt(&ok);
                 ok &= !comps.at(1).isEmpty();
                 ok &= compVal <= 0xffff;
-                m_minor = (quint16)compVal;
+                m_minor = quint16(compVal);
             }
             if(ok && comps.count() >= 3) {
                 compVal = comps.at(2).toUInt(&ok);
                 ok &= !comps.at(2).isEmpty();
                 ok &= compVal <= 0xffff;
-                m_revision = (quint16)compVal;
+                m_revision = quint16(compVal);
             }
         } else
             ok = false;

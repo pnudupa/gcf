@@ -53,6 +53,9 @@ private:
     QmlApplicationServicesData *d;
 };
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wweak-vtables"
+
 class QmlApplication : public QtApplicationClass, public QmlApplicationServices
 {
 public:
@@ -65,6 +68,8 @@ public:
         return this->exec();
     }
 };
+
+#pragma clang diagnostic pop
 
 }
 

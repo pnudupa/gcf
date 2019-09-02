@@ -55,7 +55,7 @@ class GCF_EXPORT Component : public QObject
     Q_OBJECT
 
 public:
-    Component(QObject *parent = 0);
+    Component(QObject *parent=nullptr);
 
     // Information about the vendor that gave this component
     virtual QString name() const; // Returns component class-name by default
@@ -118,6 +118,9 @@ private:
     friend struct ApplicationServicesData;
     ComponentData *d;
 };
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wweak-vtables"
 
 // Component Event Classes
 class GCF_EXPORT InitializeEvent : public QEvent
@@ -373,6 +376,8 @@ private:
     QVariantMap m_parentInfo;
     QVariantMap m_childInfo;
 };
+
+#pragma clang diagnostic pop
 
 namespace ComponentEvent
 {

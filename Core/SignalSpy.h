@@ -38,6 +38,9 @@ class GCF_EXPORT SignalSpyBase : public QObject
 {
     Q_OBJECT
 
+public:
+    virtual ~SignalSpyBase() { }
+
 signals:
     void caughtSignal(const QVariantList &args);
 
@@ -45,20 +48,24 @@ protected:
     SignalSpyBase(QObject *parent) : QObject(parent) { }
 };
 
-class GCF_EXPORT WaitEventLoop : public QObject
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wweak-vtables"
+
+class WaitEventLoop : public QObject
 {
 public:
-    WaitEventLoop(QObject *parent=0) : QObject(parent), m_loop(0), m_timerId(-1) { }
+    WaitEventLoop(QObject *parent=nullptr) : QObject(parent), m_loop(nullptr), m_timerId(-1) { }
 
-    bool inLoop() const { return m_loop != 0; }
+    bool inLoop() const { return m_loop != nullptr; }
 
     int enter(int ms) {
-        Q_ASSERT(m_loop == 0);
+        Q_ASSERT(m_loop == nullptr);
         QEventLoop loop;
         m_loop = &loop;
         m_timerId = this->startTimer(ms);
         int retVal = loop.exec();
-        m_loop = 0;
+        m_loop = nullptr;
         return retVal;
     }
 
@@ -82,10 +89,10 @@ private:
     int m_timerId;
 };
 
-class GCF_EXPORT SignalSpy : public SignalSpyBase
+class SignalSpy : public SignalSpyBase
 {
 public:
-    SignalSpy(QObject *sender, const char *signal, QObject *parent = 0)
+    SignalSpy(QObject *sender, const char *signal, QObject *parent=nullptr)
         : SignalSpyBase(parent), m_sender(sender), m_valid(false) {
         // First find out if the signal is valid in sender
         if(sender && signal) {
@@ -140,7 +147,7 @@ public:
             }
         }
     }
-    ~SignalSpy() { }
+    virtual ~SignalSpy() override { }
 
     bool isValid() const { return m_sender.data() && m_valid; }
     QObject *sender() const { return m_sender.data(); }
@@ -202,6 +209,7 @@ private:
     QList< QVariantList > m_emissions;
 };
 
+#pragma clang diagnostic pop
 }
 
 #endif // SIGNALSPY_H

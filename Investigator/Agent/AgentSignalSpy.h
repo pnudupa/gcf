@@ -28,7 +28,7 @@ class AgentSignalSpy : public QObject
     Q_OBJECT
 
 public:
-    AgentSignalSpy(QObject *sender, const char *signal, QObject *parent = 0)
+    AgentSignalSpy(QObject *sender, const char *signal, QObject *parent=nullptr)
         : QObject(parent), m_signalSpy(sender, signal) { }
     ~AgentSignalSpy() { }
 

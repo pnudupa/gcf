@@ -46,7 +46,7 @@ namespace GCF
 {
 struct QmlApplicationServicesData
 {
-    QmlApplicationServicesData() : qmlEngine(0) { }
+    QmlApplicationServicesData() : qmlEngine(nullptr) { }
 
     QQmlEngine *qmlEngine;
 };
@@ -56,7 +56,7 @@ class System : public QObject
     Q_OBJECT
 
 public:
-    System(QObject *parent=0);
+    System(QObject *parent=nullptr);
     ~System();
 
     Q_INVOKABLE QObject *findObject(const QString &path) const;
@@ -73,7 +73,7 @@ private:
 
 Q_GLOBAL_STATIC(GCF::System, SystemObject)
 
-static GCF::QmlApplicationServices *QmlApplicationServicesInstance = 0;
+static GCF::QmlApplicationServices *QmlApplicationServicesInstance=nullptr;
 
 /**
 This function returns pointer to the only instance of \ref GCF::QmlApplicationServices in the
@@ -98,7 +98,7 @@ Destructor
  */
 GCF::QmlApplicationServices::~QmlApplicationServices()
 {
-    ::QmlApplicationServicesInstance = 0;
+    ::QmlApplicationServicesInstance=nullptr;
     delete d;
 }
 
@@ -208,7 +208,7 @@ QObject *GCF::System::findImplementation(const QString &className) const
     if(node)
         return node->object();
 
-    return 0;
+    return nullptr;
 }
 
 QObjectList GCF::System::findImplementations(const QString &className) const

@@ -136,7 +136,7 @@ void GCF::IpcServer::onIncomingMessage(const GCF::IpcMessage &message)
 
         GCF::IpcRemoteObjectHandler *remoteObjectHandler =
                 new GCF::IpcRemoteObjectHandler(message, socket, this);
-        disconnect(socket, 0, this, 0);
+        disconnect(socket, nullptr, this, nullptr);
         Q_UNUSED(remoteObjectHandler);
     }
 }
@@ -263,11 +263,11 @@ void GCF::IpcRemoteObjectHandler::onIncomingMessage(const GCF::IpcMessage &messa
         if(!signalDespatch || !signalDespatch->isValid())
         {
             delete signalDespatch;
-            signalDespatch = 0;
+            signalDespatch = nullptr;
         }
 
         response.data()["signal"] = signal;
-        response.setResult( signalDespatch != 0 );
+        response.setResult( signalDespatch != nullptr );
     }
 
     m_socket->sendMessage(response);

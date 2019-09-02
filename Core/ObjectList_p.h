@@ -30,7 +30,7 @@ class QObjectListWatcher : public QObject
     Q_OBJECT
 
 public:
-    QObjectListWatcher() : eventListener(0) { }
+    QObjectListWatcher() : eventListener(nullptr) { }
 
     QObjectList qObjectList; // the list that is being watched.
     GCF::ObjectListEventListener *eventListener;

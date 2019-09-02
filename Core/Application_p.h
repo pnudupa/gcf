@@ -33,7 +33,7 @@ public:
     GCF::Result call(const QString &path, const QString &method, const QVariantList &args);
     GCF::Result call(QObject *object, const QString &method, const QVariantList &args);
     GCF::Result call(QObject *object, const QMetaMethod &method, const QVariantList &args);
-    GCF::Result isMethodInvokable(const QMetaMethod &method, QObject *object=0);
+    GCF::Result isMethodInvokable(const QMetaMethod &method, QObject *object=nullptr);
 
 private:
     GCF::Result call2(QObject *object, const QMetaMethod &method, const QVariantList &args);

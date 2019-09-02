@@ -36,7 +36,7 @@ struct GuiComponentData;
 class GCF_GUI_EXPORT GuiComponent : public GCF::Component
 {
 public:
-    GuiComponent(QObject *parent=0);
+    GuiComponent(QObject *parent=nullptr);
 
 protected:
     ~GuiComponent();

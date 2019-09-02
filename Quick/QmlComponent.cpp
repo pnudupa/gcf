@@ -86,10 +86,11 @@ namespace  GCF
 
 struct QmlComponentData
 {
-    QmlComponentData() : active(false), context(0) { }
+    QmlComponentData() : active(false), context(nullptr) { }
 
     QmlComponent *component;
     bool active;
+    char unused[7]; // Padding for aligning structure
     QQmlContext *context;
 
     QObject *loadQml(const QUrl &url);
@@ -171,7 +172,7 @@ QObject *GCF::QmlComponent::addQml(const QString &name, const QUrl &url)
                                     .arg(url.toString()));
         GCF::Log::instance()->info(GCF_DEFAULT_LOG_CONTEXT,
                                    QString("QML object was not added"));
-        return 0;
+        return nullptr;
     }
 
     if(componentNode->node(name))
@@ -180,7 +181,7 @@ QObject *GCF::QmlComponent::addQml(const QString &name, const QUrl &url)
                                     QString("Another object by name \"%1\" has already been added").arg(name));
         GCF::Log::instance()->info(GCF_DEFAULT_LOG_CONTEXT,
                                    QString("QML object was not added"));
-        return 0;
+        return nullptr;
     }
 
     QObject *qmlObj = d->loadQml(url);
@@ -273,7 +274,7 @@ within a non QML application. It calls the base class implementation of the even
 void GCF::QmlComponent::initializeEvent(GCF::InitializeEvent *e)
 {
     if(e->isPreInitialize())
-        Q_ASSERT(gApp && gApp->qmlEngine() != 0);
+        Q_ASSERT(gApp && gApp->qmlEngine() != nullptr);
 
     GCF::Component::initializeEvent(e);
 }
@@ -509,7 +510,7 @@ QObject *GCF::QmlComponentData::loadQml(const QUrl &url)
         this->logComponentError(qmlComp);
         delete qmlObjContext;
         delete qmlComp;
-        return 0;
+        return nullptr;
     }
 
     qmlObj->setObjectName(name);
@@ -531,7 +532,8 @@ QObject *GCF::QmlComponentData::loadQml(const QUrl &url)
     else if(qmlComp->isError())
     {
         this->logComponentError(qmlComp);
-        delete qmlObj; qmlObj = 0;
+        delete qmlObj;
+        qmlObj = nullptr;
         // qmlComp will be deleted by logComponentError
     }
     else

@@ -10,7 +10,7 @@ SUBDIRS += \
     Gui \
     Ipc \
     Investigator \
-    Fiber \
+    # Fiber \
     # GDrive
 
 isEqual(QT_MAJOR_VERSION, 5) {

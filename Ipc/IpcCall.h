@@ -36,7 +36,7 @@ public:
             const QString &object,
             const QString &method,
             const QVariantList &arguments,
-            QObject *parent=0);
+            QObject *parent=nullptr);
     ~IpcCall();
 
     QHostAddress address() const;

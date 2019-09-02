@@ -64,10 +64,11 @@ struct IpcCallData
     IpcCallData() : port(0),
         done(false), success(false),
         messageId(-1), autoDelete(false),
-        socket(0), timeoutTimer(0) { }
+        socket(nullptr), timeoutTimer(nullptr) { }
 
     QHostAddress address;
     quint16 port;
+    char unused[6]; // Padding
     QString object;
     QString method;
     QVariantList arguments;
@@ -75,11 +76,13 @@ struct IpcCallData
     bool done;
 
     bool success;
+    char unused1[6]; // Padding
     QString errorMessage;
     QVariant result;
     int messageId;
     bool autoDelete;
 
+    char unused2[3]; // Padding
     QTcpSocket *socket;
     QTimer *timeoutTimer;
 
@@ -105,7 +108,7 @@ QSemaphore GCF::IpcCallData::CallSemaphore(20);
 GCF::IpcCall::IpcCall(const QHostAddress &addr, quint16 port,
                       const QString &object, const QString &method,
                       const QVariantList &args, QObject *parent)
-    : QObject(0)
+    : QObject(nullptr)
 {
     if(parent && parent->thread() == this->thread())
         this->setParent(parent);
@@ -348,7 +351,7 @@ void GCF::IpcCall::onCall()
 void GCF::IpcCall::onConnected()
 {
     delete d->timeoutTimer;
-    d->timeoutTimer = 0;
+    d->timeoutTimer = nullptr;
 
     disconnect(d->socket, SIGNAL(connected()), this, SLOT(onConnected()));
     connect(d->socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
@@ -367,7 +370,7 @@ void GCF::IpcCall::onConnected()
     QString msg = QString("Sending message-id %1 of type %2 int %3 bytes to %4:%5")
             .arg(message.id())
             .arg(QString::fromLatin1(message.type()))
-            .arg(packet.size()-sizeof(qint32))
+            .arg(packet.size()-int(sizeof(qint32)))
             .arg(d->socket->peerAddress().toString())
             .arg(d->socket->peerPort());
     GCF::Log::instance()->info(GCF_DEFAULT_LOG_CONTEXT, msg);
@@ -444,7 +447,7 @@ void GCF::IpcCall::onDisconnected()
 void GCF::IpcCall::onConnectTimeout()
 {
     d->timeoutTimer->deleteLater();
-    d->timeoutTimer = 0;
+    d->timeoutTimer = nullptr;
     disconnect(d->socket, SIGNAL(connected()), this, SLOT(onConnected()));
     d->socket->abort();
     emitDone(false, tr("A connection timeout occured"));
@@ -453,7 +456,7 @@ void GCF::IpcCall::onConnectTimeout()
 void GCF::IpcCall::onCallTimeout()
 {
     d->timeoutTimer->deleteLater();
-    d->timeoutTimer = 0;
+    d->timeoutTimer = nullptr;
     disconnect(d->socket, SIGNAL(disconnected()), this, SLOT(onDisconnected()));
     d->socket->abort();
     emitDone(false, tr("A call timeout occured"));

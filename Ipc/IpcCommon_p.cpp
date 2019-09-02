@@ -121,7 +121,7 @@ void GCF::IpcSocket::sendMessage(const GCF::IpcMessage &message)
     QString msg = QString("Sending message-id %1 of type %2 int %3 bytes to %4:%5")
             .arg(message.id())
             .arg(QString::fromLatin1(message.type()))
-            .arg(packet.size()-sizeof(qint32))
+            .arg(packet.size()-int(sizeof(qint32)))
             .arg(this->peerAddress().toString())
             .arg(this->peerPort());
     GCF::Log::instance()->info(GCF_DEFAULT_LOG_CONTEXT, msg);

@@ -27,7 +27,7 @@ class AgentComponent : public GCF::Component
     Q_OBJECT
 
 public:
-    AgentComponent(QObject *parent=0);
+    AgentComponent(QObject *parent=nullptr);
     ~AgentComponent();
 
     Q_INVOKABLE GCF::Result runScript(const QString &script);

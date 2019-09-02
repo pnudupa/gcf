@@ -35,7 +35,7 @@ class GCF_EXPORT ObjectTree : public QObject, public ObjectMapEventListener
     Q_OBJECT
 
 public:
-    ObjectTree(QObject *parent=0);
+    ObjectTree(QObject *parent=nullptr);
     ~ObjectTree();
 
     const QVariantMap &info() const;
@@ -56,7 +56,7 @@ public:
                 return it.value();
             ++it;
         }
-        return 0;
+        return nullptr;
     }
 
     template <class T>
