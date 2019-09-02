@@ -11,7 +11,7 @@ SUBDIRS += \
     Ipc \
     Investigator \
     Fiber \
-    GDrive
+    # GDrive
 
 isEqual(QT_MAJOR_VERSION, 5) {
 SUBDIRS += Quick

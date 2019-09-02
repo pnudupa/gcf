@@ -8,7 +8,11 @@ TARGET = Fiber
 DESTDIR = $$PWD/../../Binary
 
 include($$PWD/../../QMakePRF/GCF3.prf)
-QT += script network
+QT += network
+
+isEqual(QT_MAJOR_VERSION, 4) {
+QT += script
+}
 
 SOURCES += \
     JSON.cpp \

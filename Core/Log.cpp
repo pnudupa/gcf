@@ -32,6 +32,10 @@
 #include <QTextStream>
 #include <QMutexLocker>
 
+#if QT_VERSION >= 0x050900
+#include <QOperatingSystemVersion>
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
@@ -164,7 +168,7 @@ namespace GCF
 {
 struct LogData
 {
-    LogData() : rootMessage(0), timestamp(QDateTime::currentDateTime()),
+    LogData() : rootMessage(nullptr), timestamp(QDateTime::currentDateTime()),
         logQtMessages(false), versionLogged(false) { }
 
     QMutex messageMutex;
@@ -176,6 +180,7 @@ struct LogData
     QDateTime timestamp;
     bool logQtMessages;
     bool versionLogged;
+    char unused[6]; // Padding added to align this struct
 
     GCF::LogMessage *currentBranch() const {
         if(this->stack.count()) return this->stack.top();
@@ -183,12 +188,15 @@ struct LogData
     }
 };
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wweak-vtables"
 class Log2 : public Log
 {
 public:
     Log2() { }
     ~Log2() { }
 };
+#pragma clang diagnostic pop
 
 #if QT_VERSION >= 0x050000
 void qtMsgToLogHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
@@ -360,9 +368,9 @@ void GCF::Log::setLogQtMessages(bool val)
 #endif
     else
 #if QT_VERSION >= 0x050000
-        qInstallMessageHandler(0);
+        qInstallMessageHandler(nullptr);
 #else
-        qInstallMsgHandler(0);
+        qInstallMsgHandler(nullptr);
 #endif
 }
 
@@ -577,7 +585,11 @@ QString GCF::Log::toString() const
                                                          << "Jaguar" << "Panther" << "Tiger" << "Leapord"
                                                          << "Snow Leapord" << "Lion" << "Moutain Lion" << "Mavericks";
 #if QT_VERSION >= 0x050000
-        int osVersion = int( QSysInfo::macVersion() ) - int ( QSysInfo::MV_10_0 );
+    #if QT_VERSION >= 0x050900
+            int osVersion = QOperatingSystemVersion::current().minorVersion();
+    #else
+            int osVersion = int( QSysInfo::macVersion() ) - int ( QSysInfo::MV_10_0 );
+    #endif
 #else
         int osVersion = int( QSysInfo::MacintoshVersion ) - int ( QSysInfo::MV_10_0 );
 #endif
@@ -632,11 +644,11 @@ GCF::LogMessage *GCF::Log::logMessage(const QModelIndex &index) const
 {
     if(index.isValid())
     {
-        GCF::LogMessage *msg = (GCF::LogMessage*)index.internalPointer();
+        GCF::LogMessage *msg = static_cast<GCF::LogMessage*>(index.internalPointer());
         return msg;
     }
 
-    return 0;
+    return nullptr;
 }
 
 /**
@@ -647,7 +659,7 @@ int GCF::Log::rowCount(const QModelIndex &parent) const
     QMutexLocker locker(&d->messageMutex);
     if(parent.isValid())
     {
-        GCF::LogMessage *msg = (GCF::LogMessage*)parent.internalPointer();
+        GCF::LogMessage *msg = static_cast<GCF::LogMessage*>(parent.internalPointer());
         return msg->children().count();
     }
 
@@ -672,7 +684,7 @@ QVariant GCF::Log::data(const QModelIndex &index, int role) const
     if(!index.isValid() || role != Qt::DisplayRole)
         return QVariant();
 
-    GCF::LogMessage *msg = (GCF::LogMessage*)index.internalPointer();
+    GCF::LogMessage *msg = static_cast<GCF::LogMessage*>(index.internalPointer());
     switch(index.column())
     {
     case 0: return msg->logLevel();
@@ -695,7 +707,7 @@ QModelIndex GCF::Log::parent(const QModelIndex &child) const
     if(!child.isValid() || child.column() != 0)
         return QModelIndex();
 
-    GCF::LogMessage *msg = (GCF::LogMessage*)child.internalPointer();
+    GCF::LogMessage *msg = static_cast<GCF::LogMessage*>(child.internalPointer());
     if(msg->parent() == d->rootMessage)
         return QModelIndex();
 
@@ -710,9 +722,9 @@ QModelIndex GCF::Log::parent(const QModelIndex &child) const
 QModelIndex GCF::Log::index(int row, int column, const QModelIndex &parent) const
 {
     QMutexLocker locker(&d->messageMutex);
-    GCF::LogMessage *parentMsg = 0;
+    GCF::LogMessage *parentMsg = nullptr;
     if(parent.isValid())
-        parentMsg = (GCF::LogMessage*)parent.internalPointer();
+        parentMsg = static_cast<GCF::LogMessage*>(parent.internalPointer());
     else
         parentMsg = d->rootMessage;
 
@@ -736,7 +748,7 @@ QVariant GCF::Log::headerData(int section, Qt::Orientation orientation, int role
         case 2: return tr("Code");
         case 3: return tr("Message");
         case 4: return tr("Details");
-            break;
+        default: break;
         }
     }
 
@@ -791,7 +803,7 @@ GCF::LogMessage *GCF::Log::popBranch()
 {
     QMutexLocker locker(&d->messageMutex);
     if(d->stack.isEmpty())
-        return 0;
+        return nullptr;
 
     return d->stack.pop();
 }
@@ -919,8 +931,9 @@ namespace GCF
 
 struct LogMessageData
 {
-    LogMessageData() : logLevel(GCF::LogMessage::Info), parent(0) { }
+    LogMessageData() : logLevel(GCF::LogMessage::Info), parent(nullptr) { }
 
+    char unused[4]; // Padding added to align this struct
     int logLevel;
     QString context;
     QByteArray logCode;
@@ -978,7 +991,7 @@ GCF::LogMessage::~LogMessage()
 
     if(d->parent)
         d->parent->d->children.removeAll(this);
-    d->parent = 0;
+    d->parent = nullptr;
 
     this->clear();
 
@@ -1151,7 +1164,7 @@ GCF::LogMessageBranch::LogMessageBranch(const QString &context)
         m_branchMessage = GCF::Log::instance()->pushBranch(context);
     else
     {
-        m_branchMessage = 0;
+        m_branchMessage = nullptr;
         qDebug() << Q_FUNC_INFO << " - NULL GCF::Log instance!!";
     }
 }
@@ -1169,11 +1182,11 @@ GCF::LogMessageBranch::~LogMessageBranch()
         {
             if(m_branchMessage->children().count() == 0)
                 delete m_branchMessage;
-            else if(m_branchMessage->parent()->parent() == 0)
+            else if(m_branchMessage->parent()->parent() == nullptr)
                 GCF::Log::instance()->dumpLogMessage(m_branchMessage);
         }
 
-        m_branchMessage = 0;
+        m_branchMessage = nullptr;
     }
 }
 

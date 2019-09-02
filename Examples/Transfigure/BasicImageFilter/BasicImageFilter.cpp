@@ -109,7 +109,7 @@
 class BasicImageFilterComponent : public GCF::Component
 {
 public:
-    BasicImageFilterComponent(QObject *parent=0) : GCF::Component(parent) { }
+    BasicImageFilterComponent(QObject *parent=nullptr) : GCF::Component(parent) { }
     ~BasicImageFilterComponent() { }
 
     QString name() const {
@@ -203,7 +203,11 @@ QImage BasicImageFilter::applyBlackAndWhiteEffect(const QImage &image) const
     if (!image.isNull())
     {
         int pixels = img.width() * img.height();
+#if QT_VERSION >= 0x050D00
+        if (pixels*(int)sizeof(QRgb) <= img.sizeInBytes())
+#else
         if (pixels*(int)sizeof(QRgb) <= img.byteCount())
+#endif
         {
             QRgb *data = (QRgb *)img.bits();
             for (int i = 0; i < pixels; i++)

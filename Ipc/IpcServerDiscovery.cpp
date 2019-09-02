@@ -30,6 +30,10 @@
 #include <QNetworkInterface>
 #include <QProcessEnvironment>
 
+#if QT_VERSION >= 0x050900
+#include <QOperatingSystemVersion>
+#endif
+
 /**
 \struct GCF::IpcServerInfo IpcServerDiscovery.h <GCF3/IpcServerDiscovery>
 \brief This structure contains key information about a discovered GCF::IpcServer
@@ -364,9 +368,13 @@ QString GCF::IpcServerDiscoveryData::user()
 #endif
 #ifdef Q_OS_MAC
 #if QT_VERSION >= 0x050000
-    int osVersion = int( QSysInfo::macVersion() ) - int ( QSysInfo::MV_10_0 );
+    #if QT_VERSION >= 0x050900
+            int osVersion = QOperatingSystemVersion::current().minorVersion();
+    #else
+            int osVersion = int( QSysInfo::macVersion() ) - int ( QSysInfo::MV_10_0 );
+    #endif
 #else
-    int osVersion = int( QSysInfo::MacintoshVersion ) - int ( QSysInfo::MV_10_0 );
+        int osVersion = int( QSysInfo::MacintoshVersion ) - int ( QSysInfo::MV_10_0 );
 #endif
     host = QString("Mac OS 10.%1").arg(osVersion);
 #endif
