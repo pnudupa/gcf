@@ -24,6 +24,7 @@
 #include "../Core/Application.h"
 #include "../Core/Log.h"
 
+#include <QUuid>
 #include <QVector>
 
 /**
@@ -60,6 +61,14 @@ Destructor
 GCF::IpcServer::~IpcServer()
 {
     ::IpcServerList()->removeAll(this);
+}
+
+QString GCF::IpcServer::serverId() const
+{
+    if(m_serverId.isEmpty())
+        m_serverId = QUuid::createUuid().toString();
+
+    return m_serverId;
 }
 
 #if QT_VERSION >= 0x050000

@@ -99,11 +99,12 @@ struct IpcServerDiscoveryData
 
         // Ensure that info doesnt loop back to a IpcServer
         // within this application process itself.
-        if( this->isMyAddress(info.Address) ) {
-            QList<GCF::IpcServer*> servers = GCF::IpcServer::servers();
-            Q_FOREACH(GCF::IpcServer *server, servers)
-                if(server->serverPort() == info.Port)
-                    return false;
+        QList<GCF::IpcServer*> servers = GCF::IpcServer::servers();
+        Q_FOREACH(GCF::IpcServer *server, servers) {
+            if(!info.ServerId.isEmpty() && server->serverId() == info.ServerId)
+                return false;
+            if(info.Port == server->serverPort())
+                return false;
         }
 
         // Genuine record.
@@ -259,16 +260,22 @@ void GCF::IpcServerDiscovery::sendBroadcastDatagram()
         return;
 
     QByteArray datagram("GCFIpcServerDiscovery@");
-    QDataStream ds(&datagram, QIODevice::Append);
 
+    QDataStream ds(&datagram, QIODevice::Append);
     ds << d->user();
     ds << (quint32)servers.count();
     Q_FOREACH(GCF::IpcServer *server, servers)
     {
         if(server->isListening())
+        {
             ds << server->serverPort();
+            ds << server->serverId();
+        }
         else
+        {
             ds << (quint16)0;
+            ds << QString();
+        }
     }
 
     bool validBroadcastAddresses = true;
@@ -312,8 +319,11 @@ void GCF::IpcServerDiscovery::readBroadcastDatagram()
             quint16 serverPort = 0;
             ds >> serverPort;
 
-            GCF::IpcServerInfo info(user, address, serverPort);
-            if(d->addFoundServer(info))
+            QString serverId;
+            ds >> serverId;
+
+            GCF::IpcServerInfo info(user, address, serverPort, serverId);
+            if(info.isValid() && d->addFoundServer(info))
                 emit foundServer(info);
         }
     }

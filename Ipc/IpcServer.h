@@ -38,6 +38,8 @@ public:
     IpcServer(QObject *parent=0);
     ~IpcServer();
 
+    QString serverId() const;
+
 protected:
 #if QT_VERSION >= 0x050000
     void incomingConnection(qintptr handle);
@@ -47,6 +49,9 @@ protected:
 
 private slots:
     void onIncomingMessage(const GCF::IpcMessage &message);
+
+private:
+    mutable QString m_serverId;
 };
 
 }

@@ -31,18 +31,19 @@ class IpcServer;
 struct IpcServerInfo
 {
     IpcServerInfo() : Port(0) { }
-    IpcServerInfo(const QString &user, const QHostAddress &addr, quint16 port)
-        : User(user), Address(addr), Port(port) { }
+    IpcServerInfo(const QString &user, const QHostAddress &addr, quint16 port, const QString &id)
+        : User(user), Address(addr), Port(port), ServerId(id) { }
     IpcServerInfo(const IpcServerInfo &other)
-        : User(other.User), Address(other.Address), Port(other.Port) { }
+        : User(other.User), Address(other.Address), Port(other.Port), ServerId(other.ServerId) { }
 
     QString User;
     QHostAddress Address;
     quint16 Port;
+    QString ServerId;
 
-    bool isValid() const { return !this->User.isEmpty() && !this->Address.isNull() && this->Port > 0; }
+    bool isValid() const { return !this->User.isEmpty() && !this->Address.isNull() && this->Port > 0 && !this->ServerId.isEmpty(); }
     bool operator == (const IpcServerInfo &other) const {
-        return User == other.User && Address == other.Address && Port == other.Port;
+        return User == other.User && Address == other.Address && Port == other.Port && ServerId == other.ServerId;
     }
 };
 
