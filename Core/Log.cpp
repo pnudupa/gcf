@@ -199,6 +199,9 @@ void qtMsgToLogHandler(QtMsgType type, const QMessageLogContext &context, const 
 
     switch (type)
     {
+    case QtInfoMsg:
+        GCF::Log::instance()->debug("QtInfoMsg", logMsg);
+        break;
     case QtDebugMsg:
         GCF::Log::instance()->debug("QtDebugMsg", logMsg);
         break;
