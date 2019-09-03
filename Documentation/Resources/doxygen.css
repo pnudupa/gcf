@@ -1086,6 +1086,7 @@ div.toc {
         height: auto;
         margin: 0 20px 10px 10px;
         width: 200px;
+        overflow-x: scroll;
 }
 
 div.toc li {

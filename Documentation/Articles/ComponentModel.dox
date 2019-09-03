@@ -54,9 +54,10 @@ the data of the component model.
 Play the video below to get a sense of these concepts and how they come together in a GCF application.
 
 \htmlonly
-<p>&nbsp;</p>
-<iframe src="http://player.vimeo.com/video/77953239" width="500" height="313" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-<p>&nbsp;</p>
+<video width="500" controls>
+    <source src="../../../Videos/Concepts/Component-Model.mp4" type="video/mp4">
+</video>
+<p>If you are unable to view the embedded video above, please click <a href="http://player.vimeo.com/video/77953239" target="_blank">here</a> to view it on the web.</p>
 \endhtmlonly
 
 If you are unable to view the video, the following bullet points summarize the content of the video.
@@ -334,9 +335,10 @@ methods offered as virtual functions in \ref GCF::Component. We recommend doing 
 The following video explains the flow of events during component load.
 
 \htmlonly
-<p>&nbsp;</p>
-<iframe src="http://player.vimeo.com/video/78147503?byline=0&amp;portrait=0" width="500" height="313" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-<p>&nbsp;</p>
+<video width="500" controls>
+    <source src="../../../Videos/Concepts/Component-Loading.mp4" type="video/mp4">
+</video>
+<p>If you are unable to view the embedded video above, please click <a href="http://player.vimeo.com/video/78147503" target="_blank">here</a> to view it on the web.</p>
 \endhtmlonly
 
 \sa \ref gcf_component_loading
@@ -359,9 +361,10 @@ virtual functions in \ref GCF::Component. We recommend doing the latter.
 The following video explains the flow of events during component unload.
 
 \htmlonly
-<p>&nbsp;</p>
-<iframe src="http://player.vimeo.com/video/78152875?byline=0&amp;portrait=0" width="500" height="313" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-<p>&nbsp;</p>
+<video width="500" controls>
+    <source src="../../../Videos/Concepts/Component-Unloading.mp4" type="video/mp4">
+</video>
+<p>If you are unable to view the embedded video above, please click <a href="http://player.vimeo.com/video/78152875" target="_blank">here</a> to view it on the web.</p>
 \endhtmlonly
 
 \sa \ref gcf_component_unloading
@@ -456,9 +459,10 @@ The following video explains the whole process of loading and merging of objects
 of an example.
 
 \htmlonly
-<p>&nbsp;</p>
-<iframe src="http://player.vimeo.com/video/78163068?byline=0&amp;portrait=0" width="500" height="313" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-<p>&nbsp;</p>
+<video width="500" controls>
+    <source src="../../../Videos/Concepts/Component-Merging.mp4" type="video/mp4">
+</video>
+<p>If you are unable to view the embedded video above, please click <a href="http://player.vimeo.com/video/78163068" target="_blank">here</a> to view it on the web.</p>
 \endhtmlonly
 
 \subsection gcf_component_model_62 Using addContentObject() function

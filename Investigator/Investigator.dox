@@ -1,6 +1,14 @@
 /**
 \page gcf_investigator GCF Investigator
 
+\htmlonly
+<div style="border: 1px solid black; padding: 20px; margin: 20px; font-size: 1.25em; width: 50%;">
+Please ensure that you explicitly install QtScript module while installing Qt 5.x on your
+computer. Without QtScript module, GCF Investigator will __NOT__ work. If you do not
+have QtScript installed, then GCF compilation will fail!!!
+</div>
+\endhtmlonly
+
 GCF Investigator is a tool-set that allows you to record, edit and play automated test
 scripts for GCF applications. Investigator is used only for creating UI test cases. For
 all other kinds, you can use QtTestLib or any other testing tool of your choice.

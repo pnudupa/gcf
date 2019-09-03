@@ -21,24 +21,18 @@ help of an example.
 We have some video tutorials for you to get yourself familiarized with GCF 3.
 
 \htmlonly
-<p>&nbsp</p>
-<iframe id="videosFrame" src="http://gcf.vcreatelogic.com/docs/videos.html" width="100%" height="100%" frameborder="0" seamless="seamless"></iframe>
+<video height="320" controls>
+    <source src="../../../Videos/Getting-Started.mp4" type="video/mp4">
+</video>
 
-<script>
-function setIframeHeight(iframe) {
-    if (iframe) {
-        var iframeWin = iframe.contentWindow || iframe.contentDocument.parentWindow;
-        if (iframeWin.document.body) {
-            iframe.height = iframeWin.document.documentElement.scrollHeight || iframeWin.document.body.scrollHeight;
-        }
-    }
-};
+<video height="320" controls>
+    <source src="../../../Videos/Shared-Clipboard-Tutorial.mp4" type="video/mp4">
+</video>
 
-window.onload = function() {
-    setIframeHeight(document.getElementById('videosFrame'));
-};
-</script>
+<p>If you are unable to view the embedded video above, please click <a href="http://player.vimeo.com/video/77784760" target="_blank">here</a> to view it on the web.</p>
 \endhtmlonly
+
+
 
 */
 

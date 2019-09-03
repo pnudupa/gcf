@@ -38,7 +38,7 @@ class GCF_IPC_EXPORT IpcRemoteObject : public QObject
 
 public:
     IpcRemoteObject(const QHostAddress &addr, quint16 port,
-                    const QString &object, QObject *parent=0);
+                    const QString &object, QObject *parent=nullptr);
     ~IpcRemoteObject();
 
     bool isActivated() const;
@@ -53,13 +53,13 @@ public:
     QStringList invokableMethods() const;
 
     GCF::Result updateProperty(const QString &propertyName,
-                        QObject *receiver=0, const char *member=0);
+                        QObject *receiver=nullptr, const char *member=nullptr);
     GCF::Result changeProperty(const QString &propertyName, const QVariant &propertyValue,
-                        QObject *receiver=0, const char *member=0);
-    GCF::Result ipcConnect(const char *signal, QObject *receiver=0, const char *member=0);
-    GCF::Result ipcConnect(QObject *sender, const char *signal=0, const char *member=0);
+                        QObject *receiver=nullptr, const char *member=nullptr);
+    GCF::Result ipcConnect(const char *signal, QObject *receiver=nullptr, const char *member=nullptr);
+    GCF::Result ipcConnect(QObject *sender, const char *signal=nullptr, const char *member=nullptr);
     GCF::Result call(const QString &method, const QVariantList &args,
-              QObject *receiver=0, const char *member=0);
+              QObject *receiver=nullptr, const char *member=nullptr);
 
 signals:
     void activated();

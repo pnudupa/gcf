@@ -11,7 +11,17 @@
 </div>
 </div>
 <div class="right_col">
-<iframe src="http://gcf.vcreatelogic.com/docs/news.html" frameborder="0" width="100%" height="100%"></iframe>
+<table style="width: 100%;">
+<tr>
+<td align="center">
+<video height="200" controls>
+    <source src="../../../Videos/Getting-Started.mp4" type="video/mp4">
+</video>
+</td>
+<td>
+</td>
+</tr>
+</table>
 </div>
 <div class="clear"></div>
 

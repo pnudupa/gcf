@@ -387,9 +387,10 @@ Objects loaded from the parsing of a content-file is registered with the applica
 accessible via \c gAppService->objectTree(). This part is explained in the following video
 
 \htmlonly
-<p>&nbsp;</p>
-<iframe src="http://player.vimeo.com/video/77953239" width="500" height="313" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
-<p>&nbsp;</p>
+<video width="500" controls>
+    <source src="../../../Videos/Concepts/Component-Model.mp4" type="video/mp4">
+</video>
+<p>If you are unable to view the embedded video above, please click <a href="http://player.vimeo.com/video/77953239" target="_blank">here</a> to view it on the web.</p>
 \endhtmlonly
 
 There are more ways in which objects can be registered with the application and included in the

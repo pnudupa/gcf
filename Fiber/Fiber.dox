@@ -4,6 +4,14 @@
 \brief
 Fiber is a collection of tools provided as a part of GCF 3, which would help you host a component developed in GCF 3 <B>like a web service.</B> A client written in <B>any technology</B> on <B>any platform</B> can then access the exposed services as long as they follow a simple <B>JSON message format.</B>
 
+\htmlonly
+<div style="border: 1px solid black; padding: 20px; margin: 20px; font-size: 1.25em;">
+GCF Fiber is no longer guaranteed to work in 2019. The source code & documentation is provided only if you
+want to use it as an inspiraton to build your own stack. By default GCF's Fibre module is not compiled
+along with GCF. You have to explicitly enable compilation of these modules.
+</div>
+\endhtmlonly
+
 \section gcf_fiber_0 Introduction
 <HR>
 

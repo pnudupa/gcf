@@ -16,7 +16,10 @@ as GCF Applications.
 Suggested video:
 
 \htmlonly
-<iframe src="http://player.vimeo.com/video/77784760?byline=0" width="500" height="313" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+<video width="500" controls>
+    <source src="../../../Videos/Getting-Started.mp4" type="video/mp4">
+</video>
+<p>If you are unable to view the embedded video above, please click <a href="http://player.vimeo.com/video/77784760" target="_blank">here</a> to view it on the web.</p>
 \endhtmlonly
 
 \tableofcontents

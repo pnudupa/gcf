@@ -1,6 +1,16 @@
 /**
 \defgroup gcf_gdrivelite GCF's GDriveLite component
 
+\htmlonly
+<div style="border: 1px solid black; padding: 20px; margin: 20px; font-size: 1.25em;">
+GCF's GDriveLite is no longer guaranteed to work in 2019. The source code & documentation is
+provided only if you want to use it as an inspiraton to build your own stack. We strongly recommend that
+you use <a href="https://doc.qt.io/qt-5/qtnetworkauth-index.html" target="_blank">Qt Network Authorization</a> to enable Google Drive API access in your applications.
+By default GCF's GDriveLite component and examples are not compiled along with GCF. You have to explicitly
+enable compilation of these modules.
+</div>
+\endhtmlonly
+
 GDriveLite is an in-built component in GCF that makes it possible to bring Google Drive
 to your applications. With this component you can
 
