@@ -127,7 +127,7 @@ GCF::Result GCF::InvokeMethodHelper::isMethodInvokable(const QMetaMethod &method
 struct CallData
 {
     CallData(int paramCount)
-        : genericArgs(paramCount, (QGenericArgument*)0) { }
+        : genericArgs(paramCount, nullptr) { }
 
     ~CallData() {
         qDeleteAll(ints);
@@ -218,11 +218,11 @@ bool CallData::add(int index, int type, const QVariant &value)
             genericArgs[index] = new QGenericArgument("GCF::Result", results.last());
         }
         else
-            genericArgs[index] = 0;
+            genericArgs[index] = nullptr;
         break;
     }
 
-    return genericArgs[index] != 0;
+    return genericArgs[index] != nullptr;
 }
 
 GCF::Result GCF::InvokeMethodHelper::call2(QObject *object, const QMetaMethod &method, const QVariantList &args)
@@ -249,7 +249,7 @@ GCF::Result GCF::InvokeMethodHelper::call2(QObject *object, const QMetaMethod &m
             return this->errorResult( QString("Invalid parameter type. Expecting '%1' but found '%2'")
                              .arg(QMetaType::typeName(argType)).arg(arg.typeName()));
 
-        if(argType != (int)arg.type() && argType != QMetaType::QVariant)
+        if(argType != int(arg.type()) && argType != QMetaType::QVariant)
             arg.convert(QVariant::Type(argType));
 
         if(argType == qMetaTypeId<GCF::Result>() || !callData.add(i, argType, arg))
@@ -271,7 +271,7 @@ GCF::Result GCF::InvokeMethodHelper::call2(QObject *object, const QMetaMethod &m
                              .arg( QString::fromLatin1(method.typeName())) );
     }
 
-#define G_RETURN_ARG *( (QGenericReturnArgument*)callData.genericArgs.last() )
+#define G_RETURN_ARG *( (QGenericReturnArgument*)(callData.genericArgs.last()) )
 #define G_ARG(index) (index >= callData.genericArgs.count()-1) ? QGenericArgument() : *( callData.genericArgs.at(index) )
 
     // Make the call using QMetaMethod::invokeMethod()

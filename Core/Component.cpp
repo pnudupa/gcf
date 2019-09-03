@@ -403,7 +403,7 @@ namespace GCF
 
 struct ComponentData
 {
-    ComponentData() : settings(0), currentEvent(0) { }
+    ComponentData() : settings(nullptr), currentEvent(nullptr) { }
 
     QSettings *settings;
     QEvent *currentEvent;
