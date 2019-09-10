@@ -31,7 +31,7 @@ int main(int argc, char **argv)
 
     QQuickView qmlView;
     a.setQmlEngine(qmlView.engine());
-    qmlView.setTitle("Klippe - Your Shared Clipboard");
+    qmlView.setTitle("Klippie - Your Shared Clipboard");
     qmlView.engine()->rootContext()->setContextProperty("klippieModel", klippie.model());
     qmlView.engine()->rootContext()->setContextProperty("klippie", &klippie);
     qmlView.setResizeMode(QQuickView::SizeRootObjectToView);
