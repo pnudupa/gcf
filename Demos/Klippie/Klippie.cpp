@@ -45,7 +45,7 @@ Klippie::~Klippie()
 void Klippie::onFoundServer(const GCF::IpcServerInfo &info)
 {
     GCF::IpcRemoteObject *remoteKlippyModel
-            = new GCF::IpcRemoteObject(info.Address, info.Port, "Application.KlippieModel");
+            = new GCF::IpcRemoteObject(info.Address, info.Port, "Application.KlippieModel", this);
     remoteKlippyModel->setObjectName( QString("%1 (%2:%3)").arg(info.User).arg(info.Address.toString()).arg(info.Port) );
 
     connect(remoteKlippyModel, SIGNAL(activated()),
