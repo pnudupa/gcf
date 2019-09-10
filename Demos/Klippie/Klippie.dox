@@ -1,0 +1,13 @@
+/**
+\page gcf_klippie Klippie (Shared Clipboard) - Example application for GCF's IPC module.
+
+Klippie is a shared clipboard application written using GCF's IPC module to demonstrate
+its capability.
+
+To use Klippie, just launch multiple one instance of Klippie on each of your computers
+in your LAN. Let Klippie run in the background. While you go about working on other
+things on your computers, simply copy something on to the system clipboard, go to Klippie
+and click the "Sync" button. This will cause your local Klippie instance to copy contents
+of the clipboard on to its own models, which it will then sync with other Klippie instances
+on the LAN. The end result is that you can copy/paste between computers in a LAN.
+*/
