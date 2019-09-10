@@ -53,6 +53,9 @@ using the \c gAppService global pointer.
 #include <QMetaObject>
 #include <QDomElement>
 #include <QDomDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
 
 namespace GCF
 {
@@ -158,6 +161,16 @@ GCF::ApplicationServices::ApplicationServices()
     qRegisterMetaType<GCF::Version>("GCF::Version");
     qRegisterMetaType<GCF::AbstractJob*>("GCF::AbstractJob*");
     qRegisterMetaType<QModelIndex>("QModelIndex");
+
+    qRegisterMetaType<QJsonValue>("QJsonValue");
+    qRegisterMetaTypeStreamOperators<QJsonValue>("QJsonValue");
+
+    qRegisterMetaType<QJsonObject>("QJsonObject");
+    qRegisterMetaTypeStreamOperators<QJsonObject>("QJsonObject");
+
+    qRegisterMetaType<QJsonArray>("QJsonArray");
+    qRegisterMetaTypeStreamOperators<QJsonArray>("QJsonArray");
+
 
     d = new ApplicationServicesData;
     d->launchTimestamp = QDateTime::currentDateTime();
