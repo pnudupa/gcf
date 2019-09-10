@@ -43,7 +43,9 @@ struct IpcServerInfo
 
     bool isValid() const { return !this->User.isEmpty() && !this->Address.isNull() && this->Port > 0 && !this->ServerId.isEmpty(); }
     bool operator == (const IpcServerInfo &other) const {
-        return User == other.User && Address == other.Address && Port == other.Port && ServerId == other.ServerId;
+        if(!ServerId.isEmpty() && !other.ServerId.isEmpty())
+            return ServerId == other.ServerId;
+        return User == other.User && Address == other.Address && Port == other.Port;
     }
 };
 
