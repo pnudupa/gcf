@@ -53,7 +53,7 @@ Item {
                     maximumLineCount: 4
                     elide: Text.ElideNone
                     font.pixelSize: 11
-                    textFormat: Text.RichText
+                    height: Math.min(contentHeight, 60)
                     text: {
                         if( content["text/plain"] )
                             return content["text/plain"]
