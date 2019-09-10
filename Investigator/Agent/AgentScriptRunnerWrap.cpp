@@ -458,12 +458,12 @@ static QScriptValue UI_waitForShown(QScriptContext *context, QScriptEngine *engi
         return QScriptValue(engine, false);
 
 #if QT_VERSION >= 0x050000
-    QTest::qWaitForWindowActive(w);
+    const bool success = QTest::qWaitForWindowActive(w);
 #else
-    QTest::qWaitForWindowShown(w);
+    const bool success = QTest::qWaitForWindowShown(w);
 #endif
 
-    return QScriptValue(engine, true);
+    return QScriptValue(engine, success);
 }
 
 template <class T>

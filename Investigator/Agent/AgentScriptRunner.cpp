@@ -24,12 +24,12 @@
 
 struct AgentScriptRunnerData
 {
-    AgentScriptRunnerData() : engine(0), failCount(0), fail(false) { }
+    AgentScriptRunnerData() : engine(nullptr), failCount(0), fail(false) { }
 
     AgentComponent *agentComponent;
     QScriptEngine *engine;
     int failCount;
-    bool fail;
+    int fail; // This is actually bool, but we use a int for proper padding.
 
     QList<AgentSignalSpy*> spyList;
 
@@ -223,7 +223,7 @@ void AgentScriptRunner::fail(const QScriptValue &msg)
 QScriptValue AgentScriptRunner::object(const QScriptValue &path)
 {
     QObject *object = this->findObject(path.toString());
-    if(object == 0)
+    if(object == nullptr)
     {
         int lineNr = d->lineNumber(path.engine());
         d->agentComponent->log(QString("Error at line %1: Object '%2' not found").arg(lineNr).arg(path.toString()));
@@ -253,14 +253,16 @@ void AgentScriptRunner::waitForWindowShown(const QScriptValue &window, int timeo
         return;
     }
 
-    QWidget *windowPointer = (QWidget*)windowObject;
+    QWidget *windowPointer = qobject_cast<QWidget*>(windowObject);
 
 #if QT_VERSION >= 0x050000
-    QTest::qWaitForWindowActive(windowPointer, timeout);
+    const bool success = QTest::qWaitForWindowActive(windowPointer, timeout);
 #else
     Q_UNUSED(timeout);
-    QTest::qWaitForWindowShown(windowPointer);
+    const bool success = QTest::qWaitForWindowShown(windowPointer);
 #endif
+
+    Q_UNUSED(success)
 }
 
 void AgentScriptRunner::waitForWindowActive(const QScriptValue &window, int timeout)
@@ -412,7 +414,7 @@ QScriptValue AgentScriptRunner::createSignalSpy(const QScriptValue &object, cons
 
 QObject *AgentScriptRunner::objectFromScriptValue(const QScriptValue &object)
 {
-    QObject *qObject = 0;
+    QObject *qObject = nullptr;
 
     if(object.isQObject())
         qObject = object.toQObject();
@@ -435,10 +437,9 @@ QObject *AgentScriptRunner::objectFromScriptValue(const QScriptValue &object)
 
 QScriptValue AgentScriptRunner_log(QScriptContext *context, QScriptEngine *engine)
 {
-    QScriptValue arg1 = context->argumentCount() >= 1 ?
-                context->argument(0) : QScriptValue();
-    AgentScriptRunner *runner =
-            (AgentScriptRunner*)engine->globalObject().property("investigator").toQObject();
+    QScriptValue arg1 = context->argumentCount() >= 1 ? context->argument(0) : QScriptValue();
+    QObject *investigatorObject = engine->globalObject().property("investigator").toQObject();
+    AgentScriptRunner *runner = qobject_cast<AgentScriptRunner*>(investigatorObject);
     runner->log(arg1);
 
     return QScriptValue();
@@ -446,11 +447,9 @@ QScriptValue AgentScriptRunner_log(QScriptContext *context, QScriptEngine *engin
 
 QScriptValue AgentScriptRunner_fail(QScriptContext *context, QScriptEngine *engine)
 {
-    QScriptValue arg1 = context->argumentCount() >= 1 ?
-                context->argument(0) :
-                QScriptValue("Reason unknown");
-    AgentScriptRunner *runner =
-            (AgentScriptRunner*)engine->globalObject().property("investigator").toQObject();
+    QScriptValue arg1 = context->argumentCount() >= 1 ? context->argument(0) : QScriptValue("Reason unknown");
+    QObject *investigatorObject = engine->globalObject().property("investigator").toQObject();
+    AgentScriptRunner *runner = qobject_cast<AgentScriptRunner*>(investigatorObject);
     runner->fail(arg1);
 
     return QScriptValue();
@@ -458,10 +457,9 @@ QScriptValue AgentScriptRunner_fail(QScriptContext *context, QScriptEngine *engi
 
 QScriptValue AgentScriptRunner_object(QScriptContext *context, QScriptEngine *engine)
 {
-    QScriptValue arg1 = context->argumentCount() >= 1 ?
-                context->argument(0) : QScriptValue();
-    AgentScriptRunner *runner =
-            (AgentScriptRunner*)engine->globalObject().property("investigator").toQObject();
+    QScriptValue arg1 = context->argumentCount() >= 1 ? context->argument(0) : QScriptValue();
+    QObject *investigatorObject = engine->globalObject().property("investigator").toQObject();
+    AgentScriptRunner *runner = qobject_cast<AgentScriptRunner*>(investigatorObject);
     return runner->object(arg1);
 }
 
@@ -471,7 +469,7 @@ QScriptValue AgentScriptRunner_interface(QScriptContext *context, QScriptEngine 
                 context->argument(0) : QScriptValue();
 
     GCF::ObjectTreeNode *node = gAppService->objectTree()->findObjectNode(arg1.toString());
-    QObject *object = node ? node->object() : 0;
+    QObject *object = node ? node->object() : nullptr;
 
     QScriptValue objectValue = engine->newQObject(object);
     AgentScriptRunner::wrap(objectValue);
@@ -480,10 +478,9 @@ QScriptValue AgentScriptRunner_interface(QScriptContext *context, QScriptEngine 
 
 QScriptValue AgentScriptRunner_wait(QScriptContext *context, QScriptEngine *engine)
 {
-    QScriptValue arg1 = context->argumentCount() >= 1 ?
-                context->argument(0) : QScriptValue();
-    AgentScriptRunner *runner =
-            (AgentScriptRunner*)engine->globalObject().property("investigator").toQObject();
+    QScriptValue arg1 = context->argumentCount() >= 1 ? context->argument(0) : QScriptValue();
+    QObject *investigatorObject = engine->globalObject().property("investigator").toQObject();
+    AgentScriptRunner *runner = qobject_cast<AgentScriptRunner*>(investigatorObject);
     runner->wait(arg1.toInt32());
     return QScriptValue();
 }
@@ -492,8 +489,8 @@ QScriptValue AgentScriptRunner_waitForWindowShown(QScriptContext *context, QScri
 {
     QScriptValue arg1 = context->argumentCount() >= 1 ? context->argument(0) : QScriptValue();
     QScriptValue arg2 = context->argumentCount() >= 2 ? context->argument(1) : QScriptValue();
-    AgentScriptRunner *runner =
-            (AgentScriptRunner*)engine->globalObject().property("investigator").toQObject();
+    QObject *investigatorObject = engine->globalObject().property("investigator").toQObject();
+    AgentScriptRunner *runner = qobject_cast<AgentScriptRunner*>(investigatorObject);
     runner->waitForWindowShown(arg1, arg2.toInt32());
     return QScriptValue();
 }
@@ -502,8 +499,8 @@ QScriptValue AgentScriptRunner_waitForWindowActive(QScriptContext *context, QScr
 {
     QScriptValue arg1 = context->argumentCount() >= 1 ? context->argument(0) : QScriptValue();
     QScriptValue arg2 = context->argumentCount() >= 2 ? context->argument(1) : QScriptValue();
-    AgentScriptRunner *runner =
-            (AgentScriptRunner*)engine->globalObject().property("investigator").toQObject();
+    QObject *investigatorObject = engine->globalObject().property("investigator").toQObject();
+    AgentScriptRunner *runner = qobject_cast<AgentScriptRunner*>(investigatorObject);
     runner->waitForWindowActive(arg1, arg2.toInt32());
     return QScriptValue();
 }
@@ -513,8 +510,8 @@ QScriptValue AgentScriptRunner_waitForSignal(QScriptContext *context, QScriptEng
     QScriptValue arg1 = context->argumentCount() >= 1 ? context->argument(0) : QScriptValue();
     QScriptValue arg2 = context->argumentCount() >= 2 ? context->argument(1) : QScriptValue();
     QScriptValue arg3 = context->argumentCount() >= 3 ? context->argument(3) : QScriptValue(5000);
-    AgentScriptRunner *runner =
-            (AgentScriptRunner*)engine->globalObject().property("investigator").toQObject();
+    QObject *investigatorObject = engine->globalObject().property("investigator").toQObject();
+    AgentScriptRunner *runner = qobject_cast<AgentScriptRunner*>(investigatorObject);
     return runner->waitForSignal(arg1, arg2.toString(), arg3.toInt32());
 }
 
@@ -523,8 +520,8 @@ QScriptValue AgentScriptRunner_waitForPropertyChange(QScriptContext *context, QS
     QScriptValue arg1 = context->argumentCount() >= 1 ? context->argument(0) : QScriptValue();
     QScriptValue arg2 = context->argumentCount() >= 2 ? context->argument(1) : QScriptValue();
     QScriptValue arg3 = context->argumentCount() >= 3 ? context->argument(3) : QScriptValue(5000);
-    AgentScriptRunner *runner =
-            (AgentScriptRunner*)engine->globalObject().property("investigator").toQObject();
+    QObject *investigatorObject = engine->globalObject().property("investigator").toQObject();
+    AgentScriptRunner *runner = qobject_cast<AgentScriptRunner*>(investigatorObject);
     return runner->waitForPropertyChange(arg1, arg2.toString(), arg3.toInt32());
 }
 
@@ -533,8 +530,8 @@ QScriptValue AgentScriptRunner_compare(QScriptContext *context, QScriptEngine *e
     QScriptValue arg1 = context->argumentCount() >= 1 ? context->argument(0) : QScriptValue();
     QScriptValue arg2 = context->argumentCount() >= 2 ? context->argument(1) : QScriptValue();
     QScriptValue arg3 = context->argumentCount() >= 3 ? context->argument(2) : QScriptValue();
-    AgentScriptRunner *runner =
-            (AgentScriptRunner*)engine->globalObject().property("investigator").toQObject();
+    QObject *investigatorObject = engine->globalObject().property("investigator").toQObject();
+    AgentScriptRunner *runner = qobject_cast<AgentScriptRunner*>(investigatorObject);
     if(!arg3.isValid())
         arg3 = QScriptValue(engine, "compare() failed");
     runner->compare(arg1, arg2, arg3);
@@ -545,8 +542,8 @@ QScriptValue AgentScriptRunner_verify(QScriptContext *context, QScriptEngine *en
 {
     QScriptValue arg1 = context->argumentCount() >= 1 ? context->argument(0) : QScriptValue();
     QScriptValue arg2 = context->argumentCount() >= 2 ? context->argument(1) : QScriptValue();
-    AgentScriptRunner *runner =
-            (AgentScriptRunner*)engine->globalObject().property("investigator").toQObject();
+    QObject *investigatorObject = engine->globalObject().property("investigator").toQObject();
+    AgentScriptRunner *runner = qobject_cast<AgentScriptRunner*>(investigatorObject);
     if(!arg2.isValid())
         arg2 = QScriptValue(engine, "verify() failed");
     runner->verify(arg1, arg2);
@@ -557,8 +554,8 @@ QScriptValue AgentScriptRunner_createSignalSpy(QScriptContext *context, QScriptE
 {
     QScriptValue arg1 = context->argumentCount() >= 1 ? context->argument(0) : QScriptValue();
     QScriptValue arg2 = context->argumentCount() >= 2 ? context->argument(1) : QScriptValue();
-    AgentScriptRunner *runner =
-            (AgentScriptRunner*)engine->globalObject().property("investigator").toQObject();
+    QObject *investigatorObject = engine->globalObject().property("investigator").toQObject();
+    AgentScriptRunner *runner = qobject_cast<AgentScriptRunner*>(investigatorObject);
     return runner->createSignalSpy(arg1, arg2.toString());
 }
 
@@ -641,27 +638,27 @@ QScriptValue AgentScriptRunnerData::createValue(QScriptEngine *engine, const QVa
     case QVariant::UInt:
         return QScriptValue(value.toUInt());
     case QVariant::LongLong:
-        return QScriptValue((qsreal)value.toLongLong());
+        return QScriptValue(qsreal(value.toLongLong()));
     case QVariant::Bool:
         return QScriptValue(value.toBool());
     case QVariant::ByteArray:
         return QScriptValue(QLatin1String(value.toByteArray()));
     case QVariant::Double:
-        return QScriptValue((qsreal)value.toDouble());
+        return QScriptValue(qsreal(value.toDouble()));
     case QVariant::StringList: {
         QStringList stringList = value.toStringList();
-        QScriptValue array = engine->newArray(stringList.length());
+        QScriptValue array = engine->newArray(uint(stringList.length()));
         for(int i=0; i<stringList.count(); i++)
-            array.setProperty(i, stringList.at(i));
+            array.setProperty(quint32(i), stringList.at(i));
         return array;
-    } break;
+        }
     case QVariant::List: {
         QList<QVariant> list = value.toList();
-        QScriptValue array = engine->newArray(list.length());
+        QScriptValue array = engine->newArray(uint(list.length()));
         for(int i=0; i<list.count(); i++)
-            array.setProperty(i, createValue(engine, list.at(i)));
+            array.setProperty(quint32(i), createValue(engine, list.at(i)));
         return array;
-    } break;
+        }
     default:
         break;
     }
@@ -681,7 +678,7 @@ QScriptValue AgentSignalSpy::at(const QScriptValue &i) const
 
     QVariantList args = m_signalSpy.at(index);
     for(int idx=0; idx<args.count(); idx++)
-        array.setProperty(idx, AgentScriptRunnerData::createValue(i.engine(), args.at(idx)));
+        array.setProperty(quint32(idx), AgentScriptRunnerData::createValue(i.engine(), args.at(idx)));
 
     return array;
 }
