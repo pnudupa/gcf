@@ -1,6 +1,7 @@
 TEMPLATE = subdirs
 
-SUBDIRS += Communique
+SUBDIRS += Communique \
+    Klippie
 
 isEqual(QT_MAJOR_VERSION, 5) {
 SUBDIRS += TicTacToe
