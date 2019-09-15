@@ -21,7 +21,7 @@ Item {
         highlightMoveDuration: 50
         delegate: Item {
             width: klippieView.width-1
-            height: klippieItemRow.height*1.11
+            height: klippieItem.height + 10
 
             Rectangle {
                 anchors.fill: parent
@@ -31,38 +31,24 @@ Item {
                 color: Qt.rgba(0,0,0,0)
             }
 
-            Column {
-                id: klippieItemRow
+            Loader {
+                id: klippieItem
                 width: parent.width*0.9
                 anchors.centerIn: parent
-
-                spacing: 10
-
-                Text {
-                    width: parent.width
-                    wrapMode: Text.WordWrap
-                    maximumLineCount: 2
-                    elide: Text.ElideRight
-                    text: content.formats.join(", ");
-                    font.pixelSize: 14
-                }
-
-                Text {
-                    width: parent.width
-                    wrapMode: Text.WordWrap
-                    maximumLineCount: 4
-                    elide: Text.ElideNone
-                    font.pixelSize: 11
-                    height: Math.min(contentHeight, 60)
-                    text: {
-                        if( content["text/plain"] )
-                            return content["text/plain"]
-                        if( content["text/html"] )
-                            return content["text/html"]
-                        if( content["text/uri-list"] )
-                            return content["text/uri-list"]
-                        return "[[ Binary Data ]]"
+                active: true
+                clip: true
+                property var contentData: content.data
+                property int contentIndex: index
+                sourceComponent: {
+                    switch(content.type) {
+                    case "text": return textData
+                    case "urls": return urlsData
+                    case "image": return imageData
+                    case "html": return htmlData
+                    case "mime-data": return mimeData
+                    default: break
                     }
+                    return binaryData
                 }
             }
 
@@ -95,6 +81,12 @@ Item {
             function click() {
                 klippieModel.use(klippieView.currentIndex)
             }
+        }
+
+        Button {
+            id: clearButton
+            text: "Clear"
+            onClicked: klippieModel.clear()
         }
     }
 
@@ -168,6 +160,67 @@ Item {
                     script: notificationBar.noticeMessage = ""
                 }
             }
+        }
+    }
+
+    Component {
+        id: textData
+
+        Text {
+            maximumLineCount: 2
+            elide: Text.ElideRight
+            text: contentData
+        }
+    }
+
+    Component {
+        id: urlsData
+
+        Text {
+            maximumLineCount: 2
+            elide: Text.ElideRight
+            text: "[" + contentData.length + "] - " + contentData.join(", ")
+        }
+    }
+
+    Component {
+        id: htmlData
+
+        Text {
+            height: Math.min(120, contentHeight)
+            text: contentData
+            textFormat: Text.RichText
+        }
+    }
+
+    Component {
+        id: imageData
+
+        Image {
+            fillMode: Image.PreserveAspectFit
+            source: contentIndex >= 0 ? "image://klippie/" + contentIndex : ""
+            smooth: true
+        }
+    }
+
+    Component {
+        id: mimeData
+
+        ListView {
+            model: contentData
+            spacing: 2
+            height: Math.min(120, contentHeight)
+            delegate: Text {
+                text: mimetype
+            }
+        }
+    }
+
+    Component {
+        id: binaryData
+
+        Text {
+            text: "[[ Binary Data ]]"
         }
     }
 }

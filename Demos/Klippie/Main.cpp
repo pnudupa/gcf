@@ -34,6 +34,7 @@ int main(int argc, char **argv)
     qmlView.setTitle("Klippie - Your Shared Clipboard");
     qmlView.engine()->rootContext()->setContextProperty("klippieModel", klippie.model());
     qmlView.engine()->rootContext()->setContextProperty("klippie", &klippie);
+    qmlView.engine()->addImageProvider("klippie", klippie.model());
     qmlView.setResizeMode(QQuickView::SizeRootObjectToView);
     qmlView.setSource(QUrl("qrc:/Klippie.qml"));
     qmlView.show();

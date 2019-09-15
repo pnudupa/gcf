@@ -21,8 +21,9 @@
 
 #include <QVariantList>
 #include <QAbstractListModel>
+#include <QQuickImageProvider>
 
-class KlippieModel : public QAbstractListModel
+class KlippieModel : public QAbstractListModel, public QQuickImageProvider
 {
     Q_OBJECT
 
@@ -44,6 +45,9 @@ public:
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
     QHash<int,QByteArray> roleNames() const;
+
+    // QQuickImageProvider interface
+    QImage requestImage(const QString &id, QSize *size, const QSize &requestedSize);
 
 signals:
     void newItem(const QVariant &item);
